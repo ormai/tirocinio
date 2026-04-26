@@ -16,3 +16,4 @@
 
 - [Dockerizing Your SvelteKit Applications: A Practical Guide](https://khromov.se/dockerizing-your-sveltekit-applications-a-practical-guide/)
 - [A Modern CSS Reset](https://www.joshwcomeau.com/css/custom-css-reset/)
+- [System Font Stack](https://systemfontstack.com/)
