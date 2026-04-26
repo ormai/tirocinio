@@ -22,7 +22,7 @@
 
 	let currentIndex = $derived(options.findIndex((opt) => opt.value === selected));
 
-	/// Buttons should be activatable by pressing 'Enter', not just 'Space'.
+	/// Make the button activatable by pressing 'Enter', not just 'Space'.
 	function onKeyDown(event: KeyboardEvent, value: string) {
 		if (event.key === 'Enter') {
 			event.preventDefault();
@@ -59,7 +59,7 @@
 		width: 100%;
 	}
 
-	@media (max-width: 400px) {
+	@media (max-width: 330px) {
 		fieldset {
 			flex-direction: column;
 		}

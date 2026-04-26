@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { Eye, EyeOff } from '@lucide/svelte';
 	import { validator, validatePassword } from '$lib/validation.svelte';
-	import { onMount } from 'svelte';
+	import { tooltip } from '$lib/tooltip.svelte';
 
-	let { visible = $bindable(false), name = 'password', label = 'Password' } = $props();
+	let { name = 'password', label = 'Password' } = $props();
 	let error = $state({ value: '' });
+	let visible = $state(false);
 </script>
 
 <div class="input-host">
@@ -23,9 +24,8 @@
 		<button
 			type="button"
 			class="secondary"
-			onclick={() => {
-				visible = !visible;
-			}}
+			onclick={() => (visible = !visible)}
+			{@attach tooltip(visible ? 'Hide password' : 'Show password')}
 		>
 			{#if visible}
 				<EyeOff />
