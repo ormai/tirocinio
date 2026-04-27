@@ -1,5 +1,5 @@
 {
-	"$schema": "https://inlang.com/schema/inlang-message-format",
+  "$schema": "https://inlang.com/schema/inlang-message-format",
   "signin_title": "Sign In",
   "signin_student": "Student",
   "signin_admin": "Administrator",
@@ -15,5 +15,6 @@
   "email_input_label": "Email",
   "email_placeholder": "john.doe@example.com",
   "email_validity_missing": "Please provide your email",
-  "email_validity_type": "This email is not valid, a valid email looks@like.this"
+  "email_validity_type": "This email is not valid, a valid email looks@like.this",
+  "error_server_desc": "The server returned an error"
 }
