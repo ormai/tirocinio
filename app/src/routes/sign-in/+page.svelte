@@ -25,8 +25,8 @@ function submit(
   <h1>{title}</h1>
   <SegmentedButtons
     options={[
-      { label: "Student", value: "student" },
-      { label: "Administrator", value: "admin" },
+      { label: m.signin_student(), value: "student" },
+      { label: m.signin_admin(), value: "admin" },
     ]}
     bind:selected={signInType}
   />

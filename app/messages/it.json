@@ -11,7 +11,7 @@
   "password_validity_missing": "Inserisci la tua password",
   "password_validity_too_short": "La password deve essere lunga almeno {min} caratteri, quella attuale ne ha {current}",
   "password_validity_too_long": "La password non può superare i {max} caratteri, quella attuale ne ha {current}",
-  "password_validity_pattern": "La password deve contenere almeno una lettera maiuscola, una minuscola, un numero e un simbolo.",
+  "password_validity_pattern": "La password deve contenere almeno una lettera maiuscola, una minuscola, un numero e un simbolo tra questi !?@#$%&^`\"'()[]<>=*~+-_/\\|.,:;",
   "email_input_label": "Email",
   "email_placeholder": "mario.rossi@example.com",
   "email_validity_missing": "Inserisci il tuo indirizzo email",

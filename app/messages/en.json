@@ -11,7 +11,7 @@
   "password_validity_missing": "Please provide your password",
   "password_validity_too_short": "Password must be at least {min} characters long, the current one has {current}",
   "password_validity_too_long": "Password cannot be longer than {max} characters, the current one has  {current}",
-  "password_validity_pattern": "Password must contain at least one uppercase letter, one lowercase letter, a digit, and a symbol.",
+  "password_validity_pattern": "Password must contain at least one uppercase letter, one lowercase letter, a digit, and a symbol among these !?@#$%&^`\"'()[]<>=*~+-_/\\|.,:;",
   "email_input_label": "Email",
   "email_placeholder": "john.doe@example.com",
   "email_validity_missing": "Please provide your email",

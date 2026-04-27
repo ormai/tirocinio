@@ -22,9 +22,7 @@ export interface Error {
   value: string;
 }
 
-// Regular expression for email validation as per HTML specification
-const passwordRegExp =
-  /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!#$%&"'()*+,\-./:;<=>?@[\\\]^_`{|}~])[A-Za-z\d!#$%&"'()*+,\-./:;<=>?@[\\\]^_`{|}~]{10,}$/;
+const passwordRegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!#$%&"'()*+,\-./:;<=>?@[\\\]^_`|~]).{10,}$/;
 
 /**
  * Checks whether an email is valid.
