@@ -24,7 +24,7 @@ html {
 	--body-bg: light-dark(#fdfdfd, #212529);
 
 	/* Lighter text */
-	--body-light: light-dark(#2b3035, #7f8387);
+	--body-light: light-dark(#2b3035, #ddd);
 	/* Dividers and disabled elements */
 	--body-light-bg: light-dark(#eee, #2b3035);
 
@@ -71,6 +71,8 @@ html {
 	--info-text: #6edff6;
 
 	--radius: 10px;
+	--spacing: 6px;
+	--border-thickness: 1px;
 
 	--focus-shadow: 0 0 0 3px rgb(from var(--primary) r g b / 0.5);
 }
@@ -142,9 +144,30 @@ button {
 button,
 input,
 select {
-	padding: 6px 12px;
-	border-width: 1px;
+	padding: var(--spacing) calc(var(--spacing) * 2);
+	border-width: var(--border-thickness);
 	border-style: solid;
+}
+
+.outlined {
+	border: var(--border-thickness) solid var(--border);	
+	border-radius: var(--radius);
+	padding: var(--spacing);
+}
+
+.centered {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+select {
+	height: calc(1.5em + var(--spacing) * 2 + var(--border-thickness));
+}
+
+option {
+  color: var(--body-light);
+  background: var(--body-light-bg)
 }
 
 input,

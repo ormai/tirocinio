@@ -1,5 +1,6 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
+  "language_name": "English",
   "signin_title": "Sign In",
   "signin_student": "Student",
   "signin_admin": "Administrator",

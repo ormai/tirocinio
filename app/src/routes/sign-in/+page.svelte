@@ -1,5 +1,6 @@
 <script lang="ts">
 import { enhance } from "$app/forms";
+import LanguageSwitcher from "$lib/LanguageSwitcher.svelte";
 import { m } from "$lib/paraglide/messages";
 import PasswordField from "$lib/PasswordField.svelte";
 import SegmentedButtons from "$lib/SegmentedButtons.svelte";
@@ -18,6 +19,8 @@ function submit(
   }
 }
 </script>
+
+<LanguageSwitcher />
 
 <svelte:head><title>{title}</title></svelte:head>
 

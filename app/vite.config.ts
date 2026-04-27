@@ -9,7 +9,7 @@ export default defineConfig({
     paraglideVitePlugin({
       project: "./project.inlang",
       outdir: "./src/lib/paraglide",
-      strategy: ["url", "localStorage", "cookie", "preferredLanguage", "baseLocale"],
+      strategy: ["localStorage", "cookie", "preferredLanguage", "url", "baseLocale"],
     }),
   ],
   test: {
