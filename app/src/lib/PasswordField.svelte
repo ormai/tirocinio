@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { Eye, EyeOff } from '@lucide/svelte';
-	import { validator, validatePassword } from '$lib/validation.svelte';
+	import { fade } from 'svelte/transition';
+	import { validation, passwordValidator } from '$lib/validation.svelte';
 	import { tooltip } from '$lib/tooltip.svelte';
+	import { m } from '$lib/paraglide/messages';
 
-	let { name = 'password', label = 'Password' } = $props();
+	let { name = 'password', label = m.password_input_label() } = $props();
 	let error = $state({ value: '' });
 	let visible = $state(false);
 </script>
@@ -19,13 +21,13 @@
 			required
 			minlength="10"
 			maxlength="200"
-			{@attach (input) => validator(input, validatePassword, error)}
+			{@attach (input) => validation(input, passwordValidator, error)}
 		/>
 		<button
 			type="button"
 			class="secondary"
 			onclick={() => (visible = !visible)}
-			{@attach tooltip(visible ? 'Hide password' : 'Show password')}
+			{@attach tooltip(visible ? m.password_hide() : m.password_show())}
 		>
 			{#if visible}
 				<EyeOff />
@@ -35,7 +37,7 @@
 		</button>
 	</div>
 	{#if error.value}
-		<span class="error">{error.value}</span>
+		<span transition:fade class="error">{error.value}</span>
 	{/if}
 </div>
 

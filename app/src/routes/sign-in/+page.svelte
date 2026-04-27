@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { fly } from 'svelte/transition';
+	import { fly, fade } from 'svelte/transition';
 	import { enhance } from '$app/forms';
 	import SegmentedButtons from '$lib/SegmentedButtons.svelte';
 	import PasswordField from '$lib/PasswordField.svelte';
-	import { validator, validateEmail } from '$lib/validation.svelte';
+	import { validation, emailValidator } from '$lib/validation.svelte';
+	import { m } from '$lib/paraglide/messages';
 
-	const title = 'Sign In';
+	const title = m.signin_title();
 	let signInType: 'student' | 'admin' = $state('student');
 	let emailError = $state({ value: '' });
 
@@ -30,18 +31,18 @@
 
 	<form method="POST" use:enhance={submit} novalidate>
 		<div class="input-host">
-			<label for="email">Email</label>
+			<label for="email">{m.email_input_label()}</label>
 			<input
 				id="email"
 				name="email"
 				type="email"
 				autocomplete="email"
-				placeholder="john.doe@example.com"
+				placeholder={m.email_placeholder()}
 				required
-				{@attach (input) => validator(input, validateEmail, emailError)}
+				{@attach (input) => validation(input, emailValidator, emailError)}
 			/>
 			{#if emailError.value}
-				<span class="error">{emailError.value}</span>
+				<span transition:fade class="error">{emailError.value}</span>
 			{/if}
 		</div>
 
@@ -52,7 +53,7 @@
 		{/if}
 
 		<button>
-			{signInType === 'admin' ? 'Sign In' : 'Send Code'}
+			{signInType === 'admin' ? m.signin_admin_submit() : m.signin_student_submit()}
 		</button>
 	</form>
 </main>

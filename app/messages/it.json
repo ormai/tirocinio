@@ -1,4 +1,19 @@
 {
-	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hello, {name} from it!"
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "signin_title": "Accedi",
+  "signin_student": "Studente",
+  "signin_admin": "Amministratore",
+  "signin_student_submit": "Invia codice",
+  "signin_admin_submit": "Accedi",
+  "password_show": "Mostra password",
+  "password_hide": "Nascondi password",
+  "password_input_label": "Password",
+  "password_validity_missing": "Inserisci la tua password",
+  "password_validity_too_short": "La password deve essere lunga almeno {min} caratteri, quella attuale ne ha {current}",
+  "password_validity_too_long": "La password non può superare i {max} caratteri, quella attuale ne ha {current}",
+  "password_validity_pattern": "La password deve contenere almeno una lettera maiuscola, una minuscola, un numero e un simbolo.",
+  "email_input_label": "Email",
+  "email_placeholder": "mario.rossi@example.com",
+  "email_validity_missing": "Inserisci il tuo indirizzo email",
+  "email_validity_type": "Questo indirizzo email non è valido, un indirizzo valido è simile@a.questo"
 }

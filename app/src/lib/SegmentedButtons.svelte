@@ -2,8 +2,7 @@
 	@component
 
 	Segmented buttons are a group of buttons of which only one can be active at a
-	time. They are similar to the concept of "tabs".
-
+	time. They are similar to the concept of tabs.
 	They can also be thouth as radio buttons with extra steps.
 	
 	Segmented buttons are part of [Material UI 3](https://m3.material.io/components/segmented-buttons/overview).

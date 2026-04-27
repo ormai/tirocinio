@@ -5,13 +5,15 @@
  * validation and integrate it with Svelte's progressive enhancement of forms.
  *
  * With progressive enhancement, in the absence of JavaScript the form will
- * still be submit and the browser's native constraint validation API will work.
+ * still be submitted and the browser's native constraint validation API will work.
  *
  * Our customization is about specifying custom validation messages, and
  * displaying them without the browser's default floating bubble.
  *
  * @see https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Form_validation
  */
+
+import { m } from '$lib/paraglide/messages';
 
 export interface Error {
 	/**
@@ -22,7 +24,7 @@ export interface Error {
 
 // Regular expression for email validation as per HTML specification
 const passwordRegExp =
-	/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!#$%&"'()*+,\-./:;<=>?@\[\\\]^_`{|}~])[A-Za-z\d!#$%&"'()*+,\-./:;<=>?@\[\\\]^_`{|}~]{10,}$/;
+	/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!#$%&"'()*+,\-.\/:;<=>?@\[\\\]^_`{|}~])[A-Za-z\d!#$%&"'()*+,\-.\/:;<=>?@\[\\\]^_`{|}~]{10,}$/;
 
 /**
  * Checks whether an email is valid.
@@ -30,11 +32,11 @@ const passwordRegExp =
  * @param value {HTMLInputElement} - The email input element to validate.
  * @returns {string | null} A localized feedback error message or the empty string if the input is valid.
  */
-export function validateEmail(input: HTMLInputElement): string {
+export function emailValidator(input: HTMLInputElement): string {
 	if (input.validity.valueMissing) {
-		return 'Please provide your email';
+		return m.email_validity_missing();
 	} else if (input.validity.typeMismatch) {
-		return 'Email not valid';
+		return m.email_validity_type();
 	}
 	return '';
 }
@@ -45,15 +47,15 @@ export function validateEmail(input: HTMLInputElement): string {
  * @param input {string | null | undefined} - The password to validate.
  * @returns {string | null} A localized feedback error message or the empty string if the input is valid.
  */
-export function validatePassword(input: HTMLInputElement): string {
+export function passwordValidator(input: HTMLInputElement): string {
 	if (input.validity.valueMissing) {
-		return 'Please provide your password';
+		return m.password_validity_missing();
 	} else if (input.validity.tooShort) {
-		return `Password must be at least ${input.minLength} characters long, yours has a length of ${input.value.length}`;
+		return m.password_validity_too_short({min: input.minLength, current: input.value.length});
 	} else if (input.validity.tooLong) {
-		return `Password cannot be longer than ${input.maxLength} characters, yours has a length of ${input.value.length}`;
+		return m.password_validity_too_long({max: input.maxLength, current: input.value.length});
 	} else if (!passwordRegExp.test(input.value)) {
-		return 'Password must contain at least one uppercase letter, one lowercase letter, a digit, and symbol.';
+		return m.password_validity_pattern();
 	}
 	return '';
 }
@@ -61,15 +63,15 @@ export function validatePassword(input: HTMLInputElement): string {
 /**
  * An attachment to validate HTMLInputElements.
  */
-export function validator(
+export function validation(
 	input: HTMLInputElement,
-	fn: (input: HTMLInputElement) => string,
+	validator: (input: HTMLInputElement) => string,
 	error: Error
 ) {
 	let validateOnInput = $state(false);
 
 	function validate() {
-		input.setCustomValidity(fn(input));
+		input.setCustomValidity(validator(input));
 		error.value = input.validationMessage;
 	}
 
