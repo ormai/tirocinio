@@ -1,58 +1,58 @@
 <script lang="ts">
   import { applyAction, enhance } from '$app/forms';
+  import { Field, passwordRegExp } from '$lib/form/field.svelte.js';
+  import PasswordField from '$lib/form/PasswordField.svelte';
   import LanguageSwitcher from '$lib/LanguageSwitcher.svelte';
   import { m } from '$lib/paraglide/messages';
-  import PasswordField from '$lib/PasswordField.svelte';
   import SegmentedButtons from '$lib/SegmentedButtons.svelte';
   import { untrack } from 'svelte';
   import { fade, fly } from 'svelte/transition';
 
-  interface ServerErrors {
-    incorrectCredentials?: boolean;
-    emailMissing?: boolean;
-  }
-
   let { form } = $props();
-  let serverErrors: ServerErrors = $state({});
-  let serverErrorConsumed = $state(false);
-
-  const title = m.signin_title();
+  let errors = $state<Partial<typeof form>>({});
   let signInType: 'student' | 'admin' = $state('student');
 
-  let passwordError = $state({ value: '' });
-  let loading = $state(false);
-
-  let email = $state<HTMLInputElement>();
-  let emailError = $state({ value: '' });
-  let emailDirty = $state(false);
-
   $effect(() => {
-    const newErrors = {
-      emailMissing: form?.emailMissing,
-      incorrectCredentials: form?.incorrectCredentials,
-    };
+    errors = { ...form };
     untrack(() => {
-      serverErrors = newErrors;
-      serverErrorConsumed = false;
-      if (email) validateEmail();
+      email.validate();
+      password.validate();
+      if (errors?.incorrectRole) {
+        signInType = signInType === 'student' ? 'admin' : 'student';
+        errors.incorrectRole = false;
+      }
     });
   });
 
-  function validateEmail() {
-    if (!email) return;
-    let error = '';
-    if (email.validity.valueMissing || serverErrors?.emailMissing) {
-      error = m.email_validity_missing();
-    } else if (email.validity.typeMismatch) {
-      error = m.email_validity_type();
-    } else if (serverErrors?.incorrectCredentials) {
-      error = m.signin_incorrect_credentials();
-    }
-    emailError.value = error;
-    if (emailDirty) {
-      email.dataset.valid = error ? 'false' : 'true';
-    }
-  }
+  // reactivity makes my head ache
+  const email = new Field(
+    [
+      (i) => i.validity.valueMissing && m.email_validity_missing(),
+      (i) => i.validity.typeMismatch && m.email_validity_type(),
+      () => errors?.incorrectCredentials === true && m.signin_incorrect_credentials(),
+    ],
+    () => {
+      errors!.incorrectCredentials = false;
+      password.validate();
+    },
+  );
+  const password = new Field(
+    [
+      (i) => i.validity.valueMissing && m.password_validity_missing(),
+      (i) =>
+        i.validity.tooShort
+        && m.password_validity_too_short({ min: i.minLength, current: i.value.length }),
+      (i) => !passwordRegExp.test(i.value) && m.password_validity_pattern(),
+      () => errors?.incorrectCredentials === true && m.signin_incorrect_credentials(),
+    ],
+    () => {
+      errors!.incorrectCredentials = false;
+      email.validate();
+    },
+  );
+
+  const title = m.signin_title();
+  let loading = $state(false);
 </script>
 
 <LanguageSwitcher />
@@ -69,10 +69,11 @@
   <form
     method="POST"
     action="?/{signInType}"
-    use:enhance={({ formElement, cancel }) => {
-      emailDirty = true;
-      validateEmail();
-      if (!formElement.checkValidity() || emailError.value || passwordError.value) {
+    novalidate
+    use:enhance={({ cancel }) => {
+      email.touch();
+      password.touch();
+      if (!email.valid || !password.valid) {
         cancel();
         return;
       }
@@ -82,38 +83,26 @@
         loading = false;
       };
     }}
-    novalidate
   >
     <div class="input-host">
       <label for="email">{m.email_input_label()}</label>
       <input
-        bind:this={email}
         id="email"
         name="email"
         type="email"
+        required
         autocomplete="email"
         placeholder={m.email_placeholder()}
-        oninput={() => {
-          serverErrors.incorrectCredentials = false;
-          serverErrors.emailMissing = false;
-          serverErrorConsumed = true;
-          if (emailDirty) validateEmail();
-        }}
-        onblur={() => {
-          emailDirty = true;
-          const hadServerError = serverErrors?.incorrectCredentials && !serverErrorConsumed;
-          if (!hadServerError) validateEmail();
-        }}
-        required
+        {@attach email.attach}
       />
-      {#if emailDirty && emailError.value}
-        <span transition:fade class="error">{emailError.value}</span>
+      {#if email.dirty && email.error}
+        <span transition:fade class="error">{email.error}</span>
       {/if}
     </div>
 
     {#if signInType === 'admin'}
       <div transition:fly={{ x: -800, duration: 250 }}>
-        <PasswordField error={passwordError} />
+        <PasswordField field={password} />
       </div>
     {/if}
 
