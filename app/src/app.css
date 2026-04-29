@@ -32,7 +32,7 @@ html {
 	--body-lighter: light-dark(#343a40, #bfb2b6);
 	/* Even lighter text: hovers, accents */
 	--body-lighter-bg: light-dark(#ccc, #647a70);
-	--emphasis: light-dark(white, black);
+	--emphasis: light-dark(black, white);
 
 	color: var(--body);
 	background: var(--body-bg);
@@ -139,6 +139,17 @@ button {
 			background: hsl(from var(--body-light-bg) h s calc(l + 6));
 		}
 	}
+
+	&:disabled {
+		background: var(--body-light-bg);
+		color: var(--body-light);
+		border-color: var(--border);
+		cursor: not-allowed;
+	}
+}
+
+.icon svg {
+	fill: var(--emphasis);
 }
 
 button,

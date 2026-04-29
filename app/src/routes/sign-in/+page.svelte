@@ -3,6 +3,7 @@
   import { Field, passwordRegExp } from '$lib/form/field.svelte.js';
   import PasswordField from '$lib/form/PasswordField.svelte';
   import LanguageSwitcher from '$lib/LanguageSwitcher.svelte';
+  import LoadingButton from '$lib/LoadingButton.svelte';
   import { m } from '$lib/paraglide/messages';
   import SegmentedButtons from '$lib/SegmentedButtons.svelte';
   import { untrack } from 'svelte';
@@ -106,9 +107,9 @@
       </div>
     {/if}
 
-    <button disabled={loading}>
+    <LoadingButton style="margin-top: 1cm;" {loading}>
       {signInType === 'admin' ? m.signin_admin_submit() : m.signin_student_submit()}
-    </button>
+    </LoadingButton>
   </form>
 </main>
 
@@ -127,10 +128,5 @@
     flex-direction: column;
     gap: 3mm;
     margin-top: 1cm;
-
-    button {
-      width: 100%;
-      margin-top: 5mm;
-    }
   }
 </style>
