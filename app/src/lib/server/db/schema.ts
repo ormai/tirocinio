@@ -1,7 +1,110 @@
-import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
+import { sql } from 'drizzle-orm';
+import {
+  integer,
+  pgTable,
+  primaryKey,
+  serial,
+  smallint,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
-export const task = pgTable("task", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  priority: integer("priority").notNull().default(1),
+// Serial is a PostgreSQL specific notational convention for an INTEGER that is
+// generated using a sequence.
+// https://www.postgresql.org/docs/current/datatype-numeric.html#DATATYPE-SERIAL
+
+export const users = pgTable(
+  'users',
+  {
+    id: serial().primaryKey(),
+    number: integer().unique(),
+    email: varchar().notNull().unique(),
+    encodedPassword: varchar('encoded_password', { length: 380 }),
+    name: varchar({ length: 255 }),
+    surname: varchar({ length: 255 }),
+    enrollmentYear: smallint('enrollment_year'),
+    outstandingOtp: smallint('outstanding_otp'),
+    outstandingOtpExpiresAt: timestamp('outstanding_otp_expires_at'),
+    role: text({ enum: ['admin', 'student'] }).default('student').notNull(),
+  },
+  (students) => [
+    uniqueIndex('email_index').on(students.email),
+    uniqueIndex('number_index').on(students.number),
+  ],
+);
+
+export const sessions = pgTable(
+  'sessions',
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    userId: integer().references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    expiresAt: timestamp('expires_at').default(sql`CURRENT_TIMESTAMP + INTERVAL '2 hours'`).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+);
+
+export const sites = pgTable('sites', {
+  id: serial().primaryKey(),
+  name: varchar().unique(),
 });
+
+export const structures = pgTable('structures', {
+  id: serial().primaryKey(),
+  name: varchar({ length: 255 }),
+  ward: varchar({ length: 255 }),
+  area: varchar({ length: 255 }),
+  kind: varchar({ length: 255 }),
+  siteId: integer('site_id').references(() => sites.id),
+});
+
+export const capacities = pgTable(
+  'capacities',
+  {
+    structureId: integer('structure_id').references(() => structures.id),
+    year: integer(),
+    capacity: integer().notNull(),
+  },
+  (capacities) => [
+    primaryKey({ columns: [capacities.structureId, capacities.year] }),
+  ],
+);
+
+export const preferenceCollectionIntervals = pgTable('preference_collection_intervals', {
+  id: serial().primaryKey(),
+  startTime: timestamp('start_time').notNull(),
+  endTime: timestamp('end_time').notNull(),
+  durationMonths: smallint('duration_months').notNull(),
+  numberOfPreferences: smallint('number_of_preferences').notNull(),
+  year: integer().notNull(),
+});
+
+export const preferences = pgTable(
+  'preferences',
+  {
+    studentId: integer('student_id').references(() => users.id),
+    collectionId: integer('collection_id').references(() => preferenceCollectionIntervals.id),
+    siteId: integer('site_id').references(() => sites.id),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    month: smallint().notNull(),
+    weight: smallint().notNull(),
+  },
+  (preferences) => [
+    primaryKey({ columns: [preferences.studentId, preferences.collectionId, preferences.siteId] }),
+  ],
+);
+
+export const assignments = pgTable(
+  'assignments',
+  {
+    studentId: integer('student_id').references(() => users.id),
+    structureId: integer('structure_id').references(() => structures.id),
+    year: integer().notNull(),
+    month: smallint().notNull(),
+  },
+  (assignments) => [
+    primaryKey({ columns: [assignments.studentId, assignments.structureId] }),
+  ],
+);
