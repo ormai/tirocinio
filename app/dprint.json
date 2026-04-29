@@ -1,6 +1,23 @@
 {
   "incremental": true,
-  "excludes": ["node_modules", "dist", "build", "package.lock", "static", "drizzle"],
+  "typescript": {
+    "quoteStyle": "preferSingle",
+    "semiColons": "prefer",
+    "arrowFunction.useParentheses": "force"
+  },
+  "json": {
+    "indentWidth": 2
+  },
+  "markup": {
+    "indentWidth": 2,
+    "printWidth": 100,
+    "svelte.scriptIndent": true,
+    "svelte.styleIndent": true,
+    "svelteAttrShorthand": true,
+    "svelteDirectiveShorthand": true
+  },
+  "includes": ["**/*.{ts,js,json,svelte}"],
+  "excludes": ["**/node_modules", "dist", "build", "target", "**/-lock.lock", "static", "drizzle"],
   "plugins": [
     "https://plugins.dprint.dev/json-0.21.3.wasm",
     "https://plugins.dprint.dev/markdown-0.21.1.wasm",
