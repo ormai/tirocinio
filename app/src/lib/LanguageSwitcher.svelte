@@ -1,13 +1,13 @@
 <script>
-import { m } from "$lib/paraglide/messages";
-import { getLocale, locales, setLocale } from "$lib/paraglide/runtime";
+  import { m } from '$lib/paraglide/messages';
+  import { getLocale, locales, setLocale } from '$lib/paraglide/runtime';
 
-let locale = $state(getLocale());
-$effect(() => {
-  if (getLocale() !== locale) {
-    setLocale(locale);
-  }
-});
+  let locale = $state(getLocale());
+  $effect(() => {
+    if (getLocale() !== locale) {
+      setLocale(locale);
+    }
+  });
 </script>
 
 <label for="switcher">
@@ -19,11 +19,11 @@ $effect(() => {
 </label>
 
 <style>
-select {
-  position: absolute;
-  top: 1em;
-  right: 0.5em;
-  cursor: pointer;
-  font-size: 0.8em;
-}
+  select {
+    position: absolute;
+    top: 1em;
+    right: 0.5em;
+    cursor: pointer;
+    font-size: 0.8em;
+  }
 </style>

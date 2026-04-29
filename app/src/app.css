@@ -200,7 +200,7 @@ form .input-host {
 	}
 }
 
-input:user-invalid {
+input[data-valid="false"] {
 	border-color: var(--danger);
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23DC3545' stroke-width='2' stroke-linecap='round' %3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
 
@@ -209,7 +209,7 @@ input:user-invalid {
 	}
 }
 
-input:user-valid {
+input[data-valid="true"] {
 	border-color: var(--success);
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23198754' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
 
@@ -218,8 +218,7 @@ input:user-valid {
 	}
 }
 
-input:user-invalid,
-input:user-valid {
+input[data-valid="true"], input[data-valid="false"] {
 	background-position: right 0.6em center;
 	background-size: 1.25em;
 	padding-right: 2.25em;

@@ -1,6 +1,6 @@
 import type { LocalizedString } from '@inlang/paraglide-js';
 
-type Validator = (input:HTMLInputElement) => LocalizedString | false;
+type Validator = (input: HTMLInputElement) => LocalizedString | false;
 
 export const passwordRegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!#$%&"'()*+,\-./:;<=>?@[\\\]^_`|~]).{10,}$/;
 
@@ -36,7 +36,7 @@ export class Field {
   }
 
   /** Attaches to an input element */
-  attach = (input: HTMLInputElement): (() => void) => {
+  attach = (input: HTMLInputElement): () => void => {
     this.#input = input;
 
     const onInput = () => {
@@ -55,13 +55,13 @@ export class Field {
     input.addEventListener('blur', onBlur);
 
     return () => {
-        input.removeEventListener('input', onInput);
-        input.removeEventListener('blur', onBlur);
-        this.error = '';
-        this.dirty = false;
-        this.#input = undefined;
+      input.removeEventListener('input', onInput);
+      input.removeEventListener('blur', onBlur);
+      this.error = '';
+      this.dirty = false;
+      this.#input = undefined;
     };
-  }
+  };
 
   /** Validates and marks dirty before submit. Used in enhance. */
   touch() {

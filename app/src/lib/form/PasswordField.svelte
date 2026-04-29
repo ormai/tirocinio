@@ -1,10 +1,10 @@
 <script lang="ts">
+  import type { Field } from '$lib/form/field.svelte';
   import { m } from '$lib/paraglide/messages';
   import { tooltip } from '$lib/tooltip.svelte';
   import type { LocalizedString } from '@inlang/paraglide-js';
   import { Eye, EyeOff } from '@lucide/svelte';
   import { fade } from 'svelte/transition';
-  import type { Field } from '$lib/form/field.svelte';
 
   let {
     name = 'password',
