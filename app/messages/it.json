@@ -7,6 +7,7 @@
   "signin_student_submit": "Invia codice",
   "signin_admin_submit": "Accedi",
   "signin_incorrect_credentials": "Credenziali incorrette",
+  "signin_incorrect_role": "Stai cercando di accedere come {current}, riprova come {other}.",
   "password_show": "Mostra password",
   "password_hide": "Nascondi password",
   "password_input_label": "Password",

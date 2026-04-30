@@ -21,8 +21,8 @@
 <style>
   select {
     position: absolute;
-    top: 1em;
-    right: 0.5em;
+    bottom: 1em;
+    right: 1em;
     cursor: pointer;
     font-size: 0.8em;
   }

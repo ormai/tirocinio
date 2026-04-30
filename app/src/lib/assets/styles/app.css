@@ -49,7 +49,7 @@ html {
 	/* Positive or successful actions and information */
 	--success: #198754;
 	--success-bg: #051b11;
-	--success-border: #051b11;
+	--success-border: #095f2f;
 	--success-text: #75b798;
 
 	/* Errors and dangerous actions */
@@ -67,7 +67,7 @@ html {
 	/* Neutral and informative content */
 	--info: #0dcaf0;
 	--info-bg: #032830;
-	--info-border: #032830;
+	--info-border: #134880;
 	--info-text: #6edff6;
 
 	--radius: 10px;
@@ -238,7 +238,7 @@ input[data-valid="true"], input[data-valid="false"] {
 
 .tippy-box[data-theme~='app'] {
 	background-color: var(--body);
-	color: var(--emphasis);
+	color: var(--body-bg);
 }
 
 .tippy-box[data-theme~='app']>.tippy-arrow::before {

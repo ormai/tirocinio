@@ -6,6 +6,7 @@
   import LoadingButton from '$lib/LoadingButton.svelte';
   import { m } from '$lib/paraglide/messages';
   import SegmentedButtons from '$lib/SegmentedButtons.svelte';
+  import { notify } from '$lib/toast/Toaster.svelte';
   import { untrack } from 'svelte';
   import { fade, fly } from 'svelte/transition';
 
@@ -19,6 +20,9 @@
       email.validate();
       password.validate();
       if (errors?.incorrectRole) {
+        const roles = [m.signin_admin(), m.signin_student()];
+        const [current, other] = signInType === 'admin' ? roles : roles.toReversed();
+        notify(m.signin_incorrect_role({ current, other }).toWellFormed());
         signInType = signInType === 'student' ? 'admin' : 'student';
         errors.incorrectRole = false;
       }
