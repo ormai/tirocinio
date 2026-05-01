@@ -26,7 +26,7 @@ export const users = pgTable(
     name: varchar({ length: 255 }),
     surname: varchar({ length: 255 }),
     enrollmentYear: smallint('enrollment_year'),
-    outstandingOtp: smallint('outstanding_otp'),
+    outstandingOtp: integer('outstanding_otp'),
     outstandingOtpExpiresAt: timestamp('outstanding_otp_expires_at'),
     role: text({ enum: ['admin', 'student'] }).default('student').notNull(),
   },

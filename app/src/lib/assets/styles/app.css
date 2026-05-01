@@ -204,7 +204,7 @@ form .input-host {
 	}
 
 	.error {
-		margin-top: 0.3em;
+		margin-top: 0.6em;
 		color: var(--danger);
 		font-size: 0.7em;
 		line-height: 1.35em;

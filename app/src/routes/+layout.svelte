@@ -5,14 +5,17 @@
   import Toaster from '$lib/toast/Toaster.svelte';
 
   let { children } = $props();
+
+  /** Some routes are excluded from nav elements. */
+  const excluded = ['sign-in'];
 </script>
 
 <Toaster />
 
-{#if !page.url.pathname.endsWith('sign-in')}
+{#if excluded.some((route) => page.url.pathname.endsWith(route))}
+  {@render children()}
+{:else}
   <nav>
     <form method="POST" action="/sign-in?/signout"><button>Sign Out</button></form>
   </nav>
 {/if}
-
-{@render children()}

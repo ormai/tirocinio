@@ -9,15 +9,11 @@
 -->
 
 <script lang="ts">
-  interface Option {
-    label: string;
-    value: string;
-  }
-
   let {
     options = [],
     selected = $bindable(options[0]?.value),
-  }: { options: Option[]; selected: string } = $props();
+    ...rest
+  } = $props();
 
   let currentIndex = $derived(
     options.findIndex((opt) => opt.value === selected),
@@ -32,7 +28,7 @@
   }
 </script>
 
-<fieldset style:--count={options.length} style:--index={currentIndex}>
+<fieldset style:--count={options.length} style:--index={currentIndex} {...rest}>
   <div class="selection"></div>
   {#each options as option (option.value)}
     <label for={option.value} class:active={selected === option.value}>
