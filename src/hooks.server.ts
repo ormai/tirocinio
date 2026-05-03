@@ -13,7 +13,7 @@ const authentication: Handle = async ({ event, resolve }) => {
     const session = await getSession(token);
     if (session) {
       const [user] = await db
-        .select({ id: users.id, email: users.email })
+        .select()
         .from(users)
         .where(eq(users.id, session.userId));
       event.locals.user = user ?? null;

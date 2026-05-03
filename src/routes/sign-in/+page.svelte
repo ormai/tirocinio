@@ -12,8 +12,9 @@
   import type { ActionResult } from '@sveltejs/kit';
   import { untrack } from 'svelte';
   import { fade, fly } from 'svelte/transition';
+  import type { PageProps } from './$types';
 
-  let { form } = $props();
+  let { form }: PageProps = $props();
   let server = $state<Partial<typeof form>>({});
   let signInType: 'student' | 'admin' = $state('student');
   let otp = $state(false);
@@ -61,7 +62,6 @@
       email.validate();
     },
   );
-
   const code = new Field(
     [
       (i) => i.validity.valueMissing && m.otp_missing(),
