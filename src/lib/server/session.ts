@@ -6,19 +6,21 @@ type Session = InferSelectModel<typeof sessions>;
 
 export const SESSION_COOKIE = 'session_id';
 const DURATIONS = {
-  'admin': 1000 * 60 * 60 * 24 * 30, // 30 days
-  'student': 1000 * 60 * 60 * 2, // 2 hours
-};
+  admin: 1000 * 60 * 60 * 24 * 30, // 30 days
+  student: 1000 * 60 * 60 * 2, // 2 hours
+} as const;
 
 export async function createSession(
   userId: number,
   role: 'admin' | 'student',
 ): Promise<Pick<Session, 'id' | 'expiresAt'>> {
   const expiresAt = new Date(Date.now() + DURATIONS[role]);
-  const [session] = await db.insert(sessions).values({ userId, expiresAt }).returning({
-    id: sessions.id,
-    expiresAt: sessions.expiresAt,
-  });
+  const [session] = await db.insert(sessions).values({ userId, expiresAt }).returning(
+    {
+      id: sessions.id,
+      expiresAt: sessions.expiresAt,
+    } as const,
+  );
   return session;
 }
 

@@ -16,8 +16,6 @@ async function sendOtpEmail(email: string, otp: number, otpDurationMs: number) {
 }
 
 /**
- * Page server load function for the login route.
- *
  * Redirects already-authenticated users to the homepage so they don't see
  * the login form unnecessarily.
  */

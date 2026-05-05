@@ -17,7 +17,7 @@
     warning: TriangleAlert,
     info: Info,
     success: BadgeCheck,
-  };
+  } as const;
 
   const Icon = $derived(icons[toast.type ?? ''] ?? icons.default);
 </script>

@@ -1,9 +1,14 @@
 <script module lang="ts">
   export interface ToastOpts {
-    id?: number;
+    /** A unique identifier used by Svelte's #each block as key */
+    id: number;
+    /** An optional title shown above the message. */
     title?: string;
+    /** Main content. The only required property. */
     message: string;
+    /** The type affects the style of the toast in the UI */
     type?: 'default' | 'info' | 'warning' | 'danger' | 'success';
+    /** Duration in milliseconds */
     duration?: number;
   }
 
@@ -12,17 +17,14 @@
   /** Serial id, only internal to the frontend */
   let id = 0;
   /** Single instance of all toasts in the app. */
-  let toasts: ToastOpts[] = $state([]);
+  let toasts: Array<Readonly<ToastOpts>> = $state([]);
 
   /**
-   * Add a toast to the stack to be shown.
+   * Adds a toast to the stack in queue to be shown.
    */
-  export function add(toast: ToastOpts) {
+  export function add({title, message, duration = 4000, type = 'default'}: Omit<ToastOpts, 'id'>) {
     if (toasts.length <= limit) {
-      toast.id = id += 1;
-      toast.duration ??= 4000;
-      toast.type ??= 'default';
-      toasts.push(toast);
+      toasts.push({ id: id += 1, title, message, duration, type, });
     } else {
       console.warn(`Attempt to add more than ${limit} toasts`);
     }
