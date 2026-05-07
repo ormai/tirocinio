@@ -22,9 +22,11 @@
   /**
    * Adds a toast to the stack in queue to be shown.
    */
-  export function add({title, message, duration = 4000, type = 'default'}: Omit<ToastOpts, 'id'>) {
+  export function add(
+    { title, message, duration = 4000, type = 'default' }: Omit<ToastOpts, 'id'>,
+  ) {
     if (toasts.length <= limit) {
-      toasts.push({ id: id += 1, title, message, duration, type, });
+      toasts.push({ id: id += 1, title, message, duration, type });
     } else {
       console.warn(`Attempt to add more than ${limit} toasts`);
     }

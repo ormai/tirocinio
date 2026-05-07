@@ -25,5 +25,14 @@
   "email_validity_missing": "Please provide your email",
   "email_validity_type": "This email is not valid, a valid email looks@like.this",
   "error_server_desc": "The server returned an error",
-  "nav_back": "Go back"
+  "nav_back": "Go back",
+  "sidebar_expand": "Expand",
+  "sidebar_collapse": "Collapse",
+  "sidebar_home": "Home",
+  "sidebar_structures": "Structures",
+  "sidebar_students": "Students",
+  "sidebar_preferences": "Preferences",
+  "sidebar_plan": "Plan",
+  "sidebar_profile": "Profile",
+  "signout": "Sign out"
 }

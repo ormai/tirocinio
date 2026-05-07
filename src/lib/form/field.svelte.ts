@@ -1,36 +1,50 @@
 import type { LocalizedString } from '@inlang/paraglide-js';
 
+/**
+ * Given an input field validates it, returning `false` if valid or a feedback
+ * string explaining why it is invalid and giving advice for a fix.
+ */
 type Validator = (input: HTMLInputElement) => LocalizedString | false;
 
 export const passwordRegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!#$%&"'()*+,\-./:;<=>?@[\\\]^_`|~]).{10,}$/;
 
+/**
+ * Interaction logic for an input field in a form.
+ */
 export class Field {
   private input = $state<HTMLInputElement>();
-  private validators: Validator[];
-  private onClearServerErrors: () => void;
+  private _error: string = $state('');
 
-  error: string = $state('');
-  dirty: boolean = $state(false);
+  private _dirty: boolean = $state(false);
 
-  constructor(validators: Validator[], onClearServerErrors: () => void) {
-    this.validators = validators;
-    this.onClearServerErrors = onClearServerErrors;
+  get error() {
+    return this._error;
   }
+
+  get dirty() {
+    return this._dirty;
+  }
+
+  /**
+   * @param validators {Validator[]} used to validate the value of the field
+   * @param onClearServerErrors {() => void} callback to clear server errors on input, defaults to no-op.
+   */
+  constructor(private validators: Validator[] = [], private onClearServerErrors: () => void = () => {}) {}
 
   validate() {
     if (!this.input) return;
     for (const validator of this.validators) {
       const feedback = validator(this.input);
       if (feedback) {
-        this.error = feedback;
-        if (this.dirty) {
+        this._error = feedback;
+        if (this._dirty) {
           this.input.dataset.valid = 'false';
         }
         return;
       }
     }
-    this.error = '';
-    if (this.dirty) {
+    this._error = '';
+    if (this._dirty) {
       this.input.dataset.valid = 'true';
     }
   }
@@ -58,13 +72,13 @@ export class Field {
 
     const onInput = () => {
       this.onClearServerErrors();
-      if (this.dirty) {
+      if (this._dirty) {
         this.validate();
       }
     };
 
     const onBlur = () => {
-      this.dirty = true;
+      this._dirty = true;
       this.validate();
     };
 
@@ -74,19 +88,19 @@ export class Field {
     return () => {
       input.removeEventListener('input', onInput);
       input.removeEventListener('blur', onBlur);
-      this.error = '';
-      this.dirty = false;
+      this._error = '';
+      this._dirty = false;
       this.input = undefined;
     };
   };
 
   /** Validates and marks dirty before submit. Used in enhance. */
   touch() {
-    this.dirty = true;
+    this._dirty = true;
     this.validate();
   }
 
   get valid(): boolean {
-    return this.error === '';
+    return this._error === '';
   }
 }

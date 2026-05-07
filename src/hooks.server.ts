@@ -16,7 +16,8 @@ const authentication: Handle = async ({ event, resolve }) => {
         .select()
         .from(users)
         .where(eq(users.id, session.userId));
-      event.locals.user = user ?? null;
+      console.assert(user, 'Request belongs to an orphaned Session. User deletion should cascade to Session.');
+      event.locals.user = user;
       event.locals.session = session;
     }
   }

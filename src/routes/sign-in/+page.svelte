@@ -101,7 +101,7 @@
   }
 </script>
 
-<LanguageSwitcher />
+<LanguageSwitcher style="position: absolute; bottom: 1rem; right: 1rem;" />
 
 <svelte:head><title>{title}</title></svelte:head>
 

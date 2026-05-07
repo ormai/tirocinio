@@ -2,7 +2,6 @@
   import type { Field } from '$lib/form/field.svelte';
   import { m } from '$lib/paraglide/messages';
   import { tooltip } from '$lib/tooltip.svelte';
-  import type { LocalizedString } from '@inlang/paraglide-js';
   import { Eye, EyeOff } from '@lucide/svelte';
   import { fade } from 'svelte/transition';
 
@@ -10,7 +9,7 @@
     name = 'password',
     label = m.password_input_label(),
     field,
-  }: { name?: string; label?: LocalizedString; field: Field } = $props();
+  }: { name?: string; label?: string; field: Field } = $props();
   let visible = $state(false);
 </script>
 

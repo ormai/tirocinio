@@ -2,6 +2,8 @@
   import { m } from '$lib/paraglide/messages';
   import { getLocale, locales, setLocale } from '$lib/paraglide/runtime';
 
+  let { ...props } = $props();
+
   let locale = $state(getLocale());
   $effect(() => {
     if (getLocale() !== locale) {
@@ -10,20 +12,16 @@
   });
 </script>
 
-<label for="switcher">
-  <select id="switcher" bind:value={locale}>
-    {#each locales as locale (locale)}
-      <option value={locale}>{m.language_name({}, { locale })}</option>
-    {/each}
-  </select>
-</label>
+<select id="switcher" bind:value={locale} {...props}>
+  {#each locales as locale (locale)}
+    <option value={locale}>{m.language_name({}, { locale })}</option>
+  {/each}
+</select>
 
 <style>
   select {
-    position: absolute;
-    bottom: 1em;
-    right: 1em;
     cursor: pointer;
-    font-size: 0.8em;
+    position: relative;
+    padding: var(--spacing) calc(var(--spacing) * 2);
   }
 </style>
