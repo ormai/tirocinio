@@ -18,7 +18,11 @@
   {@render children()}
 {:else}
   {#if data.user?.role === 'admin'}
-    <Sidebar user={data.user} collapsed={data.sidebarCollapsed}>{@render children()}</Sidebar>
+    <Sidebar
+      user={data.user}
+      collapsed={data.sidebarCollapsed}
+      colorScheme={data.colorScheme}
+    >{@render children()}</Sidebar>
   {:else if data.user?.role === 'student'}
     You are a student
     {@render children()}

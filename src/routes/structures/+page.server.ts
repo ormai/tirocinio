@@ -1,17 +1,12 @@
+import { requireAdmin } from '$lib/server/api-security';
 import type { structures } from '$lib/server/db/schema';
-import { error, redirect } from '@sveltejs/kit';
 import type { InferSelectModel } from 'drizzle-orm';
 import type { PageServerLoad } from '../sign-in/$types';
 
 type Structure = InferSelectModel<typeof structures>;
 
 export const load: PageServerLoad = async ({ locals }) => {
-  if (!locals.user) {
-    redirect(303, '/sign-in');
-  }
-  if (locals.user.role !== 'admin') {
-    error(403, 'Sorry, admins only');
-  }
+  requireAdmin(locals);
 
   return {
     structures: [{

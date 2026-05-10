@@ -2,12 +2,12 @@
   import spinner from '$lib/assets/spinner.svg?raw';
   import { fade } from 'svelte/transition';
 
-  let { loading = false, children, ...rest } = $props();
+  let { loading = false, enabled = true, children, ...rest } = $props();
 </script>
 <button
   {...rest}
-  disabled={loading}
-  style:cursor={loading ? 'wait' : 'pointer'}
+  disabled={!enabled || loading}
+  class:loading
 >
   {#if loading}
     <div class="icon" transition:fade={{ duration: 100 }}>

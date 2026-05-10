@@ -64,10 +64,15 @@ export class Field {
    */
   set value(value: string | undefined | null) {
     if (this.input) {
-      this.input.value = value ?? '';
+      this._value = value ?? '';
+      this.input.value = this._value;
     } else {
       console.warn('Attempt to mutate a Field that is not attached to the DOM');
     }
+  }
+
+  get hasText(): boolean {
+    return this.value.length > 0;
   }
 
   /**
@@ -77,7 +82,8 @@ export class Field {
   constructor(
     private readonly validators: Validator[] = [],
     private readonly onClearServerErrors: () => void = () => {},
-  ) {}
+  ) {
+  }
 
   /**
    * Applies the constrains passed in the constructor, **in order**, stopping at the first one that
@@ -122,15 +128,16 @@ export class Field {
    */
   attach = (input: HTMLInputElement): () => void => {
     this.input = input;
+    this._value = input.value;
 
     const onInput = () => {
       if (this.input) {
         this._value = this.input.value;
       }
-      this.onClearServerErrors();
       if (this._dirty) {
         this.validate();
       }
+      this.onClearServerErrors();
     };
 
     const onBlur = () => {
@@ -144,13 +151,15 @@ export class Field {
     return () => {
       input.removeEventListener('input', onInput);
       input.removeEventListener('blur', onBlur);
-      this.reset();
+      this._error = '';
+      this._dirty = false;
+      this.value = '';
       this.input = undefined;
     };
   };
 
   /**
-  Validates and marks dirty before submit. Used on the `onSubmit` callback passed to
+   * Validates and marks dirty before submit. Used on the `onSubmit` callback passed to
    * Svelte's `enhance`.
    */
   touch() {
@@ -159,18 +168,14 @@ export class Field {
   }
 
   /**
-   * Flushes the validation state. This action is the inverse & opposite of [this.touch].
-   */
-  reset() {
-    this._error = '';
-    this._dirty = false;
-  }
-
-  /**
    * Flushes the state of the field and sets an optional value.
    */
   resetTo(value: string | undefined | null = '') {
-    this.value = value ?? '';
-    this.reset();
+    this.value = value?.toString() ?? '';
+    this._error = '';
+    this._dirty = false;
+    if (this.input) {
+      this.input.dataset.valid = '';
+    }
   }
 }

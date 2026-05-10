@@ -7,7 +7,7 @@ import type User from '$lib/server/user';
 declare global {
   namespace App {
     interface Locals {
-      user: Omit<User, 'encodedPassword'> | null;
+      user: User | null;
       session: Session | null;
     }
   }

@@ -28,11 +28,14 @@ export const users = pgTable(
     enrollmentYear: smallint('enrollment_year'),
     outstandingOtp: integer('outstanding_otp'),
     outstandingOtpExpiresAt: timestamp('outstanding_otp_expires_at'),
+    newEmail: varchar('new_email'),
+    mfaSecret: uuid('mfa_secret'),
     role: text({ enum: ['admin', 'student'] }).default('student').notNull(),
   },
-  (students) => [
-    uniqueIndex('email_index').on(students.email),
-    uniqueIndex('number_index').on(students.number),
+  (users) => [
+    uniqueIndex('email_index').on(users.email),
+    uniqueIndex('number_index').on(users.number),
+    uniqueIndex('mfa_secret').on(users.number),
   ],
 );
 

@@ -1,6 +1,7 @@
 import { passwordRegExp } from '$lib/form/field.svelte';
 import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
+import { sendOtpEmail } from '$lib/server/multi-factor-authentication';
 import { createSession, deleteSession, SESSION_COOKIE } from '$lib/server/session';
 import { type Actions, fail, redirect } from '@sveltejs/kit';
 import bcrypt from 'bcrypt';
@@ -10,10 +11,6 @@ import type { PageServerLoad } from './$types';
 
 /** Otp valid for 10 minutes. */
 const OTP_DURATION_MS = 1000 * 60 * 10;
-
-async function sendOtpEmail(email: string, otp: number, otpDurationMs: number) {
-  console.warn(`NOT IMPLEMENTED ${email}, ${otp}, ${otpDurationMs}`);
-}
 
 /**
  * Redirects already-authenticated users to the homepage so they don't see

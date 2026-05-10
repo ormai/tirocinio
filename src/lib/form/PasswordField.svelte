@@ -5,23 +5,33 @@
   import { Eye, EyeOff } from '@lucide/svelte';
   import { fade } from 'svelte/transition';
 
+  interface Props {
+    field: Field;
+    name?: string;
+    label?: string;
+    required?: boolean;
+    autocomplete?: 'current-password' | 'new-password';
+  }
+
   let {
+    field,
     name = 'password',
     label = m.password_input_label(),
-    field,
-  }: { name?: string; label?: string; field: Field } = $props();
+    required = true,
+    autocomplete = 'current-password',
+  }: Props = $props();
   let visible = $state(false);
 </script>
 
 <div class="input-host">
   <label for={name}>{label}</label>
-  <div>
+  <div style="display: flex">
     <input
       id={name}
       {name}
       type={visible ? 'text' : 'password'}
-      autocomplete="current-password"
-      required
+      {autocomplete}
+      {required}
       minlength="10"
       maxlength="200"
       {@attach field.attach}
@@ -45,10 +55,6 @@
 </div>
 
 <style>
-  div {
-  	display: flex;
-  }
-
   label {
   	width: 100%;
   }

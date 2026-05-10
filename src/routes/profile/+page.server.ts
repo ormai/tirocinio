@@ -1,0 +1,84 @@
+import { parseNumberFromForm } from '$lib/academic-year';
+import { passwordRegExp } from '$lib/form/field.svelte';
+import { requireAuth } from '$lib/server/api-security';
+import { db } from '$lib/server/db';
+import { users } from '$lib/server/db/schema';
+import { sendVerificationEmail } from '$lib/server/multi-factor-authentication';
+import { BCRYPT_ROUNDS } from '$lib/server/user';
+import { fail } from '@sveltejs/kit';
+import bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
+import { eq } from 'drizzle-orm';
+import type { Actions, PageServerLoad } from './$types';
+
+export const load: PageServerLoad = ({ locals }) => {
+  requireAuth(locals);
+};
+
+export const actions = {
+  /**
+   * Updates the currently authenticate user's account data. Every field is optional.
+   */
+  update: async ({ locals, request }) => {
+    requireAuth(locals);
+
+    const data = await request.formData();
+    const email = data.get('email')?.toString().trim().toLowerCase();
+    const name = data.get('name')?.toString();
+    const surname = data.get('surname')?.toString();
+
+    const enrollmentYear = parseNumberFromForm(data.get('enrollment-year')?.toString());
+    if (enrollmentYear && (enrollmentYear < 0 || enrollmentYear > 32767)) {
+      return fail(400, 'Number must be in range [0, 32767]');
+    }
+
+    const number = parseNumberFromForm(data.get('student-number')?.toString());
+    if (number && (number < 0 || number > 2147483647)) {
+      return fail(400, 'Number must be in range [0, 2147483647]');
+    }
+
+    const currentPassword = data.get('current-password')?.toString();
+    const newPassword = data.get('new-password')?.toString();
+
+    if (currentPassword && newPassword) {
+      if (!passwordRegExp.test(newPassword)) {
+        return fail(400, 'New password is not secure enough');
+      }
+      if (
+        !passwordRegExp.test(currentPassword)
+        || !(await bcrypt.compare(currentPassword, locals.user?.encodedPassword ?? ''))
+      ) {
+        return fail(403, { incorrectPassword: true });
+      }
+    }
+
+    const newEmail = email !== locals.user.email ? email : undefined;
+
+    if (newEmail && await db.$count(users, eq(users.email, newEmail)) > 0) {
+      return fail(409, { emailTaken: true });
+    }
+
+    const mfaSecret = newEmail ? randomUUID() : undefined;
+
+    // NOTE: `undefined` is ignored by drizzle, `null` is the same as in SQL.
+    // See: https://orm.drizzle.team/docs/update
+    if (newPassword || name || surname || number || newEmail || mfaSecret || enrollmentYear) {
+      await db.update(users).set({
+        encodedPassword: newPassword ? await bcrypt.hash(newPassword, BCRYPT_ROUNDS) : undefined,
+        name: name !== locals.user.name ? name : undefined,
+        surname: surname !== locals.user.surname ? surname : undefined,
+        number,
+        newEmail,
+        mfaSecret,
+        enrollmentYear,
+      }).where(eq(users.id, locals.user.id));
+    }
+
+    let emailVerificationSent = false;
+    if (newEmail && mfaSecret) {
+      await sendVerificationEmail(locals.user.email, mfaSecret);
+      emailVerificationSent = true;
+    }
+    return { success: true, emailVerificationSent };
+  },
+} satisfies Actions;

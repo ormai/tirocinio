@@ -9,27 +9,38 @@
     '--info',
     '--danger',
     '--warning',
-  ];
+  ] as const;
 
   const statusColor = httpStatusColors[Math.trunc(page.status / 100) - 1]
     ?? '--body';
 </script>
 
-<main>
-  <p>{m.error_server_desc()}</p>
+<section>
+  <p>{m.error_server_desc()} ☹️</p>
 
   <h1>
     <span style:color={`var(${statusColor})`}>{page.status}</span>
     {page?.error?.message ?? '🤷'}
   </h1>
-</main>
+
+  <button onclick={() => window.location.reload()}>{m.error_reload()}</button>
+</section>
 
 <style>
-  main {
+  section {
   	display: flex;
   	flex-direction: column;
   	align-items: center;
-  	gap: 5mm;
+  	justify-content: center;
   	text-align: center;
+  	gap: 2rem;
+  	width: 100%;
+  	height: 100%;
+  }
+
+  button {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
   }
 </style>

@@ -15,6 +15,7 @@
   import { resolve } from '$app/paths';
 
   import { page } from '$app/state';
+  import { SIDEBAR_COLLAPSED } from '$lib/cookies';
   import LanguageSwitcher from '$lib/LanguageSwitcher.svelte';
   import { m } from '$lib/paraglide/messages';
   import { deLocalizeHref } from '$lib/paraglide/runtime';
@@ -32,14 +33,16 @@
   } from '@lucide/svelte';
   import { type Snippet } from 'svelte';
   import { MediaQuery } from 'svelte/reactivity';
+  import ColorSchemeSwitcher, { type ColorScheme } from './ColorSchemeSwitcher.svelte';
 
   interface Props {
     collapsed: boolean | null;
-    user: Omit<User, 'encodedPassword'> | null;
+    colorScheme: string | undefined;
+    user: User | null;
     children: Snippet;
   }
 
-  let { collapsed, user, children }: Props = $props();
+  let { user, collapsed, colorScheme, children }: Props = $props();
   let toggleLabel = $derived(sidebar.collapsed ? m.sidebar_expand() : m.sidebar_collapse());
 
   const maxWidth = new MediaQuery(`max-width: ${BREAK_POINT}px`);
@@ -51,7 +54,7 @@
   sidebar.collapsed = collapsed === null ? sidebar.mobile : collapsed;
 
   $effect(() => {
-    document.cookie = `sidebar_collapsed=${sidebar.collapsed}; path=/; max-age=${
+    document.cookie = `${SIDEBAR_COLLAPSED}=${sidebar.collapsed}; path=/; max-age=${
       60 * 60 * 24 * 365
     }; SameSite=Lax`;
   });
@@ -161,7 +164,14 @@
     <div style="flex-grow: 1;"></div>
 
     <footer>
-      <div class="row collapsible lang-switcher" style="padding: 0;">
+      <div class="row collapsible switcher">
+        <ColorSchemeSwitcher
+          colorScheme={colorScheme as (ColorScheme | undefined)}
+          style="border: none; width: 100%; padding: var(--spacing); height: 36px;"
+        />
+      </div>
+
+      <div class="row collapsible switcher">
         <LanguageSwitcher
           style="border: none; width: 100%; padding: var(--spacing); height: 36px;"
         />
@@ -183,9 +193,13 @@
         {@attach sidebar.collapsed && tooltip({ content: m.sidebar_profile(), placement: 'right' })}
       >
         <CircleUserRound />
-        {#if user}
-          <span class="collapsible">{user.name} {user.surname}</span>
-        {/if}
+        <span class="collapsible">
+          {#if user && (user.name || user.surname)}
+            {[user.name, user.surname].filter(Boolean).join(' ')}
+          {:else}
+            {m.sidebar_profile()}
+          {/if}
+        </span>
       </a>
     </footer>
   </aside>
@@ -202,13 +216,14 @@
   }
 
   main {
-    padding: 1rem;
     flex: 1;
     min-width: 0;
+    overflow: auto;
   }
 
   aside {
-    border-right: 1px solid var(--body-lighter-bg);
+    overflow: hidden auto;
+    border-right: 1px solid var(--border);
     background: var(--body-light-bg);
     display: flex;
     flex-direction: column;
@@ -236,13 +251,17 @@
     min-width: 0;
   }
 
-  aside:not(.collapsed) span.collapsible {
+  aside:not(.collapsed) header span.collapsible {
     margin-left: var(--spacing);
+  }
+
+  aside:not(.collapsed) .row span.collapsible {
+    margin-left: 0.7rem; /* Let them breathe */
   }
 
   .collapsible {
     white-space: nowrap;
-    max-width: 16rem;
+    max-width: 48rem;
     transition: max-width 0.15s cubic-bezier(0.785, 0.135, 0.15, 0.86), opacity 0.12s ease-in-out, margin-left 0.12s ease;
   }
 
@@ -291,13 +310,17 @@
     user-select: none;
   }
 
-  a, button, .lang-switcher {
+  a, button, .switcher {
     border: 1px solid transparent !important;
     transition: border 0.16s ease-in-out;
   }
 
+  .switcher {
+    padding: 0;
+  }
+
   @media (max-width: 767px) {
-    a, button, .lang-switcher {
+    a, button, .switcher  {
       border: 1px solid var(--border) !important;
     }
 
