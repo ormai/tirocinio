@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { applyAction, enhance } from '$app/forms';
+  import { enhance } from '$app/forms';
   import { Field, passwordRegExp } from '$lib/form/field.svelte.js';
   import PasswordField from '$lib/form/PasswordField.svelte';
+  import onSubmit from '$lib/form/submit';
   import LanguageSwitcher from '$lib/LanguageSwitcher.svelte';
   import LoadingButton from '$lib/LoadingButton.svelte';
   import { m } from '$lib/paraglide/messages';
@@ -9,7 +10,6 @@
   import { info, notify } from '$lib/toast/Toaster.svelte';
   import { tooltip } from '$lib/tooltip.svelte.js';
   import { ArrowLeft } from '@lucide/svelte';
-  import type { ActionResult } from '@sveltejs/kit';
   import { untrack } from 'svelte';
   import { fade, fly } from 'svelte/transition';
   import type { PageProps } from './$types';
@@ -78,27 +78,6 @@
 
   const title = m.signin_title();
   let loading = $state(false);
-
-  function onSubmit(
-    cancel: () => void,
-    fields: Field[],
-  ):
-    | (({ result }: { result: ActionResult<Record<string, unknown>> }) => Promise<void>)
-    | undefined
-  {
-    for (const field of fields) {
-      field.touch();
-    }
-    if (!fields.every((field) => field.valid)) {
-      cancel();
-      return;
-    }
-    loading = true;
-    return async ({ result }) => {
-      await applyAction(result);
-      loading = false;
-    };
-  }
 </script>
 
 <LanguageSwitcher style="position: absolute; bottom: 1rem; right: 1rem;" />
@@ -114,7 +93,10 @@
       in:fly={{ x: 400, duration: 180 }}
       action="?/verifyOtp"
       novalidate
-      use:enhance={({ cancel }) => onSubmit(cancel, [code])}
+      use:enhance={({ cancel }) =>
+      onSubmit(cancel, [code], () => (loading = true), async () => {
+        loading = false;
+      })}
     >
       <p style:text-align="center">{m.signin_verify_otp()}</p>
       <div class="input-host">
@@ -150,7 +132,10 @@
       in:fly={{ x: -400, duration: 177 }}
       action="?/{signInType}"
       novalidate
-      use:enhance={({ cancel }) => onSubmit(cancel, [email, password])}
+      use:enhance={({ cancel }) =>
+      onSubmit(cancel, [email, password], () => (loading = false), async () => {
+        loading = false;
+      })}
     >
       <SegmentedButtons
         options={[{ label: m.signin_student(), value: 'student' }, { label: m.signin_admin(), value: 'admin' }]}
@@ -199,10 +184,7 @@
 
   input.code {
     text-align: center;
-    padding-right: calc(var(--spacing) * 2);
-    appearance: textfield;
-    -moz-appearance: textfield;
-    -webkit-appearance: none;
+   padding-right: calc(var(--spacing) * 2);
   }
 
   main {
