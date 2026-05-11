@@ -19,7 +19,7 @@ export const actions = {
   /**
    * Updates the currently authenticate user's account data. Every field is optional.
    */
-  update: async ({ locals, request }) => {
+  update: async ({ locals, request, url }) => {
     requireAuth(locals);
 
     const data = await request.formData();
@@ -76,7 +76,8 @@ export const actions = {
 
     let emailVerificationSent = false;
     if (newEmail && mfaSecret) {
-      await sendVerificationEmail(locals.user.email, mfaSecret);
+      // Site note: If the default admin user changes their email the default account gets recreated.
+      await sendVerificationEmail(locals.user.email, `${url.origin}/verify?t=${mfaSecret}`);
       emailVerificationSent = true;
     }
     return { success: true, emailVerificationSent };

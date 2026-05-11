@@ -1,3 +1,4 @@
+export const SESSION_COOKIE = 'session_id';
 export const COLOR_SCHEME = 'color_scheme';
 export const SIDEBAR_COLLAPSED = 'sidebar_collapsed';
 

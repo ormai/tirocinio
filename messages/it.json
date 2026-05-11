@@ -62,5 +62,7 @@
   "profile_verify_email_desc": "Segui il link di verifica che abbiamo inviato al tuo nuovo indirizzo email.",
   "profile_update_notice": "I tuoi dettagli personali sono stati aggiornati",
   "number_underflow": "Non può essere minore di {min}",
-  "number_overflow": "Non può essere maggiore di {max}"
+  "number_overflow": "Non può essere maggiore di {max}",
+  "email_verification_successful": "Il tuo nuovo indirizzo email è stato verificato.",
+  "email_verification_failed": "Non è stato possibile verificare il tuo nuovo indirizzo email"
 }

@@ -1,19 +1,37 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
+  import { invalidateAll, replaceState } from '$app/navigation';
+  import { page } from '$app/state';
   import { nextFromStart } from '$lib/academic-year';
   import { Field, passwordRegExp } from '$lib/form/field.svelte';
   import PasswordField from '$lib/form/PasswordField.svelte';
   import onSubmit from '$lib/form/submit';
   import LoadingButton from '$lib/LoadingButton.svelte';
   import { m } from '$lib/paraglide/messages.js';
-  import { add as showToast, success } from '$lib/toast/Toaster.svelte';
+  import { add as showToast, error, success } from '$lib/toast/Toaster.svelte';
   import { tooltip } from '$lib/tooltip.svelte.js';
   import { Info, Menu } from '@lucide/svelte';
-  import { untrack } from 'svelte';
+  import { onMount, tick, untrack } from 'svelte';
   import { fade } from 'svelte/transition';
   import { sidebar } from '../Sidebar.svelte';
   import type { PageProps } from './$types.js';
+
+  onMount(async () => {
+    await tick();
+    const verification = page.url.searchParams.get('verification');
+    if (verification) {
+      if (verification === 'success') {
+        success(m.email_verification_successful());
+      } else if (verification === 'fail') {
+        error(m.email_verification_failed());
+      } else {
+        console.warn(`Unexpected value for verification search param: ${verification}`);
+      }
+      untrack(() => {
+        replaceState('?', {});
+      });
+    }
+  });
 
   const title = m.profile_title();
   let loading = $state(false);

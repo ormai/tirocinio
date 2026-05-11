@@ -4,7 +4,6 @@ import { eq, type InferSelectModel } from 'drizzle-orm';
 
 type Session = InferSelectModel<typeof sessions>;
 
-export const SESSION_COOKIE = 'session_id';
 const DURATIONS = {
   admin: 1000 * 60 * 60 * 24 * 30, // 30 days
   student: 1000 * 60 * 60 * 2, // 2 hours

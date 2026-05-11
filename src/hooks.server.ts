@@ -1,8 +1,9 @@
+import { SESSION_COOKIE } from '$lib/cookies';
 import { getTextDirection } from '$lib/paraglide/runtime';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
-import { getSession, SESSION_COOKIE } from '$lib/server/session';
+import { getSession } from '$lib/server/session';
 import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { eq } from 'drizzle-orm';
