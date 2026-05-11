@@ -70,5 +70,8 @@
   "modal_dismiss": "Dismiss",
   "modal_cancel": "Cancel",
   "modal_confirm": "Confirm",
-  "error": "An error occurred"
+  "error": "An error occurred",
+  "color_scheme_auto": "Auto",
+  "color_scheme_light": "Light",
+  "color_scheme_dark": "Dark"
 }

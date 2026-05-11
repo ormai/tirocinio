@@ -168,25 +168,22 @@
 
     <footer>
       <div class="row collapsible switcher">
-        <ColorSchemeSwitcher
-          colorScheme={colorScheme as (ColorScheme | undefined)}
-          style="border: none; width: 100%; padding: var(--spacing); height: 36px;"
-        />
+        <LanguageSwitcher border="none" />
       </div>
 
       <div class="row collapsible switcher">
-        <LanguageSwitcher
-          style="border: none; width: 100%; padding: var(--spacing); height: 36px;"
+        <ColorSchemeSwitcher
+          colorScheme={colorScheme as (ColorScheme | undefined)}
+          style="border: none"
         />
       </div>
 
       <button
-        type="submit"
         onclick={onSignOut}
         class="tertiary collapsible row"
         style="text-align: initial;"
       >
-        <LogOut /> <span class="collapsible">{m.signout()}</span>
+        <LogOut /> <span class="signout-text">{m.signout()}</span>
       </button>
 
       <div style="height: 1rem;"></div>
@@ -262,7 +259,7 @@
     margin-left: var(--spacing);
   }
 
-  aside:not(.collapsed) .row span.collapsible {
+  aside:not(.collapsed) .row span.collapsible, .signout-text {
     margin-left: 0.7rem; /* Let them breathe */
   }
 

@@ -80,7 +80,11 @@
   let loading = $state(false);
 </script>
 
-<LanguageSwitcher style="position: absolute; bottom: 1rem; right: 1rem;" />
+<LanguageSwitcher
+  spacing="calc(var(--spacing) * 2)"
+  width="initial"
+  style="position: absolute; bottom: 1rem; right: 1rem;"
+/>
 
 <svelte:head><title>{title}</title></svelte:head>
 
@@ -184,7 +188,7 @@
 
   input.code {
     text-align: center;
-   padding-right: calc(var(--spacing) * 2);
+    padding-right: calc(var(--spacing) * 2);
   }
 
   main {

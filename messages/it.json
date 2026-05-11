@@ -70,5 +70,8 @@
   "modal_dismiss": "Chiudi",
   "modal_cancel": "Annulla",
   "modal_confirm": "Conferma",
-  "error": "Si è verificato un errore"
+  "error": "Si è verificato un errore",
+  "color_scheme_auto": "Auto",
+  "color_scheme_light": "Chiaro",
+  "color_scheme_dark": "Scuro"
 }
