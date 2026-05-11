@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { m } from '$lib/paraglide/messages';
+  import { tooltip } from '$lib/tooltip.svelte';
   import { BadgeCheck, Bell, CircleX, Info, TriangleAlert, X } from '@lucide/svelte';
   import type { Component } from 'svelte';
   import { circOut, sineIn } from 'svelte/easing';
@@ -42,7 +44,14 @@
     <p class="message">{toast.message}</p>
   </div>
 
-  <button class="close" onclick={ondismiss}><X /></button>
+  <button
+    class="tertiary close"
+    onclick={ondismiss}
+    aria-label={m.modal_dismiss()}
+    {@attach tooltip(m.modal_dismiss())}
+  >
+    <X />
+  </button>
 
   {#if visible && toast.duration! > 0}
     <div
@@ -92,30 +101,6 @@
     margin-top: .2em;
     font-size: .8em;
     opacity: 0.88;
-  }
-
-  button.close {
-    flex-shrink: 0;
-    width: 24px;
-    height: 24px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    color: inherit;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s ease-in-out;
-    padding: 0;
-
-    &:hover {
-      background: rgba(64, 64, 64, 0.8);
-    }
-
-    &:active {
-      background: rgba(128, 128, 128, 0.6);
-    }
   }
 
   @media (hover: none) and (pointer: coarse) {

@@ -1,8 +1,9 @@
+import { SESSION_COOKIE } from '$lib/cookies';
 import { passwordRegExp } from '$lib/form/field.svelte';
 import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
 import { sendOtpEmail } from '$lib/server/multi-factor-authentication';
-import { createSession, deleteSession, SESSION_COOKIE } from '$lib/server/session';
+import { createSession, deleteSession } from '$lib/server/session';
 import { type Actions, fail, redirect } from '@sveltejs/kit';
 import bcrypt from 'bcrypt';
 import { eq } from 'drizzle-orm';

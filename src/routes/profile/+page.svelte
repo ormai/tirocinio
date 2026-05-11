@@ -1,6 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { invalidateAll, replaceState } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import { nextFromStart } from '$lib/academic-year';
   import { Field, passwordRegExp } from '$lib/form/field.svelte';
@@ -28,7 +29,7 @@
         console.warn(`Unexpected value for verification search param: ${verification}`);
       }
       untrack(() => {
-        replaceState('?', {});
+        replaceState(resolve('/profile'), {});
       });
     }
   });
@@ -256,6 +257,7 @@
       <div class="input-host">
         <label for="email">{m.profile_email()}</label>
         <input
+          id="email"
           type="email"
           name="email"
           autocomplete="email"

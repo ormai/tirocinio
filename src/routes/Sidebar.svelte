@@ -9,11 +9,19 @@
     /** @property {boolean} Wether the sidebar is currently in mobile mode or not. */
     mobile: false,
   });
+
+  /**
+   * Hook for when an element of the sidebar is clicked, or pressed.
+   */
+  export function onclick() {
+    if (sidebar.mobile) {
+      sidebar.collapsed = true;
+    }
+  }
 </script>
 
 <script lang="ts">
   import { resolve } from '$app/paths';
-
   import { page } from '$app/state';
   import { SIDEBAR_COLLAPSED } from '$lib/cookies';
   import LanguageSwitcher from '$lib/LanguageSwitcher.svelte';
@@ -25,6 +33,7 @@
     CircleUserRound,
     Hospital,
     House,
+    LogOut,
     PanelLeftClose,
     PanelLeftOpen,
     Tickets,
@@ -34,6 +43,7 @@
   import { type Snippet } from 'svelte';
   import { MediaQuery } from 'svelte/reactivity';
   import ColorSchemeSwitcher, { type ColorScheme } from './ColorSchemeSwitcher.svelte';
+  import { onSignOut } from './SignOut.svelte';
 
   interface Props {
     collapsed: boolean | null;
@@ -67,12 +77,6 @@
     { path: '/plan', label: m.sidebar_plan(), icon: Waypoints },
   ] as const;
 
-  function onclick() {
-    if (sidebar.mobile) {
-      sidebar.collapsed = true;
-    }
-  }
-
   let asideWidth = $state(300);
   let dragDx = $state<number | null>(null);
   let start = { x: 0, y: 0 };
@@ -88,7 +92,6 @@
     if ((Math.abs(dx) > 6 || Math.abs(dy) > 6) && (Math.abs(dx / dy) < 1.2)) {
       return; // Swipe is not horizontal
     }
-    e.preventDefault();
     dragDx = sidebar.collapsed
       ? Math.min(0, dx - asideWidth)
       : Math.max(-asideWidth, Math.min(0, dx));
@@ -177,11 +180,14 @@
         />
       </div>
 
-      <form class="collapsible" method="POST" action="/sign-in?/signout">
-        <button {onclick} class="tertiary" style="text-align: initial;">
-          {m.signout()}
-        </button>
-      </form>
+      <button
+        type="submit"
+        onclick={onSignOut}
+        class="tertiary collapsible row"
+        style="text-align: initial;"
+      >
+        <LogOut /> <span class="collapsible">{m.signout()}</span>
+      </button>
 
       <div style="height: 1rem;"></div>
 
@@ -230,6 +236,7 @@
     padding: 0.4rem;
     gap: 0.3rem;
     transition: transform 0.3s ease-in-out;
+    touch-action: pan-y;
 
     nav, footer {
       display: flex;
@@ -237,7 +244,7 @@
       width: 100%;
       gap: 0.3rem;
 
-      form, div {
+      div {
         width: 100%;
       }
     }
@@ -386,6 +393,7 @@
       inset-inline-start: 0;
       width: 20px;
       z-index: 201;
+      touch-action: pan-y;
     }
   }
 </style>

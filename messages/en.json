@@ -36,6 +36,8 @@
   "sidebar_plan": "Plan",
   "sidebar_profile": "Profile",
   "signout": "Sign out",
+  "signout_confirm": "Do you want to terminate the current session?",
+  "signout_success": "Bye!",
   "profile_title": "Personal information",
   "profile_email": "Email address",
   "profile_email_info": "Email address change applies only after verification.",
@@ -64,5 +66,9 @@
   "number_underflow": "Cannot be smaller than {min}",
   "number_overflow": "Cannot be bigger than {max}",
   "email_verification_successful": "Your new email address has been verified.",
-  "email_verification_failed": "Your new email address could not be verified."
+  "email_verification_failed": "Your new email address could not be verified.",
+  "modal_dismiss": "Dismiss",
+  "modal_cancel": "Cancel",
+  "modal_confirm": "Confirm",
+  "error": "An error occurred"
 }

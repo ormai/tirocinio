@@ -36,6 +36,8 @@
   "sidebar_plan": "Pianifica",
   "sidebar_profile": "Profilo",
   "signout": "Esci",
+  "signout_confirm": "Vuoi terminare la sessione?",
+  "signout_success": "Ciao!",
   "profile_title": "Informazioni personali",
   "profile_email": "Indirizzo email",
   "profile_email_info": "La modifica dell'indirizzo email ha effetto solo dopo la verifica.",
@@ -64,5 +66,9 @@
   "number_underflow": "Non può essere minore di {min}",
   "number_overflow": "Non può essere maggiore di {max}",
   "email_verification_successful": "Il tuo nuovo indirizzo email è stato verificato.",
-  "email_verification_failed": "Non è stato possibile verificare il tuo nuovo indirizzo email"
+  "email_verification_failed": "Non è stato possibile verificare il tuo nuovo indirizzo email",
+  "modal_dismiss": "Chiudi",
+  "modal_cancel": "Annulla",
+  "modal_confirm": "Conferma",
+  "error": "Si è verificato un errore"
 }

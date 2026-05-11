@@ -27,7 +27,7 @@
   <meta name="color-scheme" content={colorScheme}>
 </svelte:head>
 
-<select bind:value={colorScheme} {...props}>
+<select name="color-scheme-switcher" bind:value={colorScheme} {...props}>
   {#each options as { value, label } (value)}
     <option {value}>{label}</option>
   {/each}

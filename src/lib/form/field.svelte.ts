@@ -66,8 +66,6 @@ export class Field {
     if (this.input) {
       this._value = value ?? '';
       this.input.value = this._value;
-    } else {
-      console.warn('Attempt to mutate a Field that is not attached to the DOM');
     }
   }
 
