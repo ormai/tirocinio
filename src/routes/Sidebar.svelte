@@ -174,7 +174,7 @@
       <div class="row collapsible switcher">
         <ColorSchemeSwitcher
           colorScheme={colorScheme as (ColorScheme | undefined)}
-          style="border: none"
+          style="border: none; width: 100%;"
         />
       </div>
 
