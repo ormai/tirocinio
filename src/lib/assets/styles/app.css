@@ -103,6 +103,12 @@ body {
 	}
 }
 
+section.container {
+	max-width: min(70ch, 100% - 2rem);
+	margin: auto;
+	padding: 1.3rem 0;
+}
+
 a {
 	border-radius: var(--radius);
 	color: var(--primary-text);

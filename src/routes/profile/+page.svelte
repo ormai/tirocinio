@@ -10,11 +10,10 @@
   import LoadingButton from '$lib/LoadingButton.svelte';
   import { m } from '$lib/paraglide/messages.js';
   import { add as showToast, error, success } from '$lib/toast/Toaster.svelte';
-  import { tooltip } from '$lib/tooltip.svelte.js';
-  import { Info, Menu } from '@lucide/svelte';
+  import { Info } from '@lucide/svelte';
   import { onMount, tick, untrack } from 'svelte';
   import { fade } from 'svelte/transition';
-  import { sidebar } from '../Sidebar.svelte';
+  import TitleBar from '../TitleBar.svelte';
   import type { PageProps } from './$types.js';
 
   onMount(async () => {
@@ -34,7 +33,6 @@
     }
   });
 
-  const title = m.profile_title();
   let loading = $state(false);
   let { data, form }: PageProps = $props();
   let server = $state<Partial<typeof form>>({});
@@ -163,23 +161,8 @@
   }
 </script>
 
-<svelte:head><title>{title}</title></svelte:head>
-
-<section>
-  <header>
-    {#if sidebar.mobile}
-      <button
-        class="tertiary"
-        style="width: initial;"
-        onclick={() => sidebar.collapsed = !sidebar.collapsed}
-        aria-label={m.sidebar_expand()}
-        {@attach tooltip({ content: m.sidebar_expand(), placement: 'right' })}
-      >
-        <Menu />
-      </button>
-    {/if}
-    <h1>{title}</h1>
-  </header>
+<section class="container">
+  <TitleBar title={m.profile_title()} />
 
   {#if data.user}
     <form
@@ -318,26 +301,6 @@
 </section>
 
 <style>
-  header {
-    display: flex;
-    gap: 0.8rem;
-    align-items: center;
-
-    button {
-    min-width: max-content;
-    }
-  }
-
-  h1 {
-    font-size: 1.3rem;
-  }
-
-  section {
-    max-width: min(70ch, 100% - 2rem);
-    margin: auto;
-    padding: 1.3rem 0;
-  }
-
   form {
     display: flex;
     flex-direction: column;
