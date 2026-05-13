@@ -4,6 +4,7 @@
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import { nextFromStart } from '$lib/academic-year';
+  import AcademicYearField from '$lib/form/AcademicYearField.svelte';
   import { Field, passwordRegExp } from '$lib/form/field.svelte';
   import PasswordField from '$lib/form/PasswordField.svelte';
   import onSubmit from '$lib/form/submit';
@@ -45,6 +46,8 @@
   });
   const name = new Field();
   const surname = new Field();
+
+  // FIXME: server-side unique constraint validation
   const studentNumber = new Field([
     (i) => i.validity.badInput && m.profile_number_bad_input(),
     (i) => i.validity.rangeUnderflow && m.number_underflow({ min: i.min }),
@@ -168,7 +171,6 @@
     <form
       method="POST"
       action="?/update"
-      style:margin-top="2rem"
       novalidate
       use:enhance={({ cancel }) => onSubmit(cancel, fields, () => (loading = true), afterSubmit)}
     >
@@ -216,25 +218,12 @@
           {/if}
         </div>
 
-        <div class="input-host academic-year">
-          <label for="enrollment-year">{m.profile_enrollment_year()}</label>
-          <div>
-            <input
-              id="enrollment-year"
-              type="number"
-              name="enrollment-year"
-              value={data.user.enrollmentYear}
-              placeholder={m.profile_missing()}
-              min="0"
-              max="32767"
-              {@attach enrollmentYear.attach}
-            >
-            <input value={nextFromStart(enrollmentYear.value)} disabled>
-          </div>
-          {#if enrollmentYear.dirty && enrollmentYear.error}
-            <span transition:fade class="error">{enrollmentYear.error}</span>
-          {/if}
-        </div>
+        <AcademicYearField
+          field={enrollmentYear}
+          label={m.profile_enrollment_year()}
+          placeholder={m.profile_missing()}
+          initialValue={data.user.enrollmentYear}
+        />
       {/if}
 
       <div class="input-host">
@@ -305,26 +294,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
-  }
-
-  .academic-year {
-    input:first-of-type {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-    input:last-of-type {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      border-left: none;
-        pointer-events: none;
-    }
-
-    div {
-      display: flex;
-      input {
-        width: 50%;
-      }
-    }
   }
 
   .row, .button-row {

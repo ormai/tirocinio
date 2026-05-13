@@ -1,0 +1,58 @@
+<script lang="ts">
+  import { nextFromStart } from '$lib/academic-year';
+  import { fade } from 'svelte/transition';
+  import type { Field } from './field.svelte';
+
+  interface Props {
+    field: Field;
+    initialValue?: any;
+    placeholder?: string;
+    label?: string;
+  }
+
+  let { field, initialValue, placeholder, label }: Props = $props();
+</script>
+
+<div class="input-host academic-year">
+  {#if label}
+    <label for="enrollment-year">{label}</label>
+  {/if}
+  <div>
+    <input
+      id="enrollment-year"
+      type="number"
+      name="enrollment-year"
+      value={initialValue}
+      {placeholder}
+      min="0"
+      max="32767"
+      {@attach field.attach}
+    >
+    <input value={nextFromStart(field.value)} disabled>
+  </div>
+  {#if field.dirty && field.error}
+    <span transition:fade class="error">{field.error}</span>
+  {/if}
+</div>
+
+<style>
+  .academic-year {
+    input:first-of-type {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    input:last-of-type {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-left: none;
+        pointer-events: none;
+    }
+
+    div {
+      display: flex;
+      input {
+        width: 50%;
+      }
+    }
+  }
+</style>
