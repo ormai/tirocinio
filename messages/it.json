@@ -1,6 +1,7 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "language_name": "Italiano",
+  "language_switcher_tooltip": "Cambia lingua",
   "signin_title": "Accedi",
   "signin_student": "Studente",
   "signin_admin": "Amministratore",
@@ -70,8 +71,49 @@
   "modal_dismiss": "Chiudi",
   "modal_cancel": "Annulla",
   "modal_confirm": "Conferma",
+  "modal_delete": "Elimina",
+  "modal_apply": "Applica",
   "error": "Si è verificato un errore",
   "color_scheme_auto": "Auto",
   "color_scheme_light": "Chiaro",
-  "color_scheme_dark": "Scuro"
+  "color_scheme_dark": "Scuro",
+  "color_scheme_switcher_tooltip": "Cambia aspetto",
+  "students_title": "Studenti registrati",
+  "students_number": "Matricola",
+  "students_name": "Nome",
+  "students_surname": "Cognome",
+  "students_email": "Email",
+  "students_year": "Anno d'iscrizione",
+  "students_count": "{visible} studenti",
+  "students_empty": "Non ci sono studenti",
+  "students_all_filtered_out": "Nessuno studente soddisfa i filtri",
+  "students_delete": [{
+    "declarations": ["input count", "local countPlural = count: plural"],
+    "selectors": ["countPlural"],
+    "match": {
+      "countPlural=one": "Eliminare permanentemente {count} studente?",
+      "countPlural=other": "Eliminare permanente {count} studenti?"
+    }
+  }],
+  "students_selected": [{
+    "declarations": ["input selected", "local countPlural = selected: plural"],
+    "selectors": ["countPlural"],
+    "match": {
+      "countPlural=one": "{selected} selezionato",
+      "countPlural=other": "{selected} selezionati"
+    }
+  }],
+  "table_selected": "{selected} selezionati",
+  "table_select_all": "Seleziona tutti",
+  "table_deselect_all": "Deseleziona tutti",
+  "table_filters": "Filtri",
+  "table_search_placeholder": "Cerca…",
+  "table_select_row": "Seleziona {rowInfo}",
+  "table_deselect_row": "Deseleziona {rowInfo}",
+  "table_export": "Esporta",
+  "table_sort_by": "Ordina per {key}, {direction}",
+  "table_sort_asc": "decrescente",
+  "table_sort_desc": "crescente",
+  "table_clear_filters": "Reimposta filtri, selezione e ordinamento",
+  "table_filter_turn_off": "Disattiva filtro"
 }

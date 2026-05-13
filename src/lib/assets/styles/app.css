@@ -26,19 +26,19 @@ html {
 	/* Lighter text */
 	--body-light: light-dark(#353637, #ddd);
 	/* Dividers and disabled elements */
-	--body-light-bg: light-dark(#eee, #202122);
+	--body-light-bg: light-dark(#eee, #232425);
 
 	/* Higher contrast text */
 	--body-lighter: light-dark(DimGrey, DarkGrey);
 	/* Even lighter text: hovers, accents */
-	--body-lighter-bg: light-dark(Gainsboro, DimGrey);
+	--body-lighter-bg: light-dark(#ddd, #363333);
 	--emphasis: light-dark(black, white);
 
 	color: var(--body);
 	background: var(--body-bg);
 
 	/* Borders, dividers, rules */
-	--border: light-dark(#ccc, #555);
+	--border: light-dark(#ccc, #444);
 
 	/* Main color: hyperlinks, focus style, active states of components and forms */
 	--primary: light-dark(NavajoWhite, SeaGreen);
@@ -109,6 +109,11 @@ section.container {
 	padding: 1.3rem 0;
 }
 
+section:has(.scroller table) {
+	max-width: min-content;
+	padding: 1.3rem 1rem;
+}
+
 a {
 	border-radius: var(--radius);
 	color: var(--primary-text);
@@ -134,7 +139,7 @@ button {
 
 	&:disabled,
 	&.loading {
-		background: hsl(from var(--body-lighter-bg) h s calc(l - 20) / 0.9);
+		background: hsl(from var(--body-light-bg) h s calc(l - 20) / 0.9);
 		color: var(--body-lighter);
 		border-color: var(--border);
 	}
@@ -250,14 +255,9 @@ select {
 	border-radius: var(--radius);
 	border-color: var(--border);
 	background: transparent;
-
-	&:focus,
-	&:active {
-		border-color: hsl(from var(--border) h s calc(l + 40));
-	}
 }
 
-form .input-host {
+.input-host {
 	display: flex;
 	flex-direction: column;
 
@@ -308,6 +308,10 @@ input[type="number"] {
 	margin: 0;
 }
 
+input[type="checkbox"] {
+	accent-color: var(--primary);
+}
+
 .tippy-box[data-theme~='app'] {
 	background-color: var(--body);
 	color: var(--body-bg);
@@ -315,4 +319,8 @@ input[type="number"] {
 
 .tippy-box[data-theme~='app']>.tippy-arrow::before {
 	color: var(--body);
+}
+
+.numeric {
+	font-variant-numeric: tabular-nums slashed-zero;
 }

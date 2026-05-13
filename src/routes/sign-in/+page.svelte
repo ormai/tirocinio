@@ -86,7 +86,10 @@
   style="position: absolute; bottom: 1rem; right: 1rem;"
 />
 
-<svelte:head><title>{title}</title></svelte:head>
+<svelte:head>
+  <title>{title}</title>
+  <meta name="color-scheme" content="light dark">
+</svelte:head>
 
 <main>
   <h1>{title}</h1>

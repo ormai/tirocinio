@@ -1,0 +1,72 @@
+/* Responsive tables that look nice */
+
+.scroller {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+
+    tbody>tr:nth-of-type(even) {
+      background: var(--body-light-bg);
+    }
+
+    th {
+      background: var(--body-lighter-bg);
+    }
+
+    td,
+    th {
+      padding: var(--spacing) calc(var(--spacing) * 2);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+
+    >*:last-child>tr:last-child {
+
+      td,
+      th {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+td.truncate50 {
+  max-width: 50ch;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+td.truncate20 {
+  max-width: 20ch;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+th.sortable {
+  user-select: none;
+  cursor: pointer;
+  transition: background 0.2s cubic-bezier(0.77, 0, 0.175, 1);
+
+  .row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &:hover {
+    background: hsl(from var(--body-lighter-bg) h s calc(l + 4));
+  }
+
+  &:active {
+    background: hsl(from var(--body-lighter-bg) h s calc(l + 6));
+  }
+}

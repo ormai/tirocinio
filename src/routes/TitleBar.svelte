@@ -29,6 +29,7 @@
     display: flex;
     gap: 0.8rem;
     align-items: center;
+    margin-bottom: 1.5rem; /* Spacing with the following content */
 
     button {
       min-width: max-content;

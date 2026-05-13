@@ -6,6 +6,7 @@
 
 <script lang="ts">
   import { COLOR_SCHEME } from '$lib/cookies';
+  import { tooltip } from '$lib/tooltip.svelte';
   import type { LocalizedString } from '@inlang/paraglide-js';
   import { Moon, Sun, SunMoon } from '@lucide/svelte';
   import type { Component } from 'svelte';
@@ -34,7 +35,7 @@
   <meta name="color-scheme" content={colorScheme} />
 </svelte:head>
 
-<div class="select-host">
+<div class="select-host" {@attach tooltip(m.color_scheme_switcher_tooltip())}>
   <div class="icon-before"><Icon aria-hidden="true" /></div>
   <select name="color-scheme-switcher" bind:value={colorScheme} {...props}>
     {#each Object.entries(options) as [value, { label }] (value)}

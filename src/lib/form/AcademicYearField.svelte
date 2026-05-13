@@ -8,17 +8,19 @@
     initialValue?: any;
     placeholder?: string;
     label?: string;
+    maxWidth?: number;
   }
 
-  let { field, initialValue, placeholder, label }: Props = $props();
+  let { field, initialValue, placeholder, label, maxWidth }: Props = $props();
 </script>
 
-<div class="input-host academic-year">
+<div class="input-host academic-year" style:max-width={`${maxWidth}px`}>
   {#if label}
     <label for="enrollment-year">{label}</label>
   {/if}
   <div>
     <input
+      class="numeric"
       id="enrollment-year"
       type="number"
       name="enrollment-year"
@@ -28,7 +30,7 @@
       max="32767"
       {@attach field.attach}
     >
-    <input value={nextFromStart(field.value)} disabled>
+    <input class="numeric" value={nextFromStart(field.value)} disabled>
   </div>
   {#if field.dirty && field.error}
     <span transition:fade class="error">{field.error}</span>

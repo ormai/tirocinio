@@ -3,7 +3,6 @@
   import { invalidateAll, replaceState } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
-  import { nextFromStart } from '$lib/academic-year';
   import AcademicYearField from '$lib/form/AcademicYearField.svelte';
   import { Field, passwordRegExp } from '$lib/form/field.svelte';
   import PasswordField from '$lib/form/PasswordField.svelte';
@@ -204,6 +203,7 @@
         <div class="input-host">
           <label for="student-number">{m.profile_student_number()}</label>
           <input
+            class="numeric"
             id="student-number"
             type="number"
             name="student-number"
