@@ -22,7 +22,6 @@
   import { SvelteSet } from 'svelte/reactivity';
   import { fade } from 'svelte/transition';
 
-  // TODO: make toolbar adaptive
   // TODO: form to add one student
   // TODO: action to edit each student
   // TODO: export selected students
@@ -36,30 +35,39 @@
     { key: 'email', label: m.students_email(), style: 'truncate50' },
     { key: 'enrollmentYear', label: m.students_year(), style: 'numeric' },
   ] as const;
+
   type Student = typeof data.students[number];
   type Key = typeof columns[number]['key'];
 
+  interface Sort {
+    key?: Key;
+    direction: 1 | -1;
+  }
+
   let { data } = $props();
+
   let search = $state('');
-  let sort = $state<{ key: Key | undefined; direction: 1 | -1 }>({ key: undefined, direction: 1 });
+  let sort: Sort = $state({ key: undefined, direction: 1 });
+  const selected = new SvelteSet<number>();
+  let students = $derived(filterAndSort(data.students));
+  let allSelected: boolean = $derived(selected.size > 0 && selected.size === students.length);
   let deleteModalOpen = $state(false);
-  let selected = new SvelteSet<number>();
-  let filtered = $derived(filterAndSort(data.students));
-  let allSelected: boolean = $derived(selected.size > 0 && selected.size === filtered.length);
   let filtersModalOpen = $state(false);
 
+  // The 'select all' checkbox won't be updated just by reactive properties
   let selectAllCheckbox = $state<HTMLInputElement>();
   $effect(() => {
     if (selectAllCheckbox) {
-      selectAllCheckbox.checked = selected.size > 0 && selected.size === filtered.length;
+      selectAllCheckbox.checked = selected.size > 0 && selected.size === students.length;
     }
   });
 
+  // Table must not shrink.
   let tableWidth = $state(0);
   let minTableWidth = $derived(0);
-  // $effect(() => {
-  //   minTableWidth = Math.max(tableWidth, minTableWidth);
-  // });
+  $effect(() => {
+    minTableWidth = Math.max(tableWidth, minTableWidth);
+  });
 
   function toggleSort(key: Key) {
     if (sort.key === key) {
@@ -97,7 +105,7 @@
     return true;
   }
 
-  function canClear(): boolean {
+  function isDirty(): boolean {
     return sort.key !== undefined || search.length > 0 || selected.size > 0
       || yearFilter.num !== undefined;
   }
@@ -109,7 +117,14 @@
     yearFilter.num = undefined;
   }
 
-  function filterAndSort(students: Array<Student>) {
+  $effect(() => {
+    const visibleIds = new Set(students.map((s) => s.id));
+    for (const id of selected) {
+      if (!visibleIds.has(id)) selected.delete(id);
+    }
+  });
+
+  function filterAndSort(students: ReadonlyArray<Student>): Array<Student> {
     const start = Date.now();
     let rows = students.filter((s) =>
       (!search
@@ -117,16 +132,6 @@
           String(v ?? '').toLowerCase().includes(search.toLowerCase())
         )) && yearFilterSatisfied(s.enrollmentYear)
     );
-
-    // FIXME: filtered out students can't be selected.
-    // let filteredSelected = new Set<number>();
-    // for (const { id } of rows) {
-    //   if (selected.has(id)) {
-    //     filteredSelected.add(id);
-    //   }
-    // }
-    // selected.clear();
-    // filteredSelected.forEach((id) => selected.add(id));
 
     if (sort.key) {
       rows.sort((a, b) => {
@@ -144,7 +149,7 @@
     if (selected.size > 0) {
       selected.clear();
     } else {
-      for (const { id } of filtered) {
+      for (const { id } of students) {
         selected.add(id);
       }
     }
@@ -188,7 +193,7 @@
     },
   }]}
 >
-  <div class="filter-row">
+  <div class="row filter">
     {m.students_year()}
     <select bind:value={yearTone}>
       <option value="lt">&lt;</option>
@@ -215,7 +220,7 @@
   <TitleBar title={m.students_title()} />
 
   <div class="toolbar">
-    <div class="isle">
+    <div class="row">
       <div class="input-icon">
         <div class="icon-box icon-host"><Search /></div>
         <input type="search" placeholder={m.table_search_placeholder()} bind:value={search} />
@@ -227,56 +232,55 @@
       >
         <Funnel />
       </button>
-      {#if canClear()}
-        <button
-          class="secondary icon-host"
-          onclick={clear}
-          {@attach tooltip(m.table_clear_filters())}
-          transition:fade
-        >
-          <RotateCcw />
-        </button>
-      {/if}
     </div>
 
-    <div class="isle">
-      {#if selected.size > 0}
-        <div transition:fade class="isle">
+    <div class="row" style="justify-content: space-between;">
+      <div id="selection-controls" class="row">
+        {#if selected.size > 0}
+          <div transition:fade class="row">
+            <button
+              class="secondary icon-host"
+              onclick={() => {}}
+              {@attach tooltip(m.table_export())}
+            >
+              <Download />
+            </button>
+            <button
+              class="danger icon-host"
+              onclick={() => (deleteModalOpen = true)}
+              {@attach tooltip(m.modal_delete())}
+            >
+              <Trash />
+            </button>
+            <span class="numeric">{m.students_selected({ selected: selected.size })}</span>
+          </div>
+        {/if}
+        {#if isDirty()}
           <button
             class="secondary icon-host"
-            onclick={() => {}}
-            {@attach tooltip(m.table_export())}
+            onclick={clear}
+            {@attach tooltip(m.table_clear_filters())}
+            transition:fade
           >
-            <Download />
+            <RotateCcw />
           </button>
-          <button
-            class="danger icon-host"
-            onclick={() => (deleteModalOpen = true)}
-            {@attach tooltip(m.modal_delete())}
-          >
-            <Trash />
-          </button>
-          <span class="numeric">{m.students_selected({ selected: selected.size })}</span>
-        </div>
-      {/if}
+        {/if}
+      </div>
 
-      <span class="numeric">
-        {
-          m.students_count({
-            visible: data.students.length === filtered.length
-              ? data.students.length
-              : `${filtered.length}/${data.students.length}`,
-          })
-        }
-      </span>
-      <button
-        class="secondary icon-host"
-        onclick={() => (yearFilter.num = undefined)}
-        transition:fade
-        {@attach tooltip('Aggiungi studente')}
-      >
-        <Plus />
-      </button>
+      <div class="row">
+        <span class="numeric" style="text-align: end">
+          {
+            m.students_count({
+              visible: data.students.length === students.length
+                ? data.students.length
+                : `${students.length}/${data.students.length}`,
+            })
+          }
+        </span>
+        <button class="secondary icon-host" transition:fade {@attach tooltip(m.students_add())}>
+          <Plus />
+        </button>
+      </div>
     </div>
   </div>
 
@@ -325,7 +329,7 @@
         </tr>
       </thead>
       <tbody>
-        {#each filtered as { id, number, name, surname, email, enrollmentYear } (id)}
+        {#each students as { id, number, name, surname, email, enrollmentYear } (id)}
           {@const selectTooltip = selected.has(id)
           ? m.table_deselect_row({ rowInfo: `${name} ${surname}` })
           : m.table_select_row({ rowInfo: `${name} ${surname}` })}
@@ -356,45 +360,77 @@
 </section>
 
 <style>
+  @media (max-width: 800px) {
+    .toolbar {
+      flex-direction: column;
+
+      #selection-controls {
+        flex-direction: row-reverse;
+      }
+
+      >div {
+        width: 100%;
+      }
+
+      >div:first-child {
+        flex: 1 1 100%;
+        .input-icon {
+          flex: 1;
+          input {
+            flex: 1;
+            max-width: none;
+            min-width: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .row.filter {
+    text-align: center;
+  }
+
+  span {
+    letter-spacing: -0.6px;
+    font-size: 0.9rem;
+    line-height: 1.1rem;
+  }
+
   .toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;   
+    margin-bottom: 1rem;
     gap: 0.5rem;
 
-    .isle {
+    .input-icon {
       display: flex;
-      gap: 0.5rem;
-      align-items: center;
-
-      .input-icon {
+      .icon-box {
         display: flex;
-        .icon-box {
-          display: flex;
-          align-items: center;
-          border: 1px solid var(--border);
-          border-right: none;
-          border-top-left-radius: var(--radius);
-          border-bottom-left-radius: var(--radius);
-        }
-        input {
-          border-top-left-radius: 0;
-          border-bottom-left-radius: 0;
-          max-width: 200px;
-        }
+        align-items: center;
+        border: 1px solid var(--border);
+        border-right: none;
+        border-top-left-radius: var(--radius);
+        border-bottom-left-radius: var(--radius);
+      }
+      input {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        max-width: 200px;
       }
     }
-
-  }
-
-  .filter-row {
-    display: flex; gap: 0.5rem; justify-content: center; align-items: center;
   }
 
   .icon-host {
     padding: var(--spacing);
-    min-width: calc(24px + var(--spacing) * 2);
+    min-width: calc(24px + var(--spacing) * 2 + 2px);
   }
 
   .notice {

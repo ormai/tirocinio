@@ -103,6 +103,7 @@
       "countPlural=other": "{selected} selected"
     }
   }],
+  "students_add": "Add student",
   "table_select_all": "Select all",
   "table_deselect_all": "Deselect all",
   "table_filters": "Filters",
