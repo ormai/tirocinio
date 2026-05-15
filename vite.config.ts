@@ -1,9 +1,26 @@
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { playwright } from '@vitest/browser-playwright';
+import { Features } from 'lightningcss';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  build: {
+    rolldownOptions: {
+      output: {
+        minify: {
+          compress: {
+            dropConsole: true,
+          },
+        },
+      },
+    },
+  },
+  css: {
+    lightningcss: {
+      exclude: Features.LightDark,
+    },
+  },
   plugins: [
     sveltekit(),
     paraglideVitePlugin({
