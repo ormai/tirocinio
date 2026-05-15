@@ -19,6 +19,7 @@ export function tooltip(opts: string | Partial<Props>) {
     $effect(() => {
       const { content, ...rest } = props;
       if (content !== undefined) {
+        node.ariaLabel = content.toString();
         instance.setContent(content);
       }
       if (Object.keys(rest).length) {

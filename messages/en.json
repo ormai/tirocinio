@@ -115,5 +115,9 @@
   "table_sort_asc": "ascending",
   "table_sort_desc": "descending",
   "table_clear_filters": "Reset filters, selection, and sorting",
-  "table_filter_turn_off": "Reset filter"
+  "table_filter_turn_off": "Reset filter",
+  "table_page_first": "First page",
+  "table_page_prev": "Previous page",
+  "table_page_next": "Next page",
+  "table_page_last": "Last page"
 }

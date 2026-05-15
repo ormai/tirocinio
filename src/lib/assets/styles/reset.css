@@ -15,11 +15,9 @@
 }
 
 /* 3. Enable keyword animations */
-@supports (interpolate-size: allow-keywords) {
-	@media (prefers-reduced-motion: no-preference) {
-		html {
-			interpolate-size: allow-keywords;
-		}
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		interpolate-size: allow-keywords;
 	}
 }
 
@@ -60,10 +58,8 @@ h6 {
 }
 
 /* 9. Improve line wrapping */
-@supports (text-wrap: pretty) {
-	p {
-		text-wrap: pretty;
-	}
+p {
+	text-wrap: pretty;
 }
 
 h1,

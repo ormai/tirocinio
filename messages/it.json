@@ -116,5 +116,9 @@
   "table_sort_asc": "decrescente",
   "table_sort_desc": "crescente",
   "table_clear_filters": "Reimposta filtri, selezione e ordinamento",
-  "table_filter_turn_off": "Disattiva filtro"
+  "table_filter_turn_off": "Disattiva filtro",
+  "table_page_first": "Prima pagina",
+  "table_page_prev": "Pagina precedente",
+  "table_page_next": "Prossima pagina",
+  "table_page_last": "Ultima pagina"
 }

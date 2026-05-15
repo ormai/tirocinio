@@ -5,13 +5,20 @@
   import AcademicYearField from '$lib/form/AcademicYearField.svelte';
   import { Field } from '$lib/form/field.svelte.js';
   import Modal from '$lib/Modal.svelte';
+  import type { StudentView } from '$lib/server/user.js';
   import { tooltip } from '$lib/tooltip.svelte.js';
   import {
     ArrowDown01,
     ArrowDownAZ,
     ArrowDownUp,
+    ArrowLeft,
+    ArrowRight,
     ArrowUp01,
     ArrowUpAZ,
+    ChevronFirst,
+    ChevronLast,
+    ChevronLeft,
+    ChevronRight,
     Download,
     Funnel,
     Plus,
@@ -19,6 +26,7 @@
     Search,
     Trash,
   } from '@lucide/svelte';
+  import { onMount } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import { fade } from 'svelte/transition';
 
@@ -27,6 +35,7 @@
   // TODO: export selected students
   // TODO: delete selected students
   // TODO: import students from spreadsheet (?)
+  // TODO: store table state locally for the client, maybe in session state.
 
   const columns = [
     { key: 'number', label: m.students_number(), style: 'numeric' },
@@ -36,7 +45,6 @@
     { key: 'enrollmentYear', label: m.students_year(), style: 'numeric' },
   ] as const;
 
-  type Student = typeof data.students[number];
   type Key = typeof columns[number]['key'];
 
   interface Sort {
@@ -45,6 +53,9 @@
   }
 
   let { data } = $props();
+
+  console.time('mount');
+  onMount(() => console.timeEnd('mount'));
 
   let search = $state('');
   let sort: Sort = $state({ key: undefined, direction: 1 });
@@ -124,8 +135,8 @@
     }
   });
 
-  function filterAndSort(students: ReadonlyArray<Student>): Array<Student> {
-    const start = Date.now();
+  function filterAndSort(students: ReadonlyArray<StudentView>): Array<StudentView> {
+    console.time('filter');
     let rows = students.filter((s) =>
       (!search
         || [s.number, s.name, s.surname, s.email, s.enrollmentYear].some((v) =>
@@ -140,12 +151,12 @@
         return av < bv ? -sort.direction : av > bv ? sort.direction : 0;
       });
     }
-    console.log(`Sorted in ${Date.now() - start}`);
+    console.timeEnd('filter');
     return rows;
   }
 
   function toggleSelectAll() {
-    const start = Date.now();
+    console.time('select all');
     if (selected.size > 0) {
       selected.clear();
     } else {
@@ -153,7 +164,7 @@
         selected.add(id);
       }
     }
-    console.log(`Toggled all in ${Date.now() - start}`);
+    console.timeEnd('select all');
   }
 
   function toggleSelected(id: number) {
@@ -165,6 +176,15 @@
   let selectAllTooltip = $derived(
     selected.size > 0 ? m.table_deselect_all() : m.table_select_all(),
   );
+
+  const pageSize = 18;
+  let page = $state(0);
+  $effect(() => {
+    students;
+    page = 0;
+  });
+  let pageCount = $derived(Math.ceil(students.length / pageSize));
+  let paginated = $derived(students.slice(page * pageSize, (page + 1) * pageSize));
 </script>
 
 <Modal
@@ -277,7 +297,7 @@
             })
           }
         </span>
-        <button class="secondary icon-host" transition:fade {@attach tooltip(m.students_add())}>
+        <button class="secondary icon-host" {@attach tooltip(m.students_add())}>
           <Plus />
         </button>
       </div>
@@ -337,7 +357,7 @@
         </tr>
       </thead>
       <tbody>
-        {#each students as { id, number, name, surname, email, enrollmentYear } (id)}
+        {#each paginated as { id, number, name, surname, email, enrollmentYear } (id)}
           {@const selectTooltip = selected.has(id)
           ? m.table_deselect_row({ rowInfo: `${name} ${surname}` })
           : m.table_select_row({ rowInfo: `${name} ${surname}` })}
@@ -353,7 +373,7 @@
           </tr>
         {:else}
           <tr>
-            <td colspan="6" class="notice">
+            <td colspan={columns.length + 1} class="notice">
               {#if data.students.length > 0}
                 {m.students_all_filtered_out()}
               {:else}
@@ -365,6 +385,44 @@
       </tbody>
     </table>
   </div>
+
+  {#if pageCount > 1}
+    <div class="pagination row" style="margin-top: 1rem">
+      <button
+        class="secondary icon-host"
+        disabled={page === 0}
+        onclick={() => page = 0}
+        {@attach tooltip(m.table_page_first())}
+      >
+        <ChevronFirst />
+      </button>
+      <button
+        class="secondary icon-host"
+        disabled={page === 0}
+        onclick={() => page--}
+        {@attach tooltip(m.table_page_prev())}
+      >
+        <ChevronLeft />
+      </button>
+      <span class="numeric">{page + 1} / {pageCount}</span>
+      <button
+        class="secondary icon-host"
+        disabled={page === pageCount - 1}
+        onclick={() => page++}
+        {@attach tooltip(m.table_page_next())}
+      >
+        <ChevronRight />
+      </button>
+      <button
+        class="secondary icon-host"
+        disabled={page === pageCount - 1}
+        onclick={() => page = pageCount - 1}
+        {@attach tooltip(m.table_page_last())}
+      >
+        <ChevronLast />
+      </button>
+    </div>
+  {/if}
 </section>
 
 <style>

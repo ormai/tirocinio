@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import { eq, type InferSelectModel } from 'drizzle-orm';
 
 export type User = InferSelectModel<typeof users>;
+export type StudentView = Pick<User, 'id' | 'number' | 'name' | 'surname' | 'email' | 'enrollmentYear'>;
 
 export const BCRYPT_ROUNDS = 12;
 

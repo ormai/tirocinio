@@ -85,7 +85,6 @@ html {
 	outline: none;
 	position: relative;
 	box-shadow: var(--focus-shadow);
-	z-index: 1;
 	overflow: visible;
 }
 
@@ -164,6 +163,11 @@ button {
 
 		&:active {
 			background: hsl(from var(--body-light-bg) h s calc(l + 6));
+		}
+
+		&:disabled {
+			background: hsl(from var(--body-light-bg) h calc(s - 10) calc(l + 10));
+			
 		}
 	}
 

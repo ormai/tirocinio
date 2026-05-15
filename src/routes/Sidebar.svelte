@@ -135,6 +135,7 @@
     ontouchstart={onTouchStart}
     ontouchmove={onTouchMove}
     ontouchend={onTouchEnd}
+    tabindex="-1"
   >
     <header>
       <span class="collapsible">Sidebar</span>
