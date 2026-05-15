@@ -83,8 +83,9 @@ html {
 
 :focus-visible {
 	outline: none;
+	position: relative;
 	box-shadow: var(--focus-shadow);
-	z-index: 2;
+	z-index: 1;
 	overflow: visible;
 }
 

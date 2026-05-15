@@ -17,6 +17,13 @@
       background: var(--body-lighter-bg);
     }
 
+    th span {
+      white-space: nowrap;
+      max-width: 15ch;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
     td,
     th {
       padding: var(--spacing) calc(var(--spacing) * 2);
@@ -29,7 +36,6 @@
     }
 
     >*:last-child>tr:last-child {
-
       td,
       th {
         border-bottom: none;

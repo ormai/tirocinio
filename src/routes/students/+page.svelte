@@ -163,7 +163,7 @@
   }
 
   let selectAllTooltip = $derived(
-    selected.size > 0 ? m.table_deselect_all() : m.table_deselect_all(),
+    selected.size > 0 ? m.table_deselect_all() : m.table_select_all(),
   );
 </script>
 
@@ -284,7 +284,7 @@
     </div>
   </div>
 
-  <div class="scroller">
+  <div class="scroller" tabindex="-1">
     <table bind:clientWidth={tableWidth} style:min-width={`${minTableWidth}px`}>
       <thead>
         <tr>
@@ -302,6 +302,14 @@
           {#each columns as { key, label, style } (key)}
             <th
               onclick={() => toggleSort(key)}
+              onkeydown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  toggleSort(key);
+                }
+              }}
+              aria-sort={sort.key === key ? (sort.direction === 1 ? 'ascending' : 'descending') : 'none'}
+              tabindex="0"
               class="sortable"
               {@attach tooltip(
                 m.table_sort_by({
