@@ -2,8 +2,7 @@
   import { m } from '$lib/paraglide/messages';
   import TitleBar from '../TitleBar.svelte';
   import '$lib/assets/table.css';
-  import AcademicYearField from '$lib/form/AcademicYearField.svelte';
-  import { Field } from '$lib/form/field.svelte.js';
+  import AcademicYearField, { YearField } from '$lib/form/AcademicYear.svelte';
   import Modal from '$lib/Modal.svelte';
   import type { StudentView } from '$lib/server/user.js';
   import { tooltip } from '$lib/tooltip.svelte.js';
@@ -11,8 +10,6 @@
     ArrowDown01,
     ArrowDownAZ,
     ArrowDownUp,
-    ArrowLeft,
-    ArrowRight,
     ArrowUp01,
     ArrowUpAZ,
     ChevronFirst,
@@ -21,6 +18,7 @@
     ChevronRight,
     Download,
     Funnel,
+    Pencil,
     Plus,
     RotateCcw,
     Search,
@@ -29,6 +27,8 @@
   import { onMount } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import { fade } from 'svelte/transition';
+  import type { PageProps } from './$types';
+  import AddEditStudentModal from './AddEditStudentModal.svelte';
 
   // TODO: form to add one student
   // TODO: action to edit each student
@@ -36,6 +36,7 @@
   // TODO: delete selected students
   // TODO: import students from spreadsheet (?)
   // TODO: store table state locally for the client, maybe in session state.
+  // TODO: make table reusable
 
   const columns = [
     { key: 'number', label: m.students_number(), style: 'numeric' },
@@ -52,7 +53,7 @@
     direction: 1 | -1;
   }
 
-  let { data } = $props();
+  let { data, form }: PageProps = $props();
 
   console.time('mount');
   onMount(() => console.timeEnd('mount'));
@@ -91,12 +92,7 @@
   type Tone = 'lt' | 'le' | 'gt' | 'ge' | 'eq';
   let yearTone: Tone = $state('lt');
   let yearFilter: { num?: number; tone: Tone } = $state({ num: undefined, tone: 'lt' });
-  const yearFilterField = new Field([
-    (i) => i.validity.badInput && m.profile_enrollment_year_bad_input(),
-    (i) => i.validity.rangeUnderflow && m.number_underflow({ min: i.min }),
-    (i) => i.validity.rangeOverflow && m.number_overflow({ max: i.max }),
-  ]);
-
+  const yearFilterField = new YearField();
   function yearFilterSatisfied(year: number | null): boolean {
     const { tone, num } = yearFilter;
     if (year && num) {
@@ -136,7 +132,6 @@
   });
 
   function filterAndSort(students: ReadonlyArray<StudentView>): Array<StudentView> {
-    console.time('filter');
     let rows = students.filter((s) =>
       (!search
         || [s.number, s.name, s.surname, s.email, s.enrollmentYear].some((v) =>
@@ -151,12 +146,10 @@
         return av < bv ? -sort.direction : av > bv ? sort.direction : 0;
       });
     }
-    console.timeEnd('filter');
     return rows;
   }
 
   function toggleSelectAll() {
-    console.time('select all');
     if (selected.size > 0) {
       selected.clear();
     } else {
@@ -164,7 +157,6 @@
         selected.add(id);
       }
     }
-    console.timeEnd('select all');
   }
 
   function toggleSelected(id: number) {
@@ -180,12 +172,17 @@
   const pageSize = 18;
   let page = $state(0);
   $effect(() => {
-    students;
+    void students;
     page = 0;
   });
   let pageCount = $derived(Math.ceil(students.length / pageSize));
   let paginated = $derived(students.slice(page * pageSize, (page + 1) * pageSize));
+
+  let editing: StudentView | null = $state(null);
+  let addModalOpen: boolean = $state(false);
 </script>
+
+<AddEditStudentModal bind:editing bind:addModalOpen {form} />
 
 <Modal
   title={m.students_delete({ count: selected.size })}
@@ -202,7 +199,7 @@
   actions={[{ label: m.modal_dismiss(), onClick: () => (filtersModalOpen = false), role: 'secondary' }, {
     label: m.modal_apply(),
     onClick: () => {
-      if (yearFilterField.valid) {
+      if (yearFilterField?.valid) {
         const num = Number.parseInt(yearFilterField.value);
         if (Number.isFinite(num)) {
           yearFilter.num = num;
@@ -297,7 +294,11 @@
             })
           }
         </span>
-        <button class="secondary icon-host" {@attach tooltip(m.students_add())}>
+        <button
+          class="secondary icon-host"
+          {@attach tooltip(m.students_add())}
+          onclick={() => (addModalOpen = true)}
+        >
           <Plus />
         </button>
       </div>
@@ -308,17 +309,17 @@
     <table bind:clientWidth={tableWidth} style:min-width={`${minTableWidth}px`}>
       <thead>
         <tr>
-          <th
-            onclick={toggleSelectAll}
-            {@attach tooltip(selectAllTooltip)}
-          >
+          <th>
             <input
               type="checkbox"
               bind:this={selectAllCheckbox}
               indeterminate={!allSelected && selected.size > 0}
               aria-label={selectAllTooltip}
+              onclick={toggleSelectAll}
+              {@attach tooltip(selectAllTooltip)}
             />
           </th>
+          <th></th>
           {#each columns as { key, label, style } (key)}
             <th
               onclick={() => toggleSort(key)}
@@ -357,13 +358,32 @@
         </tr>
       </thead>
       <tbody>
-        {#each paginated as { id, number, name, surname, email, enrollmentYear } (id)}
+        {#each paginated as { id, number, name, surname, email, enrollmentYear }, i (id)}
+          {@const rowInfo = `${name} ${surname}`}
           {@const selectTooltip = selected.has(id)
-          ? m.table_deselect_row({ rowInfo: `${name} ${surname}` })
-          : m.table_select_row({ rowInfo: `${name} ${surname}` })}
+          ? m.table_deselect_row({ rowInfo })
+          : m.table_select_row({ rowInfo })}
           <tr>
-            <td onclick={() => toggleSelected(id)} {@attach tooltip(selectTooltip)}>
-              <input type="checkbox" checked={selected.has(id)} aria-label={selectTooltip} />
+            <td>
+              <input
+                type="checkbox"
+                checked={selected.has(id)}
+                aria-label={selectTooltip}
+                onclick={() => toggleSelected(id)}
+                {@attach tooltip(selectTooltip)}
+              />
+            </td>
+            <td class="action">
+              <button
+                class="tertiary"
+                style="min-width: calc(16px + 2 * var(--spacing))"
+                {@attach tooltip(m.table_edit_row({ rowInfo }))}
+                onclick={() => {
+                  editing = paginated[i];
+                }}
+              >
+                <Pencil size={16} />
+              </button>
             </td>
             <td class="numeric">{number}</td>
             <td class="truncate20">{name}</td>

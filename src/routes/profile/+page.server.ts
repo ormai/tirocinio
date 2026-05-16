@@ -1,3 +1,4 @@
+import { yearFromString } from '$lib/form/academic-year';
 import { passwordRegExp } from '$lib/form/field.svelte';
 import { requireAuth } from '$lib/server/api-security';
 import { db } from '$lib/server/db';
@@ -9,7 +10,6 @@ import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
-import { yearFromString } from '$lib/form/academic-year';
 
 export const load: PageServerLoad = ({ locals }) => {
   requireAuth(locals);
@@ -29,7 +29,7 @@ export const actions = {
 
     const enrollmentYear = yearFromString(data.get('enrollment-year')?.toString());
     if (enrollmentYear && (enrollmentYear < 0 || enrollmentYear > 32767)) {
-      return fail(400, 'Number must be in range [0, 32767]');
+      return fail(400, 'Enrollment year must be in range [0, 32767]');
     }
 
     const number = yearFromString(data.get('student-number')?.toString());

@@ -6,29 +6,51 @@
   import { cubicOut } from 'svelte/easing';
   import { MediaQuery } from 'svelte/reactivity';
   import { fade, fly } from 'svelte/transition';
+  import LoadingButton from './LoadingButton.svelte';
+
+  // FIXME: when modal is open it should not be possible to keyboard select other elements.
 
   type Action = {
     /** @prop label Text that describes the action. It is required because we have no tooltips for actions. */
     label: string;
+
     /** @prop onClick Side effect of the action. */
     onClick: () => void;
+
     /** @prop icon Optional icon to prepend to the label. */
     icon?: Component;
-    /** @propr role Dictates the style of the action. If absent 'primary' is assumed. */
+
+    /** @prop role Dictates the style of the action. If absent 'primary' is assumed. */
     role?: 'secondary' | 'tertiary' | 'danger';
+
+    /** @prop Whether the button is disabled or not */
+    disabled?: boolean;
+
+    /** @prop The id of the form the button submits */
+    form?: string;
+
+    /** @prop Whether the action button is showing a loading progress */
+    loading?: boolean;
   };
 
   interface Props {
     /** @prop title Text in the header of the modal. Explains what the modal is for. */
     title: string;
+
     /** @prop open Bindable. Exposes the open/closed state of the modal. */
     open?: boolean;
+
     /** @prop actions A set of actions represented as buttons at the bottom of the modal. */
-    actions?: Action[];
+    actions?: ReadonlyArray<Action>;
+
     /** @prop dismissible If true the modal can be dismissed only by an explicit action */
     dismissible?: boolean;
+
     /** @prop children Body of the modal, can be anything. */
     children?: Snippet;
+
+    /** @prop Called right after the button was internally dismissed */
+    onDismiss?: () => void;
   }
 
   /**
@@ -36,8 +58,14 @@
    */
   const TRANSITION_DURATION = 220;
 
-  let { open = $bindable(false), title, actions = [], dismissible = true, children }: Props =
-    $props();
+  let {
+    open = $bindable(false),
+    title,
+    actions = [],
+    dismissible = true,
+    children,
+    onDismiss = () => {},
+  }: Props = $props();
 
   const mobile = new MediaQuery('(max-width: 480px)');
 
@@ -51,12 +79,17 @@
       css: (t: number) => `opacity: ${t}; transform: scale(${0.96 + 0.04 * t});`,
     };
   }
+
+  function dismiss() {
+    open = false;
+    onDismiss();
+  }
 </script>
 
 <svelte:window
   onkeydown={(e: KeyboardEvent) => {
     if (open && dismissible && e.key === 'Escape') {
-      open = false;
+      dismiss();
     }
   }}
 />
@@ -65,7 +98,7 @@
   <div
     class="backdrop"
     onclick={() => {
-      if (dismissible) open = false;
+      if (dismissible) dismiss();
     }}
     role="presentation"
     transition:fade={{ duration: TRANSITION_DURATION, easing: cubicOut }}
@@ -81,7 +114,7 @@
         <h2 id="modal-title">{title}</h2>
         <button
           class="tertiary"
-          onclick={() => open = false}
+          onclick={() => dismiss()}
           aria-label={m.modal_dismiss()}
           {@attach tooltip(m.modal_dismiss())}
         >
@@ -95,10 +128,17 @@
 
       {#if actions.length > 0}
         <footer>
-          {#each actions as action (action.label)}
-            <button class={action.role} onclick={action.onClick}>
-              {#if action.icon}<div><action.icon /></div> {/if}{action.label}
-            </button>
+          {#each actions as { role, icon: Icon, label, onClick: onclick, disabled, form, loading } (label)}
+            <LoadingButton
+              type={form ? 'submit' : 'button'}
+              class={role}
+              {onclick}
+              enabled={!disabled}
+              {form}
+              {loading}
+            >
+              <div class="button-inner">{#if Icon}<div><Icon /></div> {/if}{label}</div>
+            </LoadingButton>
           {/each}
         </footer>
       {/if}
@@ -161,12 +201,14 @@
     gap: 0.5rem;
     padding: 1.25rem 1rem;
     flex-shrink: 0;
+  }
 
-    button {
-      display: flex;
-      gap: 0.5rem;
-      text-align: center;
-    }
+  .button-inner {
+    display: flex;
+    gap: 0.5rem;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
   }
 
   @media (max-width: 480px) {
@@ -185,10 +227,6 @@
 
     footer {
       flex-direction: column-reverse;
-
-      button {
-        justify-content: center;
-      }
     }
   }
 </style>

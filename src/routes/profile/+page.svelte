@@ -46,7 +46,7 @@
   const surname = new Field();
 
   const studentNumber = new NumberField(
-    [() => server?.numberTaken === true && m.student_number_taken()],
+    [() => server?.numberTaken === true && m.students_number_taken()],
     () => {
       if (server) server.numberTaken = false;
     },

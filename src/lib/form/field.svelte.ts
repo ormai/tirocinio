@@ -1,10 +1,11 @@
 import type { LocalizedString } from '@inlang/paraglide-js';
+import { untrack } from 'svelte';
 
 /**
  * Given an input field, the Validator validates it, returning `false` if valid or a feedback
  * string explaining why it is invalid and giving advice for a fix, to be displayed in UI.
  */
-type Validator = (input: HTMLInputElement) => LocalizedString | false;
+export type Validator = (input: HTMLInputElement) => LocalizedString | false;
 
 /**
  * A valid password has at least
@@ -78,7 +79,7 @@ export class Field {
    * @param onClearServerErrors {() => void} callback to clear server errors on input, defaults to no-op.
    */
   constructor(
-    private readonly validators: Validator[] = [],
+    private readonly validators: ReadonlyArray<Validator> = [],
     private readonly onClearServerErrors: () => void = () => {},
   ) {
   }
@@ -127,6 +128,7 @@ export class Field {
   attach = (input: HTMLInputElement): () => void => {
     this.input = input;
     this._value = input.value;
+    untrack(() => this.validate());
 
     const onInput = () => {
       if (this.input) {

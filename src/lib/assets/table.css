@@ -17,6 +17,11 @@
       background: var(--body-lighter-bg);
     }
 
+    td.action,
+    th.action {
+      padding: var(--spacing);
+    }
+
     th span {
       white-space: nowrap;
       max-width: 15ch;
@@ -36,6 +41,7 @@
     }
 
     >*:last-child>tr:last-child {
+
       td,
       th {
         border-bottom: none;

@@ -104,12 +104,15 @@
     }
   }],
   "students_add": "Add student",
-  "table_select_all": "Select all",
+  "students_edit": "Edit student",
+  "students_edit_confirm": "Save changes",
+  "students_add_confirm": "Add",
   "table_deselect_all": "Deselect all",
   "table_filters": "Filters",
   "table_search_placeholder": "Search…",
   "table_select_row": "Select {rowInfo}",
   "table_deselect_row": "Deselect {rowInfo}",
+  "table_edit_row": "Edit {rowInfo}",
   "table_export": "Export",
   "table_sort_by": "Sort by {key}, {direction}",
   "table_sort_asc": "ascending",
@@ -119,5 +122,10 @@
   "table_page_first": "First page",
   "table_page_prev": "Previous page",
   "table_page_next": "Next page",
-  "table_page_last": "Last page"
+  "table_page_last": "Last page",
+  "students_number_taken": "A student with this number already exists",
+  "students_email_missing": "Student email is required",
+  "students_updated_confirm": "Student updated successfully",
+  "students_added_confirm": "Student added successfully",
+  "students_email_taken": "A student with this email already exists"
 }

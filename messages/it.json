@@ -59,7 +59,7 @@
   "proflie_password_mismatch": "Le password non combaciano",
   "profile_new_password_invalid": "Non valida",
   "profile_number_bad_input": "La matricola può contenere solo numeri",
-  "profile_email_taken": "This email address is already used by another user",
+  "profile_email_taken": "Questo indirizzo email è già usato da un altro utente",
   "profile_password_incorrect": "Password incorretta",
   "profile_verify_email_title": "Verifica la tua nuova email",
   "profile_verify_email_desc": "Segui il link di verifica che abbiamo inviato al tuo nuovo indirizzo email.",
@@ -104,6 +104,9 @@
     }
   }],
   "students_add": "Aggiungi studente",
+  "students_edit": "Modifica studente",
+  "students_edit_confirm": "Salva modifiche",
+  "students_add_confirm": "Aggiungi",
   "table_selected": "{selected} selezionati",
   "table_select_all": "Seleziona tutti",
   "table_deselect_all": "Deseleziona tutti",
@@ -111,6 +114,7 @@
   "table_search_placeholder": "Cerca…",
   "table_select_row": "Seleziona {rowInfo}",
   "table_deselect_row": "Deseleziona {rowInfo}",
+  "table_edit_row": "Modifica {rowInfo}",
   "table_export": "Esporta",
   "table_sort_by": "Ordina per {key}, {direction}",
   "table_sort_asc": "decrescente",
@@ -120,5 +124,10 @@
   "table_page_first": "Prima pagina",
   "table_page_prev": "Pagina precedente",
   "table_page_next": "Prossima pagina",
-  "table_page_last": "Ultima pagina"
+  "table_page_last": "Ultima pagina",
+  "students_number_taken": "Esiste già uno studente con questa matricola",
+  "students_email_missing": "L'indirizzo email è obbligatorio",
+  "students_updated_confirm": "Studente modificato con successo",
+  "students_added_confirm": "Studente aggiunto con successo",
+  "students_email_taken": "Esiste già uno studente con questo indirizzo email"
 }

@@ -138,6 +138,12 @@ button {
 	}
 
 	&:disabled,
+	&.secondary:disabled,
+	&.secondary:disabled:hover,
+	&.tertiary:disabled,
+	&.tertiary:disabled:hover,
+	&.danger:disabled,
+	&.danger:disabled:hover,
 	&.loading {
 		background: hsl(from var(--body-light-bg) h s calc(l - 20) / 0.9);
 		color: var(--body-lighter);
@@ -163,11 +169,6 @@ button {
 
 		&:active {
 			background: hsl(from var(--body-light-bg) h s calc(l + 6));
-		}
-
-		&:disabled {
-			background: hsl(from var(--body-light-bg) h calc(s - 10) calc(l + 10));
-			
 		}
 	}
 

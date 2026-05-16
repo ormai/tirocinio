@@ -21,7 +21,7 @@
 
   interface Props {
     field: Field;
-    initialValue?: any;
+    initialValue?: string | number | null;
     placeholder?: string;
   }
 

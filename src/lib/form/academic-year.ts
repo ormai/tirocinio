@@ -1,6 +1,3 @@
-import { m } from '$lib/paraglide/messages';
-import { Field } from './field.svelte';
-
 export function nextFromStart(start: string): string {
   const year = yearFromString(start);
   return year ? `/ ${year + 1}` : '/ 0000';
