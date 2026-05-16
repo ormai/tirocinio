@@ -136,8 +136,11 @@
               enabled={!disabled}
               {form}
               {loading}
+              grow={false}
             >
-              <div class="button-inner">{#if Icon}<div><Icon /></div> {/if}{label}</div>
+              <div class="button-inner">
+                {#if Icon}<div style="min-width: 24px"><Icon /></div> {/if}{label}
+              </div>
             </LoadingButton>
           {/each}
         </footer>

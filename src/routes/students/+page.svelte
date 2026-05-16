@@ -7,6 +7,7 @@
   import Modal from '$lib/Modal.svelte';
   import { deLocalizeHref } from '$lib/paraglide/runtime';
   import type { StudentView } from '$lib/server/user.js';
+  import ExportModal from '$lib/table/ExportModal.svelte';
   import { tooltip } from '$lib/tooltip.svelte.js';
   import {
     ArrowDown01,
@@ -33,7 +34,6 @@
   import AddEditStudentModal from './AddEditStudentModal.svelte';
   import DeleteStudentsModal from './DeleteStudentsModal.svelte';
 
-  // TODO: export selected students
   // TODO: import students from spreadsheet (?)
   // TODO: make table reusable
 
@@ -198,10 +198,24 @@
   let paginated = $derived(students.slice(page * pageSize, (page + 1) * pageSize));
 
   let editing: StudentView | null = $state(null);
-  let addModalOpen: boolean = $state(false);
-
+  let addModalOpen = $state(false);
   let deleteModalOpen = $state(false);
+  let exportModalOpen = $state(false);
 </script>
+
+<ExportModal
+  title={m.students_export_modal({ count: selected.size })}
+  data={() => students.filter((s) => selected.has(s.id))}
+  bind:open={exportModalOpen}
+  headers={{
+    number: m.students_number(),
+    name: m.students_name(),
+    surname: m.students_surname(),
+    email: m.students_email(),
+    enrollmentYear: m.students_year(),
+  }}
+  filename={m.students_export_filename()}
+/>
 
 <AddEditStudentModal bind:editing bind:addModalOpen {form} />
 
@@ -271,7 +285,7 @@
           <div transition:fade class="row">
             <button
               class="secondary icon-host"
-              onclick={() => {}}
+              onclick={() => (exportModalOpen = true)}
               {@attach tooltip(m.table_export())}
             >
               <Download />

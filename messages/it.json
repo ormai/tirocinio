@@ -137,5 +137,17 @@
       "countPlural=one": "{count} studente eliminato permanentemente",
       "countPlural=other": "{count} studenti eliminati permanentemente"
     }
-  }]
+  }],
+  "students_export_modal": [{
+    "declarations": ["input count", "local countPlural = count: plural"],
+    "selectors": ["countPlural"],
+    "match": {
+      "countPlural=one": "Esporta {count} studente",
+      "countPlural=other": "Esporta {count} studenti"
+    }
+  }],
+  "export_choose_format": "Scegli un formato",
+  "export_format_xlsx": "XLSX, Microsoft Excel",
+  "export_format_csv": "CSV, testo semplice",
+  "students_export_filename": "studenti_esportati"
 }

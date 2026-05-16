@@ -125,7 +125,11 @@
       </div>
 
       <div class="button-row">
-        <button class="secondary icon-host" onclick={() => otp = false} {@attach tooltip(m.nav_back())}>
+        <button
+          class="secondary icon-host"
+          onclick={() => otp = false}
+          {@attach tooltip(m.nav_back())}
+        >
           <ArrowLeft />
         </button>
         <LoadingButton {loading}>

@@ -2,12 +2,13 @@
   import spinner from '$lib/assets/spinner.svg?raw';
   import { fade } from 'svelte/transition';
 
-  let { loading = false, enabled = true, children, ...rest } = $props();
+  let { loading = false, enabled = true, children, grow = true, ...rest } = $props();
 </script>
 <button
   {...rest}
   disabled={!enabled || loading}
   class:loading
+  style:width={grow ? '100%' : 'initial'}
 >
   {#if loading}
     <div class="icon" transition:fade={{ duration: 100 }}>
@@ -27,6 +28,5 @@
   button {
     display: flex;
     justify-content: center;
-    width: 100%;
   }
 </style>
