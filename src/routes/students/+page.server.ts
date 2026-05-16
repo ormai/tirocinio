@@ -7,7 +7,7 @@ import { type ActionFailure, type Actions, fail, isActionFailure } from '@svelte
 import { and, eq, inArray, ne } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals }): Promise<{ students: Array<StudentView> }> => {
+export const load: PageServerLoad = async ({ locals }): Promise<{ students: ReadonlyArray<StudentView> }> => {
   requireAdmin(locals);
   return {
     students: await db.select({

@@ -2,8 +2,10 @@
   import { m } from '$lib/paraglide/messages';
   import TitleBar from '../TitleBar.svelte';
   import '$lib/assets/table.css';
+  import { page as pageState } from '$app/state';
   import AcademicYearField, { YearField } from '$lib/form/AcademicYear.svelte';
   import Modal from '$lib/Modal.svelte';
+  import { deLocalizeHref } from '$lib/paraglide/runtime';
   import type { StudentView } from '$lib/server/user.js';
   import { tooltip } from '$lib/tooltip.svelte.js';
   import {
@@ -33,8 +35,26 @@
 
   // TODO: export selected students
   // TODO: import students from spreadsheet (?)
-  // TODO: store table state locally for the client, maybe in session state.
   // TODO: make table reusable
+
+  onMount(() => {
+    console.timeEnd('mount');
+    const saved = sessionStorage.getItem(`${pageState.url.pathname}-table`);
+    if (saved) {
+      const stored = JSON.parse(saved);
+      sort = stored.sort;
+      search = stored.search;
+      page = stored.page;
+      yearFilter = stored.yearFilter;
+    }
+  });
+
+  $effect(() => {
+    sessionStorage.setItem(
+      `${deLocalizeHref(pageState.url.pathname)}-table`,
+      JSON.stringify({ sort, search, page, yearFilter }),
+    );
+  });
 
   const columns = [
     { key: 'number', label: m.students_number(), style: 'numeric' },
@@ -52,9 +72,6 @@
   }
 
   let { data, form }: PageProps = $props();
-
-  console.time('mount');
-  onMount(() => console.timeEnd('mount'));
 
   let search = $state('');
   let sort: Sort = $state({ key: undefined, direction: 1 });
@@ -166,11 +183,16 @@
     selected.size > 0 ? m.table_deselect_all() : m.table_select_all(),
   );
 
+  let skipOnMountFlag = true;
   const pageSize = 18;
   let page = $state(0);
   $effect(() => {
     void students;
-    page = 0;
+    if (skipOnMountFlag) {
+      skipOnMountFlag = false;
+    } else {
+      page = 0;
+    }
   });
   let pageCount = $derived(Math.ceil(students.length / pageSize));
   let paginated = $derived(students.slice(page * pageSize, (page + 1) * pageSize));
