@@ -3,7 +3,7 @@
   import { invalidateAll, replaceState } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
-  import AcademicYearField from '$lib/form/AcademicYearField.svelte';
+  import AcademicYearField, { YearField } from '$lib/form/AcademicYearField.svelte';
   import { Field, passwordRegExp } from '$lib/form/field.svelte';
   import PasswordField from '$lib/form/PasswordField.svelte';
   import onSubmit from '$lib/form/submit';
@@ -52,11 +52,7 @@
     (i) => i.validity.rangeUnderflow && m.number_underflow({ min: i.min }),
     (i) => i.validity.rangeOverflow && m.number_overflow({ max: i.max }),
   ]);
-  const enrollmentYear = new Field([
-    (i) => i.validity.badInput && m.profile_enrollment_year_bad_input(),
-    (i) => i.validity.rangeUnderflow && m.number_underflow({ min: i.min }),
-    (i) => i.validity.rangeOverflow && m.number_overflow({ max: i.max }),
-  ]);
+  const enrollmentYear = new YearField();
 
   const currentPassword: Field = new Field([
     (i) =>

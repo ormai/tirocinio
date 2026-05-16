@@ -1,7 +1,20 @@
+<script lang="ts" module>
+  export class YearField extends Field {
+    constructor() {
+      super([
+        (i) => i.validity.badInput && m.profile_enrollment_year_bad_input(),
+        (i) => i.validity.rangeUnderflow && m.number_underflow({ min: i.min }),
+        (i) => i.validity.rangeOverflow && m.number_overflow({ max: i.max }),
+      ]);
+    }
+  }
+</script>
+
 <script lang="ts">
   import { nextFromStart } from '$lib/academic-year';
+  import { m } from '$lib/paraglide/messages';
   import { fade } from 'svelte/transition';
-  import type { Field } from './field.svelte';
+  import { Field } from './field.svelte';
 
   interface Props {
     field: Field;
