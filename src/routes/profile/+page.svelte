@@ -3,9 +3,10 @@
   import { invalidateAll, replaceState } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
-  import AcademicYearField, { YearField } from '$lib/form/AcademicYearField.svelte';
+  import AcademicYearField, { YearField } from '$lib/form/AcademicYear.svelte';
   import { Field, passwordRegExp } from '$lib/form/field.svelte';
   import PasswordField from '$lib/form/PasswordField.svelte';
+  import StudentNumberField, { NumberField } from '$lib/form/StudentNumber.svelte';
   import onSubmit from '$lib/form/submit';
   import LoadingButton from '$lib/LoadingButton.svelte';
   import { m } from '$lib/paraglide/messages.js';
@@ -27,9 +28,7 @@
       } else {
         console.warn(`Unexpected value for verification search param: ${verification}`);
       }
-      untrack(() => {
-        replaceState(resolve('/profile'), {});
-      });
+      untrack(() => replaceState(resolve('/profile'), {}));
     }
   });
 
@@ -46,12 +45,12 @@
   const name = new Field();
   const surname = new Field();
 
-  // FIXME: server-side unique constraint validation
-  const studentNumber = new Field([
-    (i) => i.validity.badInput && m.profile_number_bad_input(),
-    (i) => i.validity.rangeUnderflow && m.number_underflow({ min: i.min }),
-    (i) => i.validity.rangeOverflow && m.number_overflow({ max: i.max }),
-  ]);
+  const studentNumber = new NumberField(
+    [() => server?.numberTaken === true && m.student_number_taken()],
+    () => {
+      if (server) server.numberTaken = false;
+    },
+  );
   const enrollmentYear = new YearField();
 
   const currentPassword: Field = new Field([
@@ -96,6 +95,7 @@
     untrack(() => {
       email.validate();
       currentPassword.validate();
+      studentNumber.validate();
     });
   });
 
@@ -136,6 +136,7 @@
     if (server) {
       server.incorrectPassword = false;
       server.emailTaken = false;
+      server.numberTaken = false;
     }
   }
 
@@ -196,23 +197,11 @@
       </div>
 
       {#if data.user.role === 'student'}
-        <div class="input-host">
-          <label for="student-number">{m.profile_student_number()}</label>
-          <input
-            class="numeric"
-            id="student-number"
-            type="number"
-            name="student-number"
-            value={data.user.number}
-            placeholder={m.profile_missing()}
-            min="0"
-            max="2147483647"
-            {@attach studentNumber.attach}
-          >
-          {#if studentNumber.dirty && studentNumber.error}
-            <span transition:fade class="error">{studentNumber.error}</span>
-          {/if}
-        </div>
+        <StudentNumberField
+          field={studentNumber}
+          placeholder={m.profile_missing()}
+          initialValue={data.user.number}
+        />
 
         <AcademicYearField
           field={enrollmentYear}

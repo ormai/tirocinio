@@ -11,10 +11,10 @@
 </script>
 
 <script lang="ts">
-  import { nextFromStart } from '$lib/academic-year';
-  import { m } from '$lib/paraglide/messages';
   import { fade } from 'svelte/transition';
+  import { nextFromStart } from './academic-year';
   import { Field } from './field.svelte';
+    import { m } from '$lib/paraglide/messages';
 
   interface Props {
     field: Field;
