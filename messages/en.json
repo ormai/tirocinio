@@ -127,5 +127,13 @@
   "students_email_missing": "Student email is required",
   "students_updated_confirm": "Student updated successfully",
   "students_added_confirm": "Student added successfully",
-  "students_email_taken": "A student with this email already exists"
+  "students_email_taken": "A student with this email already exists",
+  "students_deleted_confirm": [{
+    "declarations": ["input count", "local countPlural = count: plural"],
+    "selectors": ["countPlural"],
+    "match": {
+      "countPlural=one": "{count} student deleted permantly",
+      "countPlural=other": "{count} students deleted permanently"
+    }
+  }]
 }

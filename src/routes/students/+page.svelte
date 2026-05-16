@@ -29,11 +29,9 @@
   import { fade } from 'svelte/transition';
   import type { PageProps } from './$types';
   import AddEditStudentModal from './AddEditStudentModal.svelte';
+  import DeleteStudentsModal from './DeleteStudentsModal.svelte';
 
-  // TODO: form to add one student
-  // TODO: action to edit each student
   // TODO: export selected students
-  // TODO: delete selected students
   // TODO: import students from spreadsheet (?)
   // TODO: store table state locally for the client, maybe in session state.
   // TODO: make table reusable
@@ -63,7 +61,6 @@
   const selected = new SvelteSet<number>();
   let students = $derived(filterAndSort(data.students));
   let allSelected: boolean = $derived(selected.size > 0 && selected.size === students.length);
-  let deleteModalOpen = $state(false);
   let filtersModalOpen = $state(false);
 
   // The 'select all' checkbox won't be updated just by reactive properties
@@ -180,18 +177,13 @@
 
   let editing: StudentView | null = $state(null);
   let addModalOpen: boolean = $state(false);
+
+  let deleteModalOpen = $state(false);
 </script>
 
 <AddEditStudentModal bind:editing bind:addModalOpen {form} />
 
-<Modal
-  title={m.students_delete({ count: selected.size })}
-  bind:open={deleteModalOpen}
-  actions={[
-    { label: m.modal_cancel(), onClick: () => (deleteModalOpen = false), role: 'secondary' },
-    { label: m.modal_delete(), onClick: () => {}, role: 'danger' },
-  ]}
-/>
+<DeleteStudentsModal bind:open={deleteModalOpen} ids={selected} />
 
 <Modal
   bind:open={filtersModalOpen}

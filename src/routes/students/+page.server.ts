@@ -4,7 +4,7 @@ import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
 import type { StudentView } from '$lib/server/user';
 import { type ActionFailure, type Actions, fail, isActionFailure } from '@sveltejs/kit';
-import { and, eq, ne } from 'drizzle-orm';
+import { and, eq, inArray, ne } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }): Promise<{ students: Array<StudentView> }> => {
@@ -97,5 +97,15 @@ export const actions: Actions = {
     }).where(eq(users.id, student.id));
 
     return { edited: true };
+  },
+
+  delete: async ({ locals, request }) => {
+    requireAdmin(locals);
+
+    const data = await request.formData();
+    const ids = data.getAll('id').map(Number);
+    await db.delete(users).where(inArray(users.id, ids));
+    console.debug(`Delete students: ${ids}`);
+    return { count: ids.length };
   },
 };

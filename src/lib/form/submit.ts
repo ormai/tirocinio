@@ -16,7 +16,7 @@ export default function onSubmit(
   cancel: () => void,
   fields: Field[],
   before: () => void,
-  after: () => Promise<void>,
+  after: (result: ActionResult<Record<string, unknown>>) => Promise<void>,
 ):
   | (({ result }: { result: ActionResult<Record<string, unknown>> }) => Promise<void>)
   | undefined
@@ -31,6 +31,6 @@ export default function onSubmit(
   before();
   return async ({ result }) => {
     await applyAction(result);
-    await after();
+    await after(result);
   };
 }
