@@ -41,7 +41,9 @@ html {
 	--border: light-dark(#ccc, #444);
 
 	/* Main color: hyperlinks, focus style, active states of components and forms */
-	--primary: light-dark(NavajoWhite, SeaGreen);
+	/* --primary: light-dark(SandyBrown, SaddleBrown); */
+	--primary: light-dark(Plum, DarkOrchid);
+	/* --primary: light-dark(PaleTurquoise, DarkCyan); */
 	--primary-bg: light-dark(#6ea8fe, #031633);
 	--primary-border: #084298;
 	--primary-text: light-dark(#031633, #6ea8fe);
@@ -145,9 +147,9 @@ button {
 	&.danger:disabled,
 	&.danger:disabled:hover,
 	&.loading {
-		background: hsl(from var(--body-light-bg) h s calc(l - 20) / 0.9);
+		background: light-dark(hsl(from var(--body-light-bg) h s calc(l - 20) / 0.9), hsl(from var(--body-lighter-bg) h s calc(l - 8) / 0.9));
 		color: var(--body-lighter);
-		border-color: var(--border);
+		border-color: hsl(from var(--border) h s calc(l - 10));
 	}
 
 	&:disabled {
@@ -329,4 +331,9 @@ input[type="checkbox"] {
 
 .numeric {
 	font-variant-numeric: tabular-nums slashed-zero;
+}
+
+.icon-host {
+	padding: var(--spacing);
+	min-width: calc(24px + var(--spacing) * 2 + 2px);
 }

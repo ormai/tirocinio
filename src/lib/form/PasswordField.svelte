@@ -38,8 +38,7 @@
     />
     <button
       type="button"
-      class="secondary"
-      style:padding="var(--spacing) calc(var(--spacing) + 2px)"
+      class="secondary icon-host"
       onclick={() => (visible = !visible)}
       {@attach tooltip(visible ? m.password_hide() : m.password_show())}
     >

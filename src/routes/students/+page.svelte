@@ -528,11 +528,6 @@
     }
   }
 
-  .icon-host {
-    padding: var(--spacing);
-    min-width: calc(24px + var(--spacing) * 2 + 2px);
-  }
-
   .notice {
     text-align: center;
     color: var(--body-light);
