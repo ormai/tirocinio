@@ -178,4 +178,11 @@ export class Field {
       this.input.dataset.valid = '';
     }
   }
+
+  /**
+   * Utility method that checks if the value of the field changed.
+   */
+  hasChanged(oldValue: string | number | undefined): boolean {
+    return this.value !== (oldValue?.toString() ?? '');
+  }
 }

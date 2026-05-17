@@ -8,6 +8,7 @@
   import { deLocalizeHref } from '$lib/paraglide/runtime';
   import type { StudentView } from '$lib/server/user.js';
   import ExportModal from '$lib/table/ExportModal.svelte';
+  import type { Filter } from '$lib/table/Table.svelte';
   import { tooltip } from '$lib/tooltip.svelte.js';
   import {
     ArrowDown01,
@@ -26,6 +27,7 @@
     RotateCcw,
     Search,
     Trash,
+    X,
   } from '@lucide/svelte';
   import { onMount } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
@@ -38,21 +40,27 @@
   // TODO: make table reusable
 
   onMount(() => {
-    console.timeEnd('mount');
     const saved = sessionStorage.getItem(`${pageState.url.pathname}-table`);
     if (saved) {
       const stored = JSON.parse(saved);
       sort = stored.sort;
       search = stored.search;
       page = stored.page;
-      yearFilter = stored.yearFilter;
+      yearFilter.bound = stored.yearFilterBound;
+      yearFilter.tone = stored.yearFilterTone;
     }
   });
 
   $effect(() => {
     sessionStorage.setItem(
       `${deLocalizeHref(pageState.url.pathname)}-table`,
-      JSON.stringify({ sort, search, page, yearFilter }),
+      JSON.stringify({
+        sort,
+        search,
+        page,
+        yearFilterBound: yearFilter.bound,
+        yearFilterTone: yearFilter.tone,
+      }),
     );
   });
 
@@ -104,38 +112,70 @@
   }
 
   type Tone = 'lt' | 'le' | 'gt' | 'ge' | 'eq';
-  let yearTone: Tone = $state('lt');
-  let yearFilter: { num?: number; tone: Tone } = $state({ num: undefined, tone: 'lt' });
-  const yearFilterField = new YearField();
-  function yearFilterSatisfied(year: number | null): boolean {
-    const { tone, num } = yearFilter;
-    if (year && num) {
-      switch (tone) {
-        case 'lt':
-          return year < num;
-        case 'le':
-          return year <= num;
-        case 'gt':
-          return year > num;
-        case 'ge':
-          return year >= num;
-        case 'eq':
-          return year === num;
+
+  class YearFilter implements Filter<StudentView> {
+    tone: Tone = $state('lt');
+    toneField: Tone = $state('lt');
+    bound?: number = $state(undefined);
+    boundField = new YearField();
+
+    isSatisfied(row: StudentView): boolean {
+      if (row.enrollmentYear && this.bound) {
+        switch (this.tone) {
+          case 'lt':
+            return row.enrollmentYear < this.bound;
+          case 'le':
+            return row.enrollmentYear <= this.bound;
+          case 'gt':
+            return row.enrollmentYear > this.bound;
+          case 'ge':
+            return row.enrollmentYear >= this.bound;
+          case 'eq':
+            return row.enrollmentYear === this.bound;
+        }
+      }
+      return true;
+    }
+
+    get canApply(): boolean {
+      return (this.boundField.hasChanged(this.bound) || this.tone !== this.toneField)
+        && this.boundField.hasText && this.boundField.valid;
+    }
+
+    get isActive(): boolean {
+      return this.bound !== undefined;
+    }
+
+    clear(): void {
+      this.bound = undefined;
+      this.boundField.resetTo();
+      this.tone = 'lt';
+      this.toneField = 'lt';
+    }
+
+    apply(): void {
+      if (this.canApply) {
+        const bound = Number.parseInt(this.boundField.value);
+        if (Number.isFinite(bound)) {
+          yearFilter.bound = bound;
+          yearFilter.tone = this.toneField;
+        }
       }
     }
-    return true;
   }
+
+  const yearFilter = new YearFilter();
 
   function isDirty(): boolean {
     return sort.key !== undefined || search.length > 0 || selected.size > 0
-      || yearFilter.num !== undefined;
+      || yearFilter.isActive;
   }
 
   function clear() {
     sort.key = undefined;
     search = '';
     selected.clear();
-    yearFilter.num = undefined;
+    yearFilter.clear();
   }
 
   $effect(() => {
@@ -150,7 +190,7 @@
       (!search
         || [s.number, s.name, s.surname, s.email, s.enrollmentYear].some((v) =>
           String(v ?? '').toLowerCase().includes(search.toLowerCase())
-        )) && yearFilterSatisfied(s.enrollmentYear)
+        )) && yearFilter.isSatisfied(s)
     );
 
     if (sort.key) {
@@ -224,38 +264,40 @@
 <Modal
   bind:open={filtersModalOpen}
   title={m.table_filters()}
-  actions={[{ label: m.modal_dismiss(), onClick: () => (filtersModalOpen = false), role: 'secondary' }, {
-    label: m.modal_apply(),
-    onClick: () => {
-      if (yearFilterField?.valid) {
-        const num = Number.parseInt(yearFilterField.value);
-        if (Number.isFinite(num)) {
-          yearFilter.num = num;
-          yearFilter.tone = yearTone;
-          filtersModalOpen = false;
-        }
-      }
+  actions={[
+    { label: m.modal_dismiss(), onClick: () => (filtersModalOpen = false), role: 'secondary' },
+    {
+      label: m.modal_apply(),
+      disabled: !yearFilter.canApply,
+      onClick: () => {
+        yearFilter.apply();
+        filtersModalOpen = false;
+      },
     },
-  }]}
+  ]}
 >
   <div class="row filter">
     {m.students_year()}
-    <select bind:value={yearTone}>
+    <select bind:value={yearFilter.toneField}>
       <option value="lt">&lt;</option>
       <option value="le">&le;</option>
       <option value="gt">&gt;</option>
       <option value="ge">&ge;</option>
       <option value="eq">=</option>
     </select>
-    <AcademicYearField field={yearFilterField} maxWidth={200} initialValue={yearFilter.num} />
-    {#if yearFilter.num}
+    <AcademicYearField
+      field={yearFilter.boundField}
+      maxWidth={200}
+      initialValue={yearFilter.bound}
+    />
+    {#if yearFilter.isActive}
       <button
         class="secondary icon-host"
-        onclick={() => (yearFilter.num = undefined)}
+        onclick={() => yearFilter.clear()}
         transition:fade
         {@attach tooltip(m.table_filter_turn_off())}
       >
-        <RotateCcw />
+        <X />
       </button>
     {/if}
   </div>
@@ -492,7 +534,7 @@
           flex: 1;
           input {
             flex: 1;
-            max-width: none;
+            max-width: initial;
             min-width: 0;
           }
         }
@@ -500,11 +542,12 @@
     }
   }
 
+
   .row {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    justify-content: center;
+  	display: flex;
+  	gap: 0.5rem;
+  	align-items: center;
+  	justify-content: center;
   }
 
   .row.filter {

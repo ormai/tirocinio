@@ -92,7 +92,7 @@
     "selectors": ["countPlural"],
     "match": {
       "countPlural=one": "Eliminare permanentemente {count} studente?",
-      "countPlural=other": "Eliminare permanente {count} studenti?"
+      "countPlural=other": "Eliminare permanentemente {count} studenti?"
     }
   }],
   "students_selected": [{

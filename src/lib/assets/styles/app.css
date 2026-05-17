@@ -337,3 +337,11 @@ input[type="checkbox"] {
 	padding: var(--spacing);
 	min-width: calc(24px + var(--spacing) * 2 + 2px);
 }
+
+
+.row-spaced {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	justify-content: center;
+}
