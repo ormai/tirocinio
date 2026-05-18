@@ -338,6 +338,17 @@ input[type="checkbox"] {
 	min-width: calc(24px + var(--spacing) * 2 + 2px);
 }
 
+truncate50 {
+	max-width: 50ch;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+truncate20 {
+	max-width: 20ch;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
 
 .row-spaced {
 	display: flex;

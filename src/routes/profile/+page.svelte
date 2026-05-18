@@ -83,7 +83,7 @@
     (i) =>
       (currentPassword.hasText || newPassword.hasText) && i.validity.valueMissing
       && m.profile_new_password_confirm_missing(),
-    (i) => i.value !== newPassword.value && m.proflie_password_mismatch(),
+    (i) => i.value !== newPassword.value && m.profile_password_mismatch(),
     () => (!newPassword.valid && newPassword.hasText) && m.profile_new_password_invalid(),
   ], () => {
     currentPassword.validate();

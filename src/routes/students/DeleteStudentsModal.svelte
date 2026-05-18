@@ -17,7 +17,7 @@
 </script>
 
 <Modal
-  title={m.students_delete({ count: ids.size })}
+  title={m.table_delete_modal({ count: ids.size, entity: m.students({ count: ids.size }) })}
   bind:open
   actions={[
     { label: m.modal_cancel(), onClick: () => (open = false), role: 'secondary' },

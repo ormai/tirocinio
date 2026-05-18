@@ -15,11 +15,11 @@
 
   interface Props {
     editing: StudentView | null;
-    addModalOpen: boolean;
+    open: boolean;
     form: ActionData;
   }
 
-  let { editing = $bindable(null), addModalOpen = $bindable(false), form }: Props = $props();
+  let { editing = $bindable(null), open = $bindable(false), form }: Props = $props();
 
   let server = $state<Partial<ActionData>>({});
 
@@ -72,7 +72,7 @@
       await invalidateAll();
       success(m.students_added_confirm());
       server.added = false;
-      addModalOpen = false;
+      open = false;
     } else {
       error(m.error());
     }
@@ -81,7 +81,7 @@
 
   function onDismiss() {
     editing = null;
-    addModalOpen = false;
+    open = false;
     if (server) {
       server.emailTaken = false;
       server.numberTaken = false;
@@ -90,8 +90,10 @@
 </script>
 
 <Modal
-  title={editing !== null ? m.students_edit() : m.students_add()}
-  open={editing !== null || addModalOpen}
+  title={editing !== null
+  ? m.table_edit({ entity: m.students({ count: 1 }) })
+  : m.table_add({ entity: m.students({ count: 1 }) })}
+  open={editing !== null || open}
   dismissible={!formDirty}
   {onDismiss}
   actions={[
