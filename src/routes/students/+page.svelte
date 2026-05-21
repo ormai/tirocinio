@@ -7,6 +7,7 @@
   import type { StudentView } from '$lib/server/user.js';
   import DeleteSelectedModal from '$lib/table/DeleteSelectedModal.svelte';
   import ExportModal from '$lib/table/ExportModal.svelte';
+  import OrderEqSelector, { compareOrderEq, type OrderEq } from '$lib/table/OrderEqSelector.svelte';
   import type { Filter } from '$lib/table/Table.svelte';
   import Table from '$lib/table/Table.svelte';
   import { tooltip } from '$lib/tooltip.svelte.js';
@@ -30,7 +31,7 @@
       // search = stored.search;
       // page = stored.page;
       yearFilter.bound = stored.yearFilterBound;
-      yearFilter.tone = stored.yearFilterTone;
+      yearFilter.orderEq = stored.yearFilterTone;
     }
   });
 
@@ -42,41 +43,28 @@
         // search,
         // page,
         yearFilterBound: yearFilter.bound,
-        yearFilterTone: yearFilter.tone,
+        yearFilterTone: yearFilter.orderEq,
       }),
     );
   });
 
   let { data, form }: PageProps = $props();
 
-  type Tone = 'lt' | 'le' | 'gt' | 'ge' | 'eq';
-
   class YearFilter implements Filter<StudentView> {
-    tone: Tone = $state('lt');
-    toneField: Tone = $state('lt');
+    orderEq: OrderEq = $state('lt');
+    orderEqField: OrderEq = $state('lt');
     bound?: number = $state(undefined);
     boundField = new YearField();
 
     isSatisfied(row: StudentView): boolean {
       if (row.enrollmentYear && this.bound) {
-        switch (this.tone) {
-          case 'lt':
-            return row.enrollmentYear < this.bound;
-          case 'le':
-            return row.enrollmentYear <= this.bound;
-          case 'gt':
-            return row.enrollmentYear > this.bound;
-          case 'ge':
-            return row.enrollmentYear >= this.bound;
-          case 'eq':
-            return row.enrollmentYear === this.bound;
-        }
+        return compareOrderEq(this.orderEq, row.enrollmentYear, this.bound);
       }
       return true;
     }
 
     get canApply(): boolean {
-      return (this.boundField.hasChanged(this.bound) || this.tone !== this.toneField)
+      return (this.boundField.hasChanged(this.bound) || this.orderEq !== this.orderEqField)
         && this.boundField.hasText && this.boundField.valid;
     }
 
@@ -87,8 +75,8 @@
     clear(): void {
       this.bound = undefined;
       this.boundField.resetTo();
-      this.tone = 'lt';
-      this.toneField = 'lt';
+      this.orderEq = 'lt';
+      this.orderEqField = 'lt';
     }
 
     apply(): void {
@@ -96,7 +84,7 @@
         const bound = Number.parseInt(this.boundField.value);
         if (Number.isFinite(bound)) {
           this.bound = bound;
-          this.tone = this.toneField;
+          this.orderEq = this.orderEqField;
         }
       }
     }
@@ -166,28 +154,21 @@
 >
   <div class="row-spaced filter">
     {m.students_year()}
-    <select bind:value={yearFilter.toneField}>
-      <option value="lt">&lt;</option>
-      <option value="le">&le;</option>
-      <option value="gt">&gt;</option>
-      <option value="ge">&ge;</option>
-      <option value="eq">=</option>
-    </select>
+    <OrderEqSelector bind:orderEq={yearFilter.orderEqField} />
     <AcademicYearField
       field={yearFilter.boundField}
       maxWidth={200}
       initialValue={yearFilter.bound}
     />
-    {#if yearFilter.isActive}
-      <button
-        class="secondary icon-host"
-        onclick={() => yearFilter.clear()}
-        transition:fade
-        {@attach tooltip(m.table_filter_turn_off())}
-      >
-        <X />
-      </button>
-    {/if}
+    <button
+      class="secondary icon-host"
+      onclick={() => yearFilter.clear()}
+      transition:fade
+      disabled={!yearFilter.isActive}
+      {@attach tooltip(m.table_filter_turn_off())}
+    >
+      <X />
+    </button>
   </div>
 </Modal>
 
