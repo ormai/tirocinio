@@ -51,11 +51,11 @@
 
   let formDirty: boolean = $derived.by(() =>
     editing !== null
-      ? number.value !== (editing.number?.toString() ?? '')
-        || name.value !== editing.name
-        || surname.value !== editing.surname
-        || email.value !== editing.email
-        || year.value !== (editing.enrollmentYear?.toString() ?? '')
+      ? number.hasChanged(editing.number)
+        || name.hasChanged(editing.name)
+        || surname.hasChanged(editing.surname)
+        || email.hasChanged(editing.email)
+        || year.hasChanged(editing.enrollmentYear)
       : fields.some((field) => field.dirty)
   );
   let canSubmit: boolean = $derived(formDirty && fields.every((field) => field.valid));

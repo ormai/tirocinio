@@ -89,11 +89,8 @@ export const actions: Actions = {
     }
 
     await db.update(users).set({
-      number: student.number,
-      name: student.name,
-      surname: student.surname,
       email: student.email!,
-      enrollmentYear: student.enrollmentYear,
+      ...student,
     }).where(eq(users.id, student.id));
 
     return { edited: true };

@@ -10,7 +10,7 @@
   let locale = $state(getLocale());
   $effect(() => {
     if (getLocale() !== locale) {
-      setLocale(locale);
+      void setLocale(locale);
     }
   });
 </script>

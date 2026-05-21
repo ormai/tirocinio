@@ -138,5 +138,28 @@
   ],
   "table_sort_asc": "ascending",
   "table_sort_by": "Sort by {key}, {direction}",
-  "table_sort_desc": "descending"
+  "table_sort_desc": "descending",
+  "structures": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "structure", "countPlural=other": "structures" }
+    }
+  ],
+  "structures_name": "Name",
+  "structures_ward": "Ward",
+  "structures_area": "Area",
+  "structures_kind": "Kind",
+  "structures_site": "Site",
+  "structures_capacity": "Capacity",
+  "structures_deleted_confirm": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "{count} structure deleted", "countPlural=other": "{count} structures deleted" }
+    }
+  ],
+  "structures_export_filename": "structures_export",
+  "structures_updated_confirm": "Structure updated successfully",
+  "structures_added_confirm": "Structure added successfully"
 }

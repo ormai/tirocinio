@@ -5,6 +5,7 @@
   import { m } from '$lib/paraglide/messages';
   import { deLocalizeHref } from '$lib/paraglide/runtime';
   import type { StudentView } from '$lib/server/user.js';
+  import DeleteSelectedModal from '$lib/table/DeleteSelectedModal.svelte';
   import ExportModal from '$lib/table/ExportModal.svelte';
   import type { Filter } from '$lib/table/Table.svelte';
   import Table from '$lib/table/Table.svelte';
@@ -16,7 +17,6 @@
   import TitleBar from '../TitleBar.svelte';
   import type { PageProps } from './$types';
   import AddEditStudentModal from './AddEditStudentModal.svelte';
-  import DeleteStudentsModal from './DeleteStudentsModal.svelte';
 
   // TODO: import students from spreadsheet (?)
 
@@ -142,7 +142,12 @@
 
 <AddEditStudentModal bind:editing bind:open={addModalOpen} {form} />
 
-<DeleteStudentsModal bind:open={deleteModalOpen} ids={selected} />
+<DeleteSelectedModal
+  bind:open={deleteModalOpen}
+  ids={selected}
+  label={m.students}
+  confirmMessage={m.students_deleted_confirm}
+/>
 
 <Modal
   bind:open={filtersModalOpen}

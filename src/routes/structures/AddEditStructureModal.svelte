@@ -1,0 +1,155 @@
+<script lang="ts">
+  import { enhance } from '$app/forms';
+  import { invalidateAll } from '$app/navigation';
+  import { Field } from '$lib/form/field.svelte';
+  import onSubmit from '$lib/form/submit';
+  import Modal from '$lib/Modal.svelte';
+  import { error, m } from '$lib/paraglide/messages';
+  import type { StructureView } from '$lib/server/structure';
+  import { success } from '$lib/toast/Toaster.svelte';
+  import { fade } from 'svelte/transition';
+  import type { ActionData } from './$types';
+
+  interface Props {
+    editing: StructureView | null;
+    open: boolean;
+    form: ActionData;
+  }
+
+  let { editing = $bindable(null), open = $bindable(false), form }: Props = $props();
+
+  let server = $state<Partial<ActionData>>({});
+  let loading = $state(false);
+
+  $effect(() => {
+    server = { ...form };
+  });
+
+  const name = new Field();
+  const ward = new Field();
+  const area = new Field();
+  const kind = new Field();
+  const site = new Field();
+  const capacity = new Field(
+    [
+      (i) => i.validity.badInput && m.profile_enrollment_year_bad_input(),
+      (i) => i.validity.rangeUnderflow && m.number_underflow({ min: i.min }),
+      (i) => i.validity.rangeOverflow && m.number_overflow({ max: i.max }),
+    ],
+  );
+
+  const fields = [name, ward, area, kind, site, capacity];
+
+  let formDirty: boolean = $derived.by(() =>
+    editing !== null
+      ? name.hasChanged(editing.name) || ward.hasChanged(editing.ward)
+        || area.hasChanged(editing.area) || kind.hasChanged(editing.kind)
+        || site.hasChanged(editing.site) || capacity.hasChanged(editing.capacity)
+      : fields.some((field) => field.dirty)
+  );
+  let canSubmit: boolean = $derived(formDirty && fields.every((field) => field.valid));
+
+  function onDismiss() {
+    editing = null;
+    open = false;
+  }
+
+  async function afterSubmit() {
+    if (server?.edited === true) {
+      await invalidateAll();
+      success(m.structures_updated_confirm());
+      server.edited = false;
+      editing = null;
+    } else if (server?.added === true) {
+      await invalidateAll();
+      success(m.structures_added_confirm());
+      server.added = false;
+      open = false;
+    } else {
+      error(m.error());
+    }
+    loading = false;
+  }
+</script>
+
+<Modal
+  title={editing !== null
+  ? m.table_edit({ entity: m.structures({ count: 1 }) })
+  : m.table_add({ entity: m.structures({ count: 1 }) })}
+  open={editing !== null || open}
+  dismissible={!formDirty}
+  {onDismiss}
+  actions={[
+    {
+      label: m.modal_cancel(),
+      onClick: onDismiss,
+      role: 'secondary',
+    },
+    {
+      label: editing !== null ? m.students_edit_confirm() : m.students_add_confirm(),
+      disabled: !canSubmit,
+      form: 'add-edit-structure',
+      onClick: () => {},
+      loading,
+    },
+  ]}
+>
+  <form
+    id="add-edit-structure"
+    method="POST"
+    action={editing !== null ? '?/edit' : '?/add'}
+    use:enhance={({ cancel }) => onSubmit(cancel, fields, () => (loading = true), afterSubmit)}
+    novalidate
+  >
+    <input type="hidden" name="id" value={editing?.id}>
+
+    <div class="input-host">
+      <label for="name">{m.structures_name()}</label>
+      <input id="name" name="name" value={editing?.name} {@attach name.attach} />
+    </div>
+
+    <div class="input-host">
+      <label for="ward">{m.structures_ward()}</label>
+      <input id="ward" name="ward" value={editing?.ward} {@attach ward.attach} />
+    </div>
+
+    <div class="input-host">
+      <label for="area">{m.structures_area()}</label>
+      <input id="area" name="area" value={editing?.area} {@attach area.attach} />
+    </div>
+
+    <div class="input-host">
+      <label for="kind">{m.structures_kind()}</label>
+      <input id="kind" name="kind" value={editing?.kind} {@attach kind.attach} />
+    </div>
+
+    <div class="input-host">
+      <label for="site">{m.structures_site()}</label>
+      <input id="site" name="site" value={editing?.site} {@attach site.attach} />
+    </div>
+
+    <div class="input-host">
+      <label for="capacity">{m.structures_capacity()}</label>
+      <input
+        id="capacity"
+        name="capacity"
+        type="number"
+        min="0"
+        max="2147483647"
+        value={editing?.capacity}
+        {@attach capacity.attach}
+      />
+      {#if capacity.dirty && capacity.error}
+        <span transition:fade class="error">{capacity.error}</span>
+      {/if}
+    </div>
+  </form>
+</Modal>
+
+<style>
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+</style>

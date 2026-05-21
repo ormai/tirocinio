@@ -182,7 +182,7 @@ export class Field {
   /**
    * Utility method that checks if the value of the field changed.
    */
-  hasChanged(oldValue: string | number | undefined): boolean {
+  hasChanged(oldValue: string | number | undefined | null): boolean {
     return this.value !== (oldValue?.toString() ?? '');
   }
 }

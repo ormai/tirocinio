@@ -138,5 +138,28 @@
   ],
   "table_sort_asc": "decrescente",
   "table_sort_by": "Ordina per {key}, {direction}",
-  "table_sort_desc": "crescente"
+  "table_sort_desc": "crescente",
+  "structures": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "struttura", "countPlural=other": "strutture" }
+    }
+  ],
+  "structures_name": "Nome",
+  "structures_ward": "Reparto",
+  "structures_area": "Area",
+  "structures_kind": "Tipo",
+  "structures_site": "Luogo",
+  "structures_capacity": "Capienza",
+  "structures_deleted_confirm": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "{count} struttura eliminata", "countPlural=other": "{count} strutture eliminate" }
+    }
+  ],
+  "structures_export_filename": "strutture_esportate",
+  "structures_updated_confirm": "Struttura aggiornata con successo",
+  "structures_added_confirm": "Struttura aggiunta con successo"
 }

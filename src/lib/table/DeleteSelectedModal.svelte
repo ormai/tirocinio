@@ -3,21 +3,23 @@
   import { invalidateAll } from '$app/navigation';
   import onSubmit from '$lib/form/submit';
   import Modal from '$lib/Modal.svelte';
-  import { error, m } from '$lib/paraglide/messages';
+  import { error, type LocalizedString, m } from '$lib/paraglide/messages';
   import { success } from '$lib/toast/Toaster.svelte';
 
   interface Props {
     ids: Set<number>;
     open: boolean;
+    label: ({ count }: { count: number }) => LocalizedString;
+    confirmMessage: ({ count }: { count: number }) => LocalizedString;
   }
 
-  let { ids, open = $bindable(false) }: Props = $props();
+  let { ids, open = $bindable(false), label, confirmMessage }: Props = $props();
 
   let loading = $state(false);
 </script>
 
 <Modal
-  title={m.table_delete_modal({ count: ids.size, entity: m.students({ count: ids.size }) })}
+  title={m.table_delete_modal({ count: ids.size, entity: label({ count: ids.size }) })}
   bind:open
   actions={[
     { label: m.modal_cancel(), onClick: () => (open = false), role: 'secondary' },
@@ -40,7 +42,7 @@
     if (result.type === 'success') {
       await invalidateAll();
       if (result.data?.count) {
-        success(m.students_deleted_confirm({ count: result.data.count }));
+        success(confirmMessage({ count: result.data.count as number }));
       }
       open = false;
     } else {

@@ -52,7 +52,7 @@ export const sessions = pgTable(
 export const sites = pgTable('sites', {
   id: serial().primaryKey(),
   name: varchar().unique(),
-});
+}, (site) => [uniqueIndex('site_name').on(site.name)]);
 
 export const structures = pgTable('structures', {
   id: serial().primaryKey(),
