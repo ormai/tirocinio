@@ -8,8 +8,6 @@
   import { fade, fly } from 'svelte/transition';
   import LoadingButton from './LoadingButton.svelte';
 
-  // FIXME: when modal is open it should not be possible to keyboard select other elements.
-
   type Action = {
     /** @prop label Text that describes the action. It is required because we have no tooltips for actions. */
     label: string;
@@ -80,76 +78,90 @@
     };
   }
 
+  let shaking = $state(false);
+  function shake() {
+    shaking = true;
+    setTimeout(() => (shaking = false), 439);
+  }
+
   function dismiss() {
     open = false;
     onDismiss();
   }
-</script>
 
-<svelte:window
-  onkeydown={(e: KeyboardEvent) => {
-    if (open && dismissible && e.key === 'Escape') {
-      dismiss();
-    }
-  }}
-/>
+  let dialog = $state<HTMLDialogElement>();
+</script>
 
 {#if open}
   <div
     class="backdrop"
-    onclick={() => {
-      if (dismissible) dismiss();
-    }}
     role="presentation"
     transition:fade={{ duration: TRANSITION_DURATION, easing: cubicOut }}
   >
-    <dialog
-      open
-      onclick={(e) => e.stopPropagation()}
-      aria-modal="true"
-      aria-labelledby="modal-title"
-      transition:dialogTransition
-    >
-      <header>
-        <h2 id="modal-title">{title}</h2>
-        <button
-          class="tertiary"
-          onclick={() => dismiss()}
-          aria-label={m.modal_dismiss()}
-          {@attach tooltip(m.modal_dismiss())}
-        >
-          <X />
-        </button>
-      </header>
-
-      {#if children}
-        <main>{@render children()}</main>
-      {/if}
-
-      {#if actions.length > 0}
-        <footer>
-          {#each actions as { role, icon: Icon, label, onClick: onclick, disabled, form, loading } (label)}
-            <LoadingButton
-              type={form ? 'submit' : 'button'}
-              class={role}
-              {onclick}
-              enabled={!disabled}
-              {form}
-              {loading}
-              grow={false}
-            >
-              <div class="button-inner">
-                {#if Icon}<div style="min-width: 24px"><Icon /></div> {/if}{label}
-              </div>
-            </LoadingButton>
-          {/each}
-        </footer>
-      {/if}
-    </dialog>
   </div>
+
+  <dialog
+    bind:this={dialog}
+    onkeydown={(e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        if (dismissible) dismiss();
+        else shake();
+      }
+    }}
+    onclick={(e) => {
+      if (e.target === dialog) {
+        if (dismissible) dismiss();
+        else shake();
+      }
+    }}
+    onintrostart={() => dialog?.showModal()}
+    aria-labelledby="modal-title"
+    transition:dialogTransition
+    class:shaking
+  >
+    <header>
+      <h2 id="modal-title">{title}</h2>
+      <button
+        class="tertiary"
+        onclick={() => dismiss()}
+        {@attach tooltip({ content: m.modal_dismiss(), appendTo: () => dialog!, trigger: 'mouseenter' })}
+      >
+        <X />
+      </button>
+    </header>
+
+    {#if children}
+      <main>{@render children()}</main>
+    {/if}
+
+    {#if actions.length > 0}
+      <footer>
+        {#each actions as { role, icon: Icon, label, onClick: onclick, disabled, form, loading } (label)}
+          <LoadingButton
+            type={form ? 'submit' : 'button'}
+            class={role}
+            {onclick}
+            enabled={!disabled}
+            {form}
+            {loading}
+            grow={false}
+          >
+            <div class="button-inner">
+              {#if Icon}<div style="min-width: 24px"><Icon /></div> {/if}{label}
+            </div>
+          </LoadingButton>
+        {/each}
+      </footer>
+    {/if}
+  </dialog>
 {/if}
 
 <style>
+  dialog::backdrop {
+    background: transparent;
+  }
+
   .backdrop {
     position: fixed;
     inset: 0;
@@ -163,8 +175,7 @@
   dialog {
     position: relative;
     background: var(--body-light-bg);
-    color: var(--body-light);
-    border: 1px solid var(--border);
+    color: var(--body-light); border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 0;
     width: 100%;
@@ -212,6 +223,18 @@
     text-align: center;
     align-items: center;
     justify-content: center;
+  }
+
+  dialog.shaking {
+    animation: shake 400ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  }
+
+  @keyframes shake {
+    to, from { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
   }
 
   @media (max-width: 480px) {

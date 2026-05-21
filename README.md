@@ -17,3 +17,4 @@
 - [Dockerizing Your SvelteKit Applications: A Practical Guide](https://khromov.se/dockerizing-your-sveltekit-applications-a-practical-guide/)
 - [A Modern CSS Reset](https://www.joshwcomeau.com/css/custom-css-reset/)
 - [System Font Stack](https://systemfontstack.com/)
+- [There is No Need to Trap Focus on a Dialog Element](https://css-tricks.com/there-is-no-need-to-trap-focus-on-a-dialog-element/)
