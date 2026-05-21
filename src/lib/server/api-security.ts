@@ -8,7 +8,7 @@ import type { User } from './user';
  * @throws {import('@sveltejs/kit').Redirect} If proper **authentication** is not present, redirects to sign-in route.
  */
 export function requireAuth(locals: App.Locals): asserts locals is App.Locals & { user: User } {
-  if (locals.user === null) {
+  if (!locals.user) {
     redirect(303, '/sign-in');
   }
 }
@@ -21,7 +21,7 @@ export function requireAuth(locals: App.Locals): asserts locals is App.Locals & 
  */
 export function requireAdmin(locals: App.Locals): asserts locals is App.Locals & { user: User & { role: 'admin' } } {
   requireAuth(locals);
-  if (locals.user.role !== 'admin') {
+  if (locals.user?.role !== 'admin') {
     error(403, 'Only administrators can access this resource');
   }
 }
