@@ -14,7 +14,15 @@ const authentication: Handle = async ({ event, resolve }) => {
     const session = await getSession(token);
     if (session) {
       const [user] = await db
-        .select()
+        .select({
+          id: users.id,
+          number: users.number,
+          email: users.email,
+          name: users.name,
+          surname: users.surname,
+          enrollmentYear: users.enrollmentYear,
+          role: users.role,
+        })
         .from(users)
         .where(eq(users.id, session.userId));
       console.assert(user, 'Request belongs to an orphaned Session. User deletion should cascade to Session.');

@@ -101,14 +101,11 @@
 
   let formDirty = $derived(
     data.user !== null
-      && (email.value !== data.user.email || name.value !== data.user.name
-        || surname.value !== data.user.surname
-        || (data.user.role === 'student'
-          && studentNumber.value !== (data.user.number?.toString() ?? ''))
-        || (data.user.role === 'student'
-          && enrollmentYear.value !== (data.user.enrollmentYear?.toString() ?? ''))
-        || currentPassword.hasText
-        || newPassword.hasText || newPasswordConfirm.hasText),
+      && (email.hasChanged(data.user.email) || name.hasChanged(data.user.name)
+        || surname.hasChanged(data.user.surname)
+        || (data.user.role === 'student' && studentNumber.hasChanged(data.user.number))
+        || (data.user.role === 'student' && enrollmentYear.hasChanged(data.user.enrollmentYear))
+        || currentPassword.hasText || newPassword.hasText || newPasswordConfirm.hasText),
   );
 
   const fields = [

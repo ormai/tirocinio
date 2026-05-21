@@ -170,7 +170,7 @@ export class Field {
   /**
    * Flushes the state of the field and sets an optional value.
    */
-  resetTo(value: string | undefined | null = '') {
+  resetTo(value: number | string | undefined | null = '') {
     this.value = value?.toString() ?? '';
     this._error = '';
     this._dirty = false;

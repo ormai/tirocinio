@@ -8,16 +8,13 @@
   import SignOut, { onSignOut } from './SignOut.svelte';
 
   let { data, children }: LayoutProps = $props();
-
-  /** Some routes are excluded from nav elements. */
-  const excluded = ['sign-in'];
 </script>
 
 <Toaster />
 
 <SignOut onDismiss={onSidebarDismiss} />
 
-{#if excluded.some((route) => page.url.pathname.endsWith(route))}
+{#if page.url.pathname.endsWith('sign-in')}
   {@render children()}
 {:else}
   {#if data.user?.role === 'admin'}
@@ -25,7 +22,9 @@
       user={data.user}
       collapsed={data.sidebarCollapsed}
       colorScheme={data.colorScheme}
-    >{@render children()}</Sidebar>
+    >
+      {@render children()}
+    </Sidebar>
   {:else if data.user?.role === 'student'}
     You are a student
     {@render children()}

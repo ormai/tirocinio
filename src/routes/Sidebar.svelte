@@ -27,7 +27,7 @@
   import LanguageSwitcher from '$lib/LanguageSwitcher.svelte';
   import { m } from '$lib/paraglide/messages';
   import { deLocalizeHref } from '$lib/paraglide/runtime';
-  import { type User } from '$lib/server/user';
+  import { type AuthUser } from '$lib/server/user';
   import { tooltip } from '$lib/tooltip.svelte';
   import {
     CircleUserRound,
@@ -48,7 +48,7 @@
   interface Props {
     collapsed: boolean | null;
     colorScheme: string | undefined;
-    user: User | null;
+    user: AuthUser | null;
     children: Snippet;
   }
 
