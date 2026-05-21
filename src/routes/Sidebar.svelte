@@ -128,6 +128,7 @@
 
 <div class="sidebar-layout">
   <aside
+    tabindex="-1"
     bind:offsetWidth={asideWidth}
     class:collapsed={sidebar.collapsed}
     class:no-transition={dragDx !== null}
@@ -135,7 +136,7 @@
     ontouchstart={onTouchStart}
     ontouchmove={onTouchMove}
     ontouchend={onTouchEnd}
-    tabindex="-1"
+    inert={sidebar.mobile && sidebar.collapsed}
   >
     <header>
       <span class="collapsible">Sidebar</span>
@@ -168,11 +169,11 @@
     <div style="flex-grow: 1;"></div>
 
     <footer>
-      <div class="row collapsible switcher">
+      <div class="row collapsible switcher" inert={sidebar.collapsed}>
         <LanguageSwitcher border="none" />
       </div>
 
-      <div class="row collapsible switcher">
+      <div class="row collapsible switcher" inert={sidebar.collapsed}>
         <ColorSchemeSwitcher
           colorScheme={colorScheme as (ColorScheme | undefined)}
           style="border: none; width: 100%;"
@@ -183,6 +184,7 @@
         onclick={onSignOut}
         class="tertiary collapsible row"
         style="text-align: initial;"
+        inert={sidebar.collapsed}
       >
         <LogOut /> <span class="signout-text">{m.signout()}</span>
       </button>
@@ -207,7 +209,7 @@
       </a>
     </footer>
   </aside>
-  <main>
+  <main inert={sidebar.mobile && !sidebar.collapsed} tabindex="-1">
     {@render children()}
   </main>
 </div>
