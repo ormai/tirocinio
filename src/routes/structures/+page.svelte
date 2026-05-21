@@ -3,15 +3,17 @@
   import type { StructureView } from '$lib/server/structure';
   import DeleteSelectedModal from '$lib/table/DeleteSelectedModal.svelte';
   import ExportModal from '$lib/table/ExportModal.svelte';
-  import Table from '$lib/table/Table.svelte';
+  import Table, { type Filter } from '$lib/table/Table.svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import TitleBar from '../TitleBar.svelte';
   import type { PageProps } from './$types';
   import AddEditStructureModal from './AddEditStructureModal.svelte';
+  import FiltersModal from './FiltersModal.svelte';
 
   let { data, form }: PageProps = $props();
 
   // TODO: how to manage the tuples (capacity, year) in the UI?
+  // TODO: Import from XLSX/CSV
 
   const columns = [
     { key: 'name', label: m.structures_name(), numeric: false, sortable: true, searchable: true },
@@ -34,6 +36,7 @@
   let deleteModalOpen = $state(false);
   let exportModalOpen = $state(false);
   let filtersModalOpen = $state(false);
+  let filters: ReadonlyArray<Filter<StructureView>> = $state([]);
 </script>
 
 <DeleteSelectedModal
@@ -53,6 +56,12 @@
   filename={m.structures_export_filename()}
 />
 
+<FiltersModal
+  bind:open={filtersModalOpen}
+  bind:filters
+  data={data.structures as ReadonlyArray<StructureView>}
+/>
+
 {#snippet body(row: StructureView)}
   <td class="truncate20">{row.name}</td>
   <td class="truncate20">{row.ward}</td>
@@ -69,7 +78,7 @@
     data={data.structures as StructureView[]}
     {columns}
     {body}
-    filters={[]}
+    {filters}
     bind:editing
     bind:selected
     bind:addModalOpen
@@ -78,5 +87,6 @@
     bind:filtersModalOpen
     getRowInfo={(row: StructureView) => row.name ?? `${row.area}-${row.site}-${row.kind}`}
     label={m.structures}
+    allFilteredOutMessage={m.structures_all_filtered_out()}
   />
 </section>

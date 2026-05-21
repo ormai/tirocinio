@@ -1,5 +1,11 @@
 <script lang="ts" module>
-  export class NumberField extends Field {
+  /** Maximum value of a four-byte signed integer. Same as the `integer` type of PostgreSQL. */
+  export const MAX_INT = 2147483647;
+
+  /** Maximum value of a two-byte signed integer. Same as the `smallint` type of PostgreSQL. */
+  export const MAX_SMALLINT = 32767;
+
+  export class NumericField extends Field {
     constructor(validators: ReadonlyArray<Validator> = [], onClear: () => void = () => {}) {
       super(
         [
@@ -16,29 +22,37 @@
 
 <script lang="ts">
   import { m } from '$lib/paraglide/messages';
+  import type { HTMLAttributes } from 'svelte/elements';
   import { fade } from 'svelte/transition';
   import { Field, type Validator } from './field.svelte';
 
-  interface Props {
+  interface Props extends HTMLAttributes<HTMLDivElement> {
     field: Field;
     initialValue?: string | number | null;
     placeholder?: string;
+    min?: number;
+    max?: number;
+    name?: string;
+    label?: string;
   }
 
-  let { field, initialValue, placeholder }: Props = $props();
+  let { field, name, initialValue, placeholder, min = 0, max = MAX_SMALLINT, label, ...props }:
+    Props = $props();
 </script>
 
-<div class="input-host">
-  <label for="student-number">{m.profile_student_number()}</label>
+<div class="input-host" {...props}>
+  {#if label}
+    <label for="student-number">{label}</label>
+  {/if}
   <input
     class="numeric"
-    id="student-number"
     type="number"
-    name="student-number"
+    id={name}
+    {name}
     value={initialValue}
     {placeholder}
-    min="0"
-    max="2147483647"
+    {min}
+    {max}
     {@attach field.attach}
   >
   {#if field.dirty && field.error}

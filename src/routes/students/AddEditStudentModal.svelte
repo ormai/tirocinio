@@ -3,7 +3,8 @@
   import { invalidateAll } from '$app/navigation';
   import AcademicYearField, { YearField } from '$lib/form/AcademicYear.svelte';
   import { Field } from '$lib/form/field.svelte';
-  import StudentNumber, { NumberField } from '$lib/form/StudentNumber.svelte';
+  import Numeric, { NumericField } from '$lib/form/Numeric.svelte';
+  import { MAX_INT } from '$lib/form/Numeric.svelte';
   import onSubmit from '$lib/form/submit';
   import Modal from '$lib/Modal.svelte';
   import { error, m } from '$lib/paraglide/messages';
@@ -23,7 +24,7 @@
 
   let server = $state<Partial<ActionData>>({});
 
-  const number = new NumberField(
+  const number = new NumericField(
     [() => server?.numberTaken === true && m.students_number_taken()],
     () => {
       if (server) server.numberTaken = false;
@@ -118,8 +119,14 @@
     use:enhance={({ cancel }) => onSubmit(cancel, fields, () => (loading = true), afterSubmit)}
     novalidate
   >
-    <StudentNumber field={number} initialValue={editing?.number} />
     <input type="hidden" name="id" value={editing?.id} />
+    <Numeric
+      field={number}
+      initialValue={editing?.number}
+      name="student-number"
+      max={MAX_INT}
+      label={m.profile_student_number()}
+    />
 
     <div class="input-host">
       <label for="name">{m.students_name()}</label>

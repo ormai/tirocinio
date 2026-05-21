@@ -5,8 +5,8 @@
   import { page } from '$app/state';
   import AcademicYearField, { YearField } from '$lib/form/AcademicYear.svelte';
   import { Field, passwordRegExp } from '$lib/form/field.svelte';
+  import Numeric, { MAX_INT, NumericField } from '$lib/form/Numeric.svelte';
   import PasswordField from '$lib/form/PasswordField.svelte';
-  import StudentNumberField, { NumberField } from '$lib/form/StudentNumber.svelte';
   import onSubmit from '$lib/form/submit';
   import LoadingButton from '$lib/LoadingButton.svelte';
   import { m } from '$lib/paraglide/messages.js';
@@ -45,7 +45,7 @@
   const name = new Field();
   const surname = new Field();
 
-  const studentNumber = new NumberField(
+  const studentNumber = new NumericField(
     [() => server?.numberTaken === true && m.students_number_taken()],
     () => {
       if (server) server.numberTaken = false;
@@ -194,10 +194,13 @@
       </div>
 
       {#if data.user.role === 'student'}
-        <StudentNumberField
+        <Numeric
           field={studentNumber}
           placeholder={m.profile_missing()}
           initialValue={data.user.number}
+          max={MAX_INT}
+          name="student-number"
+          label={m.profile_student_number()}
         />
 
         <AcademicYearField

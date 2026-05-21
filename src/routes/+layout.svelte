@@ -30,6 +30,6 @@
     {@render children()}
     <button onclick={onSignOut}>Sign Out</button>
   {:else}
-    Error: role unknown
+    Error: unknown role
   {/if}
 {/if}

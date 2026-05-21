@@ -1,20 +1,19 @@
 <script lang="ts">
   import { page } from '$app/state';
-  import AcademicYearField, { YearField } from '$lib/form/AcademicYear.svelte';
+  import AcademicYearField from '$lib/form/AcademicYear.svelte';
   import Modal from '$lib/Modal.svelte';
   import { m } from '$lib/paraglide/messages';
   import { deLocalizeHref } from '$lib/paraglide/runtime';
   import type { StudentView } from '$lib/server/user.js';
   import DeleteSelectedModal from '$lib/table/DeleteSelectedModal.svelte';
   import ExportModal from '$lib/table/ExportModal.svelte';
-  import OrderEqSelector, { compareOrderEq, type OrderEq } from '$lib/table/OrderEqSelector.svelte';
-  import type { Filter } from '$lib/table/Table.svelte';
+  import { NumericFilter } from '$lib/table/NumericFilter.svelte';
+  import OrderEqSelector, { compareOrderEq } from '$lib/table/OrderEqSelector.svelte';
   import Table from '$lib/table/Table.svelte';
   import { tooltip } from '$lib/tooltip.svelte.js';
-  import { X } from '@lucide/svelte';
+  import { BrushCleaning } from '@lucide/svelte';
   import { onMount } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
-  import { fade } from 'svelte/transition';
   import TitleBar from '../TitleBar.svelte';
   import type { PageProps } from './$types';
   import AddEditStudentModal from './AddEditStudentModal.svelte';
@@ -50,43 +49,12 @@
 
   let { data, form }: PageProps = $props();
 
-  class YearFilter implements Filter<StudentView> {
-    orderEq: OrderEq = $state('lt');
-    orderEqField: OrderEq = $state('lt');
-    bound?: number = $state(undefined);
-    boundField = new YearField();
-
+  class YearFilter extends NumericFilter<StudentView> {
     isSatisfied(row: StudentView): boolean {
       if (row.enrollmentYear && this.bound) {
         return compareOrderEq(this.orderEq, row.enrollmentYear, this.bound);
       }
       return true;
-    }
-
-    get canApply(): boolean {
-      return (this.boundField.hasChanged(this.bound) || this.orderEq !== this.orderEqField)
-        && this.boundField.hasText && this.boundField.valid;
-    }
-
-    get isActive(): boolean {
-      return this.bound !== undefined;
-    }
-
-    clear(): void {
-      this.bound = undefined;
-      this.boundField.resetTo();
-      this.orderEq = 'lt';
-      this.orderEqField = 'lt';
-    }
-
-    apply(): void {
-      if (this.canApply) {
-        const bound = Number.parseInt(this.boundField.value);
-        if (Number.isFinite(bound)) {
-          this.bound = bound;
-          this.orderEq = this.orderEqField;
-        }
-      }
     }
   }
 
@@ -144,7 +112,7 @@
     { label: m.modal_dismiss(), onClick: () => (filtersModalOpen = false), role: 'secondary' },
     {
       label: m.modal_apply(),
-      disabled: !yearFilter.canApply,
+      disabled: !yearFilter.hasChanged || !yearFilter.isValid,
       onClick: () => {
         yearFilter.apply();
         filtersModalOpen = false;
@@ -163,11 +131,10 @@
     <button
       class="secondary icon-host"
       onclick={() => yearFilter.clear()}
-      transition:fade
       disabled={!yearFilter.isActive}
-      {@attach tooltip(m.table_filter_turn_off())}
+      {@attach (node) => tooltip({content: m.table_filter_turn_off(), appendTo: () => node})(node)}
     >
-      <X />
+      <BrushCleaning />
     </button>
   </div>
 </Modal>

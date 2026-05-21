@@ -161,5 +161,8 @@
   ],
   "structures_export_filename": "strutture_esportate",
   "structures_updated_confirm": "Struttura aggiornata con successo",
-  "structures_added_confirm": "Struttura aggiunta con successo"
+  "structures_added_confirm": "Struttura aggiunta con successo",
+  "structures_all_filtered_out": "Nessuna struttura soddisfa i filtri",
+  "column_filter": "{column} è",
+  "filter_choose": "Scegli"
 }

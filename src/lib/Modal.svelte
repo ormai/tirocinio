@@ -8,7 +8,7 @@
   import { fade, fly } from 'svelte/transition';
   import LoadingButton from './LoadingButton.svelte';
 
-  type Action = {
+  export interface Action {
     /** @prop label Text that describes the action. It is required because we have no tooltips for actions. */
     label: string;
 
@@ -29,7 +29,7 @@
 
     /** @prop Whether the action button is showing a loading progress */
     loading?: boolean;
-  };
+  }
 
   interface Props {
     /** @prop title Text in the header of the modal. Explains what the modal is for. */
@@ -84,10 +84,9 @@
     setTimeout(() => (shaking = false), 439);
   }
 
-  function dismiss() {
-    open = false;
-    onDismiss();
-  }
+  $effect(() => {
+    if (!open) onDismiss();
+  });
 
   let dialog = $state<HTMLDialogElement>();
 </script>
@@ -105,13 +104,13 @@
     onkeydown={(e) => {
       if (e.key === 'Escape') {
         e.preventDefault();
-        if (dismissible) dismiss();
+        if (dismissible) open = false;
         else shake();
       }
     }}
     onclick={(e) => {
       if (e.target === dialog) {
-        if (dismissible) dismiss();
+        if (dismissible) open = false;
         else shake();
       }
     }}
@@ -124,7 +123,7 @@
       <h2 id="modal-title">{title}</h2>
       <button
         class="tertiary"
-        onclick={() => dismiss()}
+        onclick={() => open = false}
         {@attach tooltip({ content: m.modal_dismiss(), appendTo: () => dialog!, trigger: 'mouseenter' })}
       >
         <X />

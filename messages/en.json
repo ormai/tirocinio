@@ -111,6 +111,7 @@
   "students_year": "Enrollment year",
   "table_add": "Add {entity}",
   "table_all_filtered_out": "No {entity} matches the filters",
+  "structures_all_filtered_out": "No structures matches the filters",
   "table_clear_filters": "Reset filters, selection, and sorting",
   "table_delete_modal": "Delete {count} {entity} permanently?",
   "table_deselect_all": "Deselect all",
@@ -161,5 +162,7 @@
   ],
   "structures_export_filename": "structures_export",
   "structures_updated_confirm": "Structure updated successfully",
-  "structures_added_confirm": "Structure added successfully"
+  "structures_added_confirm": "Structure added successfully",
+  "column_filter": "{column} is",
+  "filter_choose": "Choose"
 }

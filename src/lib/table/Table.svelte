@@ -20,8 +20,11 @@
     /** @returns `true` if the {@link row} should be kept, or `false` if it should be excluded. */
     isSatisfied(row: T): boolean;
 
-    /** @returns `true` if the filter state is valid and thus the filter can be applied. */
-    get canApply(): boolean;
+    /** @returns `true` if the filter has a new value, not yet applied. */
+    get hasChanged(): boolean;
+
+    /** @returns `true` if new value for the filter is valid. */
+    get isValid(): boolean;
 
     /** Whether the filter is currently active. */
     get isActive(): boolean;
@@ -89,6 +92,7 @@
     addModalOpen: boolean;
     getRowInfo: (row: T) => string;
     label: ({ count }: { count: number }) => LocalizedString;
+    allFilteredOutMessage?: LocalizedString;
   }
 
   /* eslint-disable no-useless-assignment */
@@ -105,6 +109,7 @@
     addModalOpen = $bindable(false),
     getRowInfo,
     label,
+    allFilteredOutMessage = m.table_all_filtered_out({ entity: label({ count: 1 }) }),
   }: Props = $props();
   /* eslint-enable no-useless-assignment */
 
@@ -351,7 +356,7 @@
         <tr>
           <td colspan={columns.length + 2} class="notice">
             {#if data.length > 0}
-              {m.table_all_filtered_out({ entity: label({ count: 1 }) })}
+              {allFilteredOutMessage}
             {:else}
               {m.table_empty({ entities: label({ count: 2 }) })}
             {/if}
