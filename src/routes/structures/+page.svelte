@@ -71,6 +71,10 @@
   <td class="numeric">{row.capacity}</td>
 {/snippet}
 
+{#snippet settings()}
+  TODO: manage capacities here.
+{/snippet}
+
 <section class="container">
   <TitleBar title={m.sidebar_structures()} />
 
@@ -88,5 +92,7 @@
     getRowInfo={(row: StructureView) => row.name ?? `${row.area}-${row.site}-${row.kind}`}
     label={m.structures}
     allFilteredOutMessage={m.structures_all_filtered_out()}
+    uniqKey="str-tab-int"
+    {settings}
   />
 </section>

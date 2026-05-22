@@ -6,6 +6,7 @@
   import Numeric, { NumericFilter } from '$lib/table/NumericFilter.svelte';
   import { compareOrderEq } from '$lib/table/OrderEqSelector.svelte';
   import { type Filter } from '$lib/table/Table.svelte';
+  import { onMount } from 'svelte';
 
   interface Props {
     filters: ReadonlyArray<Filter<StructureView>>;
@@ -58,6 +59,41 @@
   const kind = new KindFilter(() => data.map((s) => s.kind).filter((kind) => kind !== null));
   const site = new SiteFilter(() => data.map((s) => s.site).filter((site) => site !== null));
   filters = [capacity, area, ward, kind, site];
+
+  onMount(() => {
+    const saved = window.localStorage.getItem('structures-filters');
+    if (saved) {
+      const data = JSON.parse(saved);
+      if (data.capacityBound) capacity.bound = data.capacityBound;
+      if (data.capacityOrderEq) capacity.orderEq = data.capacityOrderEq;
+      console.log(`${area.options}, ${data.areaSelected}, ${area.options.has(data.areaSelected)}`);
+      if (data.areaSelected && area.options.has(data.areaSelected)) {
+        area.selected = data.areaSelected;
+      }
+      if (data.wardSelected && ward.options.has(data.wardSelected)) {
+        ward.selected = data.wardSelected;
+      }
+      if (data.kindSelected && kind.options.has(data.kindSelected)) {
+        kind.selected = data.kindSelected;
+      }
+      if (data.siteSelected && site.options.has(data.siteSelected)) {
+        site.selected = data.siteSelected;
+      }
+    }
+  });
+  $effect(() => {
+    window.localStorage.setItem(
+      'structures-filters',
+      JSON.stringify({
+        capacityBound: capacity.bound,
+        capacityOrderEq: capacity.orderEq,
+        areaSelected: area.selected,
+        wardSelected: ward.selected,
+        kindSelected: kind.selected,
+        siteSelected: site.selected,
+      }),
+    );
+  });
 </script>
 
 <Modal

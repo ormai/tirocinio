@@ -46,7 +46,7 @@
 
 <script lang="ts">
   interface Props {
-    filter: Filter<Row> & { selectedField?: string; options: Set<string> };
+    filter: Filter<Row> & { selected?: string; selectedField?: string; options: Set<string> };
     label: string;
   }
 
@@ -56,7 +56,14 @@
 <div class="row-spaced">
   <span>{label}</span>
 
-  <select bind:value={filter.selectedField}>
+  <select
+    bind:value={filter.selectedField}
+    {@attach () => {
+      if (!filter.selectedField && filter.selected) {
+        filter.selectedField = filter.selected;
+      }
+    }}
+  >
     <option disabled value={undefined}>{m.filter_choose()}</option>
     {#each filter.options as opt (opt)}
       <option value={opt}>{opt}</option>

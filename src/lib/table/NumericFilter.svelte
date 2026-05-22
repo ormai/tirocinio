@@ -46,13 +46,15 @@
   import { m } from '$lib/paraglide/messages';
   import { tooltip } from '$lib/tooltip.svelte';
   import { BrushCleaning } from '@lucide/svelte';
+  import { onMount } from 'svelte';
   import type { OrderEq } from './OrderEqSelector.svelte';
   import OrderEqSelector from './OrderEqSelector.svelte';
   import type { Filter, Row } from './Table.svelte';
 
   interface Props {
     filter: NumericFilter<Row> & {
-      orderEqField?: OrderEq;
+      orderEqField: OrderEq;
+      orderEq: OrderEq;
       bound?: number;
       boundField: NumericField;
     };
@@ -60,6 +62,12 @@
   }
 
   let { filter, label }: Props = $props();
+
+  onMount(() => {
+    if (filter.orderEqField !== filter.orderEq) {
+      filter.orderEqField = filter.orderEq;
+    }
+  });
 </script>
 
 <div class="row-spaced">

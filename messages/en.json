@@ -164,5 +164,6 @@
   "structures_updated_confirm": "Structure updated successfully",
   "structures_added_confirm": "Structure added successfully",
   "column_filter": "{column} is",
-  "filter_choose": "Choose"
+  "filter_choose": "Choose",
+  "table_settings": "Additional options"
 }

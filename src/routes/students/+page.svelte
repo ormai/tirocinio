@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { page } from '$app/state';
   import AcademicYearField from '$lib/form/AcademicYear.svelte';
   import Modal from '$lib/Modal.svelte';
   import { m } from '$lib/paraglide/messages';
-  import { deLocalizeHref } from '$lib/paraglide/runtime';
   import type { StudentView } from '$lib/server/user.js';
   import DeleteSelectedModal from '$lib/table/DeleteSelectedModal.svelte';
   import ExportModal from '$lib/table/ExportModal.svelte';
@@ -20,30 +18,21 @@
 
   // TODO: import students from spreadsheet (?)
 
-  const persistenceKey = `${deLocalizeHref(page.url.pathname)}-table`;
-
   onMount(() => {
-    const saved = localStorage.getItem(persistenceKey);
+    const saved = window.localStorage.getItem('students-filters');
     if (saved) {
-      const stored = JSON.parse(saved);
-      // sort = stored.sort;
-      // search = stored.search;
-      // page = stored.page;
-      yearFilter.bound = stored.yearFilterBound;
-      yearFilter.orderEq = stored.yearFilterTone;
+      const data = JSON.parse(saved);
+      if (data.yearBound) yearFilter.bound = data.yearBound;
+      if (data.yearOrderEq) yearFilter.orderEq = data.yearOrderEq;
+    }
+    if (yearFilter.orderEqField !== yearFilter.orderEq) {
+      yearFilter.orderEqField = yearFilter.orderEq;
     }
   });
-
   $effect(() => {
-    localStorage.setItem(
-      persistenceKey,
-      JSON.stringify({
-        // sort,
-        // search,
-        // page,
-        yearFilterBound: yearFilter.bound,
-        yearFilterTone: yearFilter.orderEq,
-      }),
+    window.localStorage.setItem(
+      'students-filters',
+      JSON.stringify({ yearBound: yearFilter.bound, yearOrderEq: yearFilter.orderEq }),
     );
   });
 
@@ -132,7 +121,7 @@
       class="secondary icon-host"
       onclick={() => yearFilter.clear()}
       disabled={!yearFilter.isActive}
-      {@attach (node) => tooltip({content: m.table_filter_turn_off(), appendTo: () => node})(node)}
+      {@attach (node) => tooltip({ content: m.table_filter_turn_off(), appendTo: () => node })(node)}
     >
       <BrushCleaning />
     </button>
@@ -165,6 +154,7 @@
     bind:exportModalOpen
     getRowInfo={(row: StudentView) => `${row.name} ${row.surname}`}
     label={m.students}
+    uniqKey="stu-tab-int"
   />
 </section>
 

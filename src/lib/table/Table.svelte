@@ -57,12 +57,14 @@
     Plus,
     RotateCcw,
     Search,
+    Settings,
     Trash,
   } from '@lucide/svelte';
-  import type { Snippet } from 'svelte';
+  import { onMount, type Snippet, untrack } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import { fade } from 'svelte/transition';
   import '$lib/assets/table.css';
+  import Modal from '$lib/Modal.svelte';
 
   type Key = keyof T;
 
@@ -93,6 +95,8 @@
     getRowInfo: (row: T) => string;
     label: ({ count }: { count: number }) => LocalizedString;
     allFilteredOutMessage?: LocalizedString;
+    settings?: Snippet;
+    uniqKey: string;
   }
 
   /* eslint-disable no-useless-assignment */
@@ -110,8 +114,12 @@
     getRowInfo,
     label,
     allFilteredOutMessage = m.table_all_filtered_out({ entity: label({ count: 1 }) }),
+    settings,
+    uniqKey,
   }: Props = $props();
   /* eslint-enable no-useless-assignment */
+
+  let settingsOpen = $state(false);
 
   function filterAndSort(data: ReadonlyArray<T>): Array<T> {
     let rows = data.filter((row) =>
@@ -177,20 +185,6 @@
     }
   }
 
-  let skipOnMountFlag = true;
-  const pageSize = 18;
-  let page = $state(0);
-  $effect(() => {
-    void filtered;
-    if (skipOnMountFlag) {
-      skipOnMountFlag = false;
-    } else {
-      page = 0;
-    }
-  });
-  let pageCount = $derived(Math.ceil(filtered.length / pageSize));
-  let paginated = $derived(filtered.slice(page * pageSize, (page + 1) * pageSize));
-
   // Prevents the table from ever shrinking.
   let tableWidth = $state(0);
   let minTableWidth = $state(0);
@@ -204,7 +198,46 @@
       if (!visibleIds.has(id)) selected.delete(id);
     }
   });
+
+  onMount(() => {
+    const saved = window.localStorage.getItem(uniqKey);
+    if (saved) {
+      const data = JSON.parse(saved);
+      if (data.sort) sort = data.sort;
+      if (data.search) search = data.search;
+      if (data.page) page = data.page;
+    }
+  });
+  $effect(() => {
+    window.localStorage.setItem(uniqKey, JSON.stringify({ sort, search, page }));
+  });
+
+  let page = $state(0);
+  let skipInit = $state(false);
+  $effect(() => {
+    void filtered;
+    if (untrack(() => skipInit)) {
+      page = 0;
+    } else {
+      skipInit = true;
+    }
+  });
+  const pageSize = 18;
+  let pageCount = $derived(Math.ceil(filtered.length / pageSize));
+  let paginated = $derived(filtered.slice(page * pageSize, (page + 1) * pageSize));
 </script>
+
+{#if settings}
+  <Modal
+    title={m.table_settings()}
+    bind:open={settingsOpen}
+    actions={[
+      { label: m.modal_dismiss(), onClick: () => (settingsOpen = false), role: 'secondary' },
+    ]}
+  >
+    {@render settings()}
+  </Modal>
+{/if}
 
 <div class="toolbar">
   <div class="row">
@@ -270,6 +303,16 @@
       >
         <Plus />
       </button>
+
+      {#if settings}
+        <button
+          class="secondary icon-host"
+          onclick={() => (settingsOpen = true)}
+          {@attach tooltip(m.table_settings())}
+        >
+          <Settings />
+        </button>
+      {/if}
     </div>
   </div>
 </div>

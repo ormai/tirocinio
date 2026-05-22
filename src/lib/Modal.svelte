@@ -212,7 +212,7 @@
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
-    padding: 1.25rem 1rem;
+    padding: 1rem;
     flex-shrink: 0;
   }
 

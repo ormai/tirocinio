@@ -1,6 +1,6 @@
 import { requireAdmin } from '$lib/server/api-security';
 import { db } from '$lib/server/db';
-import { capacities, sites, structures, users } from '$lib/server/db/schema';
+import { capacities, sites, structures } from '$lib/server/db/schema';
 import type { StructureView } from '$lib/server/structure';
 import { fail } from '@sveltejs/kit';
 import { eq, inArray } from 'drizzle-orm';
@@ -88,7 +88,7 @@ export const actions: Actions = {
     requireAdmin(locals);
 
     const ids = (await request.formData()).getAll('id').map(Number);
-    await db.delete(structures).where(inArray(users.id, ids));
+    await db.delete(structures).where(inArray(structures.id, ids));
     console.debug(`Delete structures: ${ids}`);
     return { count: ids.length };
   },

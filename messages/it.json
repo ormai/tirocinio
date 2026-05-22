@@ -164,5 +164,6 @@
   "structures_added_confirm": "Struttura aggiunta con successo",
   "structures_all_filtered_out": "Nessuna struttura soddisfa i filtri",
   "column_filter": "{column} è",
-  "filter_choose": "Scegli"
+  "filter_choose": "Scegli",
+  "table_settings": "Opzioni aggiuntive"
 }
