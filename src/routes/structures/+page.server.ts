@@ -121,6 +121,7 @@ export const actions: Actions = {
       }));
       const ids = await tx.insert(structures).values(structs).returning({ id: structures.id });
 
+      // FIXME: handle unique constraint validation
       await tx.insert(capacities).values(
         ids.map(({ id }, i) => {
           return {
@@ -130,6 +131,8 @@ export const actions: Actions = {
           };
         }).filter((capacity): capacity is typeof capacity & { capacity: number } => capacity.capacity !== null),
       );
+
+      return { inserted: structs.length };
     });
   },
 };

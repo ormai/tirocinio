@@ -1,22 +1,30 @@
 <script lang="ts">
+  import { deserialize } from '$app/forms';
+  import { invalidateAll } from '$app/navigation';
   import AcademicYearField from '$lib/form/AcademicYear.svelte';
+  import { MAX_INT, MAX_SMALLINT } from '$lib/form/Numeric.svelte';
   import Modal from '$lib/Modal.svelte';
-  import { m } from '$lib/paraglide/messages';
+  import { type LocalizedString, m } from '$lib/paraglide/messages';
   import type { StudentView } from '$lib/server/user.js';
   import DeleteSelectedModal from '$lib/table/DeleteSelectedModal.svelte';
   import ExportModal from '$lib/table/ExportModal.svelte';
+  import ImportModal, {
+    isEmail,
+    isOptionalNumber,
+    isRequiredNumber,
+  } from '$lib/table/ImportModal.svelte';
   import { NumericFilter } from '$lib/table/NumericFilter.svelte';
   import OrderEqSelector, { compareOrderEq } from '$lib/table/OrderEqSelector.svelte';
   import Table from '$lib/table/Table.svelte';
+  import { error, success } from '$lib/toast/Toaster.svelte';
   import { tooltip } from '$lib/tooltip.svelte.js';
   import { BrushCleaning } from '@lucide/svelte';
+  import { type ActionResult } from '@sveltejs/kit';
   import { onMount } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import TitleBar from '../TitleBar.svelte';
   import type { PageProps } from './$types';
   import AddEditStudentModal from './AddEditStudentModal.svelte';
-
-  // TODO: import students from spreadsheet (?)
 
   onMount(() => {
     const saved = window.localStorage.getItem('students-filters');
@@ -75,6 +83,7 @@
   let deleteModalOpen = $state(false);
   let exportModalOpen = $state(false);
   let filtersModalOpen = $state(false);
+  let importModalOpen = $state(false);
 </script>
 
 <ExportModal
@@ -92,6 +101,41 @@
   ids={selected}
   label={m.students}
   confirmMessage={m.students_deleted_confirm}
+/>
+
+<ImportModal
+  bind:open={importModalOpen}
+  headers={Object.fromEntries(
+    columns.map((
+      { key, label, numeric },
+    ) => [key, {
+      label,
+      numeric,
+      required: key !== 'name' && key !== 'surname' && key !== 'enrollmentYear',
+    }]),
+  ) as Record<
+    keyof StudentView,
+    { label: LocalizedString; numeric: boolean; required: boolean }
+  >}
+  title={m.table_import_modal({ entities: m.students({ count: 2 }) })}
+  validators={{
+    number: isRequiredNumber(0, MAX_INT),
+    email: isEmail('required'),
+    enrollmentYear: isOptionalNumber(0, MAX_SMALLINT),
+  }}
+  onImport={async (rows: StudentView[]) => {
+    const data = new FormData();
+    data.append('rows', JSON.stringify(rows));
+    const res = await fetch('?/import', { method: 'POST', body: data });
+    const result = deserialize(await res.text()) as ActionResult;
+    if (res.ok && result.type === 'success') {
+      success(m.students_imported({ count: result.data?.inserted }));
+      importModalOpen = false;
+      await invalidateAll();
+    } else {
+      error(m.error());
+    }
+  }}
 />
 
 <Modal
@@ -152,6 +196,7 @@
     bind:deleteModalOpen
     bind:filtersModalOpen
     bind:exportModalOpen
+    bind:importModalOpen
     getRowInfo={(row: StudentView) => `${row.name} ${row.surname}`}
     label={m.students}
     uniqKey="stu-tab-int"

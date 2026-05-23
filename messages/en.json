@@ -212,5 +212,9 @@
   "import_validator_numeric": "Must be a number",
   "import_col_required": "Required",
   "import_col_required_yes": "Yes",
-  "import_col_required_no": "No"
+  "import_col_required_no": "No",
+  "import_validator_missing": "Value missing",
+  "import_validator_invalid_email": "Invalid email",
+  "students_imported": "Successfully imported {count} students",
+  "structures_imported": "Sucessfully imported {count} structures"
 }

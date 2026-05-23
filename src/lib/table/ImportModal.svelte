@@ -1,4 +1,45 @@
-<!-- @component Wizard to import a spreadsheet as a JSON-like object -->
+<!-- @component Wizard to import a spreadsheet as an array of JSON-like objects -->
+
+<script lang="ts" module>
+  import { MAX_SMALLINT } from '$lib/form/Numeric.svelte';
+
+  /** Takes the value and the number of a row and validates it. */
+  type Validator<V = unknown> = (value: V, row: number) => string | null;
+
+  /** Imported table column validator for a numeric column with optional cells. */
+  export function isOptionalNumber(min = 0, max = MAX_SMALLINT): Validator {
+    return (v) => {
+      if (v === '' || v == null) return null;
+      const num = Number(v);
+      if (isNaN(num)) return m.import_validator_numeric();
+      if (num < min) return m.number_underflow({ min });
+      if (num > max) return m.number_overflow({ max });
+      return null;
+    };
+  }
+
+  /** Imported table column validator for a numeric column with required cells. */
+  export function isRequiredNumber(min = 0, max = MAX_SMALLINT): Validator {
+    return (value, row) => {
+      if (value == null || value === '') return m.import_validator_missing('');
+      return isOptionalNumber(min, max)(value, row);
+    };
+  }
+
+  // https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Form_validation#:~:text=emailRegExp
+  const emailRegExp = /^[\w.!#$%&'*+/=?^`{|}~-]+@[a-z\d-]+(?:\.[a-z\d-]+)*$/i;
+
+  /** Imported table column validator for an email address column. */
+  export function isEmail(presence: 'required' | 'optional'): Validator {
+    return (value) => {
+      if (presence === 'required' && (value == null || value === '')) {
+        return m.import_validator_missing('');
+      }
+      if (!emailRegExp.test(String(value))) return m.import_validator_invalid_email();
+      return null;
+    };
+  }
+</script>
 
 <script lang="ts" generics="T extends Record<string, unknown>">
   import Modal, { type Action } from '$lib/Modal.svelte';
@@ -18,9 +59,6 @@
   import * as XLSX from 'xlsx';
 
   type Key = keyof T;
-
-  /** Takes the value and the number of a row and validates it. */
-  type Validator<V = unknown> = (value: V, row: number) => string | null;
 
   /** Report of an error on a row. */
   interface RowError {

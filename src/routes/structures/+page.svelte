@@ -6,9 +6,9 @@
   import type { StructureView } from '$lib/server/structure';
   import DeleteSelectedModal from '$lib/table/DeleteSelectedModal.svelte';
   import ExportModal from '$lib/table/ExportModal.svelte';
-  import ImportModal from '$lib/table/ImportModal.svelte';
+  import ImportModal, { isOptionalNumber } from '$lib/table/ImportModal.svelte';
   import Table, { type Filter } from '$lib/table/Table.svelte';
-  import { error } from '$lib/toast/Toaster.svelte';
+  import { error, success } from '$lib/toast/Toaster.svelte';
   import { type ActionResult } from '@sveltejs/kit';
   import { SvelteSet } from 'svelte/reactivity';
   import TitleBar from '../TitleBar.svelte';
@@ -77,16 +77,7 @@
     { label: LocalizedString; numeric: boolean; required: boolean }
   >}
   title={m.table_import_modal({ entities: m.structures({ count: 2 }) })}
-  validators={{
-    capacity: (v) => {
-      if (v === '' || v == null) return null;
-      const num = Number(v);
-      if (isNaN(num)) return m.import_validator_numeric();
-      if (num < 0) return m.number_underflow({ min: 0 });
-      if (num > MAX_INT) return m.number_overflow({ max: MAX_INT });
-      return null;
-    },
-  }}
+  validators={{ capacity: isOptionalNumber(0, MAX_INT) }}
   onImport={async (rows: StructureView[]) => {
     const data = new FormData();
     data.append('rows', JSON.stringify(rows));
@@ -95,6 +86,7 @@
     const result = deserialize(await res.text()) as ActionResult;
     if (res.ok && result.type === 'success') {
       importModalOpen = false;
+      success(m.structures_imported({ count: result.data?.inserted }));
       await invalidateAll();
     } else {
       error(m.error());

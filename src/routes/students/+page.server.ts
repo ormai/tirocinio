@@ -93,6 +93,7 @@ export const actions: Actions = {
       ...student,
     }).where(eq(users.id, student.id));
 
+    console.debug(`Edit student: ${student.id}`);
     return { edited: true };
   },
 
@@ -104,5 +105,23 @@ export const actions: Actions = {
     await db.delete(users).where(inArray(users.id, ids));
     console.debug(`Delete students: ${ids}`);
     return { count: ids.length };
+  },
+
+  import: async ({ locals, request }) => {
+    requireAdmin(locals);
+
+    const form = await request.formData();
+    const rows = form.get('rows');
+    if (!rows) return fail(400, 'An array of structures to import is required');
+    const data = JSON.parse(rows as string) as StudentView[];
+
+    // FIXME: handle unique constraint validation
+
+    await db.insert(users).values(data.map((student) => {
+      return { role: 'student' as const, ...student };
+    }));
+
+    console.debug(`Import ${data.length} students`);
+    return { inserted: data.length };
   },
 };
