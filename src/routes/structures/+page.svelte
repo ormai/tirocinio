@@ -1,9 +1,15 @@
 <script lang="ts">
-  import { m } from '$lib/paraglide/messages';
+  import { deserialize } from '$app/forms';
+  import { invalidateAll } from '$app/navigation';
+  import { MAX_INT } from '$lib/form/Numeric.svelte';
+  import { type LocalizedString, m } from '$lib/paraglide/messages';
   import type { StructureView } from '$lib/server/structure';
   import DeleteSelectedModal from '$lib/table/DeleteSelectedModal.svelte';
   import ExportModal from '$lib/table/ExportModal.svelte';
+  import ImportModal from '$lib/table/ImportModal.svelte';
   import Table, { type Filter } from '$lib/table/Table.svelte';
+  import { error } from '$lib/toast/Toaster.svelte';
+  import { type ActionResult } from '@sveltejs/kit';
   import { SvelteSet } from 'svelte/reactivity';
   import TitleBar from '../TitleBar.svelte';
   import type { PageProps } from './$types';
@@ -13,7 +19,6 @@
   let { data, form }: PageProps = $props();
 
   // TODO: how to manage the tuples (capacity, year) in the UI?
-  // TODO: Import from XLSX/CSV
 
   const columns = [
     { key: 'name', label: m.structures_name(), numeric: false, sortable: true, searchable: true },
@@ -35,6 +40,7 @@
   let addModalOpen = $state(false);
   let deleteModalOpen = $state(false);
   let exportModalOpen = $state(false);
+  let importModalOpen = $state(false);
   let filtersModalOpen = $state(false);
   let filters: ReadonlyArray<Filter<StructureView>> = $state([]);
 </script>
@@ -54,6 +60,46 @@
   data={() => data.structures.filter((s) => selected.has(s.id))}
   headers={Object.fromEntries(columns.map(({ key, label }) => [key, label]))}
   filename={m.structures_export_filename()}
+/>
+
+<ImportModal
+  bind:open={importModalOpen}
+  headers={Object.fromEntries(
+    columns.map((
+      { key, label, numeric },
+    ) => [key, {
+      label,
+      numeric,
+      required: key !== 'kind' && key !== 'capacity',
+    }]),
+  ) as Record<
+    keyof StructureView,
+    { label: LocalizedString; numeric: boolean; required: boolean }
+  >}
+  title={m.table_import_modal({ entities: m.structures({ count: 2 }) })}
+  validators={{
+    capacity: (v) => {
+      if (v === '' || v == null) return null;
+      const num = Number(v);
+      if (isNaN(num)) return m.import_validator_numeric();
+      if (num < 0) return m.number_underflow({ min: 0 });
+      if (num > MAX_INT) return m.number_overflow({ max: MAX_INT });
+      return null;
+    },
+  }}
+  onImport={async (rows: StructureView[]) => {
+    const data = new FormData();
+    data.append('rows', JSON.stringify(rows));
+    data.append('year', '2026');
+    const res = await fetch('?/import', { method: 'POST', body: data });
+    const result = deserialize(await res.text()) as ActionResult;
+    if (res.ok && result.type === 'success') {
+      importModalOpen = false;
+      await invalidateAll();
+    } else {
+      error(m.error());
+    }
+  }}
 />
 
 <FiltersModal
@@ -89,6 +135,7 @@
     bind:deleteModalOpen
     bind:exportModalOpen
     bind:filtersModalOpen
+    bind:importModalOpen
     getRowInfo={(row: StructureView) => row.name ?? `${row.area}-${row.site}-${row.kind}`}
     label={m.structures}
     allFilteredOutMessage={m.structures_all_filtered_out()}

@@ -66,7 +66,6 @@
       const data = JSON.parse(saved);
       if (data.capacityBound) capacity.bound = data.capacityBound;
       if (data.capacityOrderEq) capacity.orderEq = data.capacityOrderEq;
-      console.log(`${area.options}, ${data.areaSelected}, ${area.options.has(data.areaSelected)}`);
       if (data.areaSelected && area.options.has(data.areaSelected)) {
         area.selected = data.areaSelected;
       }

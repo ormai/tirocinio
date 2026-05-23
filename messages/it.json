@@ -165,5 +165,52 @@
   "structures_all_filtered_out": "Nessuna struttura soddisfa i filtri",
   "column_filter": "{column} è",
   "filter_choose": "Scegli",
-  "table_settings": "Opzioni aggiuntive"
+  "table_settings": "Opzioni aggiuntive",
+  "table_import_modal": "Importa {entities}",
+  "import_map_hint": "Mappa le colonne di \"{fileName}\" con le colonne attese.",
+  "import_map_warn": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} colonna non ancora mappata",
+        "countPlural=other": "{count} colonne non ancora mappate"
+      }
+    }
+  ],
+  "import_map_expected": "Colonna attesa",
+  "import_map_source": "Colonna del file",
+  "import_map_skip": "— salta —",
+  "import_sheet_hint": "\"{fileName}\" ha più fogli. Scegline uno da importare:",
+  "import_drop_hint": "Rilascia qui un documento .xlsx o .csv",
+  "import_browse": "Sfoglia…",
+  "import_expected_format": "Colonne attese",
+  "import_col_name": "Colonna",
+  "import_col_type": "Tipo di dato",
+  "import_col_numeric": "Numerico",
+  "import_col_textual": "Testuale",
+  "modal_back": "Indietro",
+  "import_confirm_sheet": "Usa questo foglio",
+  "import_confirm_mapping": "Conferma mappatura",
+  "import_confirm": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "Importa {count} riga", "countPlural=other": "Importa {count} righe" }
+    }
+  ],
+  "import_no_valid_rows": "Nessuna riga valida",
+  "import_all_valid": "Tutte le {count} righe sono valide e pronte per essere importate.",
+  "import_partial": "{valid} righe valide, {invalid} righe con errori.",
+  "import_err_row": "Riga",
+  "import_err_col": "Colonna",
+  "import_err_value": "Valore",
+  "import_err_msg": "Problema",
+  "import_download_errors": "Scarica resoconto degli errori (.xlsx)",
+  "import_bad_file_ext": "File con estensione non supportata",
+  "import_bad_file_ext_desc": "Impossibile importare \"{fileName}\" perché ha un'estensione non supportata. Assicurati di importare solo file che terminano con .xlsx o .csv.",
+  "import_validator_numeric": "Deve essere un numero",
+  "import_col_required": "Obbligatoria",
+  "import_col_required_yes": "Si",
+  "import_col_required_no": "No"
 }

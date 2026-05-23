@@ -21,11 +21,6 @@
       white-space: nowrap;
     }
 
-    td.action,
-    th.action {
-      padding: var(--spacing);
-    }
-
     th span {
       white-space: nowrap;
       max-width: 15ch;
@@ -41,6 +36,10 @@
 
       &:last-child {
         border-right: none;
+      }
+
+      &.action {
+        padding: var(--spacing);
       }
     }
 

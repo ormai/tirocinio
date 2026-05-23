@@ -44,9 +44,9 @@ html {
 	/* --primary: light-dark(SandyBrown, SaddleBrown); */
 	--primary: light-dark(Plum, DarkOrchid);
 	/* --primary: light-dark(PaleTurquoise, DarkCyan); */
-	--primary-bg: light-dark(#6ea8fe, #031633);
-	--primary-border: #084298;
-	--primary-text: light-dark(#031633, #6ea8fe);
+	--primary-bg: hsl(from var(--primary) h s l / 0.15);
+	--primary-border: hsl(from var(--primary) h s calc(l - 20) / 0.1);
+	--primary-text: light-dark(hsl(from var(--primary) h s calc(l - 30)), hsl(from var(--primary) h s calc(l + 20)));
 
 	/* Positive or successful actions and information */
 	--success: #198754;
@@ -121,7 +121,12 @@ a {
 	color: var(--primary-text);
 }
 
-button {
+button,
+label:has(>input[type="file"]) {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
 	cursor: pointer;
 	border-radius: var(--radius);
 	border-color: var(--primary);
@@ -211,7 +216,8 @@ button {
 
 button,
 input,
-select {
+select,
+label:has(>input[type="file"]) {
 	padding: var(--spacing) calc(var(--spacing) * 2);
 	border-width: var(--border-thickness);
 	border-style: solid;
@@ -316,7 +322,8 @@ input[type="number"] {
 	margin: 0;
 }
 
-input[type="checkbox"] {
+input[type="checkbox"],
+input[type="radio"] {
 	accent-color: var(--primary);
 }
 
@@ -355,4 +362,16 @@ truncate20 {
 	gap: 0.5rem;
 	align-items: center;
 	justify-content: center;
+}
+
+code {
+	font-family: var(--font-mono);
+	font-size: 0.82em;
+	background: var(--body-bg);
+	padding: 0.1em 0.35em;
+	border-radius: 3px;
+}
+
+.no-select {
+	user-select: none;
 }

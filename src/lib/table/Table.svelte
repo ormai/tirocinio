@@ -59,6 +59,7 @@
     Search,
     Settings,
     Trash,
+    Upload,
   } from '@lucide/svelte';
   import { onMount, type Snippet, untrack } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
@@ -92,6 +93,7 @@
     exportModalOpen: boolean;
     deleteModalOpen: boolean;
     addModalOpen: boolean;
+    importModalOpen?: boolean;
     getRowInfo: (row: T) => string;
     label: ({ count }: { count: number }) => LocalizedString;
     allFilteredOutMessage?: LocalizedString;
@@ -116,6 +118,7 @@
     allFilteredOutMessage = m.table_all_filtered_out({ entity: label({ count: 1 }) }),
     settings,
     uniqKey,
+    importModalOpen = $bindable(undefined),
   }: Props = $props();
   /* eslint-enable no-useless-assignment */
 
@@ -273,7 +276,7 @@
           >
             <Trash />
           </button>
-          <span class="numeric">{m.table_selected({ selected: selected.size })}</span>
+          <span class="numeric clip-short">{m.table_selected({ selected: selected.size })}</span>
         </div>
       {/if}
       {#if sort.key !== undefined || search.length > 0 || selected.size > 0 || filters.some((f) => f.isActive)}
@@ -289,7 +292,7 @@
     </div>
 
     <div class="row">
-      <span class="numeric" style="text-align: end">
+      <span class="numeric clip-short" style="text-align: end">
         {
           `${data.length === filtered.length ? data.length : `${filtered.length}/${data.length}`} ${
             label({ count: filtered.length })
@@ -303,6 +306,16 @@
       >
         <Plus />
       </button>
+
+      {#if importModalOpen !== undefined}
+        <button
+          class="secondary icon-host"
+          {@attach tooltip(m.table_import_modal({ entities: label({ count: 2 }) }))}
+          onclick={() => (importModalOpen = true)}
+        >
+          <Upload />
+        </button>
+      {/if}
 
       {#if settings}
         <button
@@ -473,8 +486,16 @@
         }
       }
     }
-  }
 
+    span.clip-short {
+      max-width: 5ch;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      font-size: 0.8rem;
+      letter-spacing: -0.6px;
+      line-height: 1rem;
+    }
+  }
 
   .row {
   	display: flex;
@@ -484,9 +505,7 @@
   }
 
   span {
-    letter-spacing: -0.6px;
     font-size: 0.9rem;
-    line-height: 1.1rem;
   }
 
   .toolbar {

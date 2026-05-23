@@ -165,5 +165,52 @@
   "structures_added_confirm": "Structure added successfully",
   "column_filter": "{column} is",
   "filter_choose": "Choose",
-  "table_settings": "Additional options"
+  "table_settings": "Additional options",
+  "table_import_modal": "Import {entities}",
+  "import_map_hint": "Match the columns from \"{fileName}\" to the expected columns.",
+  "import_map_warn": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} column not yet mapped",
+        "countPlural=other": "{count} columns not yet mapped"
+      }
+    }
+  ],
+  "import_map_expected": "Expected column",
+  "import_map_source": "File column",
+  "import_map_skip": "— skip —",
+  "import_sheet_hint": "\"{fileName}\" has multiple sheets. Choose one to import:",
+  "import_drop_hint": "Drop an .xlsx or .csv file here",
+  "import_browse": "Browse…",
+  "import_expected_format": "Expected columns",
+  "import_col_name": "Column",
+  "import_col_type": "Data type",
+  "import_col_numeric": "Numeric",
+  "import_col_textual": "Textual",
+  "modal_back": "Back",
+  "import_confirm_sheet": "Use this sheet",
+  "import_confirm_mapping": "Confirm mapping",
+  "import_confirm": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "Import {count} row", "countPlural=other": "Import {count} rows" }
+    }
+  ],
+  "import_no_valid_rows": "No valid rows",
+  "import_all_valid": "All {count} row(s) are valid and ready to import.",
+  "import_partial": "{valid} valid row(s), {invalid} row(s) with errors.",
+  "import_err_row": "Row",
+  "import_err_col": "Column",
+  "import_err_value": "Value",
+  "import_err_msg": "Problem",
+  "import_download_errors": "Download error report (.xlsx)",
+  "import_bad_file_ext": "Unexpect file extension",
+  "import_bad_file_ext_desc": "Cannot import \"{fileName}\" because it has an unsopported extension. Make sure to upload only files that end in .xlsx or .csv.",
+  "import_validator_numeric": "Must be a number",
+  "import_col_required": "Required",
+  "import_col_required_yes": "Yes",
+  "import_col_required_no": "No"
 }

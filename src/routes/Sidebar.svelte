@@ -183,7 +183,7 @@
       <button
         onclick={onSignOut}
         class="tertiary collapsible row"
-        style="text-align: initial;"
+        style="text-align: initial; justify-content: start; gap: 0"
         inert={sidebar.collapsed}
       >
         <LogOut /> <span class="signout-text">{m.signout()}</span>
