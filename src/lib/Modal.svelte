@@ -88,6 +88,15 @@
     if (!open) onDismiss();
   });
 
+  function cancel(e: Event) {
+    e.preventDefault();
+    if (dismissible) {
+      open = false;
+    } else {
+      shake();
+    }
+  }
+
   let dialog = $state<HTMLDialogElement>();
 </script>
 
@@ -101,18 +110,12 @@
 
   <dialog
     bind:this={dialog}
-    onkeydown={(e) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        if (dismissible) open = false;
-        else shake();
-      }
+    onclose={() => {
+      if (open) dialog?.showModal();
     }}
+    oncancel={cancel}
     onclick={(e) => {
-      if (e.target === dialog) {
-        if (dismissible) open = false;
-        else shake();
-      }
+      if (e.target === dialog) cancel(e);
     }}
     onintrostart={() => dialog?.showModal()}
     aria-labelledby="modal-title"

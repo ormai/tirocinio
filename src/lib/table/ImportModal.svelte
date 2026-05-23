@@ -247,7 +247,7 @@
     const errorRows = Array.from(byRow.entries()).map(([row, errs]) => {
       const raw = rawFileRows[row - 1];
       const errorMsg = errs.map((e) => `${e.field}: ${e.message}`).join('; ');
-      return { ...raw, __errors: errorMsg };
+      return { ...raw, [m.errors_column()]: errorMsg };
     });
 
     const ws = XLSX.utils.json_to_sheet(errorRows);

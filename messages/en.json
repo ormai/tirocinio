@@ -216,5 +216,6 @@
   "import_validator_missing": "Value missing",
   "import_validator_invalid_email": "Invalid email",
   "students_imported": "Successfully imported {count} students",
-  "structures_imported": "Sucessfully imported {count} structures"
+  "structures_imported": "Sucessfully imported {count} structures",
+  "errors_column": "Errors"
 }

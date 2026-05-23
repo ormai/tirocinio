@@ -1,4 +1,8 @@
 <script module lang="ts">
+  // FIXME: enter animation is not fluid
+  // FIXME: exit animation is too short
+  // FIXME: content alignment is broken
+
   export interface ToastOpts {
     /** A unique identifier used by Svelte's #each block as key */
     id: number;

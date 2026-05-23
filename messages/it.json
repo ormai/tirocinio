@@ -216,5 +216,6 @@
   "import_validator_missing": "Valore mancante",
   "import_validator_invalid_email": "Indirizzo email non valido",
   "students_imported": "{count} studenti importati con successo",
-  "structures_imported": "{count} strutture importate con successo"
+  "structures_imported": "{count} strutture importate con successo",
+  "errors_column": "Errori"
 }
