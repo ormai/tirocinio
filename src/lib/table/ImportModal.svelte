@@ -42,19 +42,12 @@
 </script>
 
 <script lang="ts" generics="T extends Record<string, unknown>">
+  import Banner from '$lib/Banner.svelte';
   import Modal, { type Action } from '$lib/Modal.svelte';
   import { m } from '$lib/paraglide/messages';
   import { add as showToast } from '$lib/toast/Toaster.svelte';
   import type { LocalizedString } from '@inlang/paraglide-js';
-  import {
-    ChevronDown,
-    ChevronUp,
-    CircleCheck,
-    Download,
-    FileSpreadsheet,
-    FileUp,
-    TriangleAlert,
-  } from '@lucide/svelte';
+  import { ChevronDown, ChevronUp, Download, FileSpreadsheet, FileUp } from '@lucide/svelte';
   import { SvelteMap } from 'svelte/reactivity';
   import * as XLSX from 'xlsx';
 
@@ -399,10 +392,7 @@
       <p style="font-size: 0.9rem">{m.import_map_hint({ fileName })}</p>
 
       {#if unmappedRequired.length > 0}
-        <div class="banner warn">
-          <TriangleAlert size={14} />
-          {m.import_map_warn({ count: unmappedRequired.length })}
-        </div>
+        <Banner kind="warn">{m.import_map_warn({ count: unmappedRequired.length })}</Banner>
       {/if}
 
       <table class="map-table">
@@ -433,14 +423,11 @@
       </table>
     {:else if step === 'review'}
       {#if errors.length === 0}
-        <div class="banner ok">
-          <CircleCheck size={14} /> {m.import_all_valid({ count: validRows.length })}
-        </div>
+        <Banner kind="ok">{m.import_all_valid({ count: validRows.length })}</Banner>
       {:else}
-        <div class="banner warn">
-          <TriangleAlert size={14} />
-          {m.import_partial({ valid: validRows.length, invalid: errorRowCount })}
-        </div>
+        <Banner kind="warn">{
+          m.import_partial({ valid: validRows.length, invalid: errorRowCount })
+        }</Banner>
 
         <div class="error-scroll">
           <table class="error-table">
@@ -572,27 +559,6 @@
     border-color: var(--warning-border);
     background: hsl(from var(--warning-bg) h s l / 0.3);
     color: var(--body-lighter);
-  }
-
-  .banner {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 0.75rem;
-    border-radius: var(--radius);
-    font-size: 0.85rem;
-
-    &.ok {
-      background: hsl(from var(--success-bg) h s l / 0.3);
-      color: var(--success-text);
-      border: 1px solid var(--success-border);
-    }
-
-    &.warn {
-      background: hsl(from var(--warning-bg) h s l / 0.3);
-      color: var(--warning-text);
-      border: 1px solid var(--warning-border);
-    }
   }
 
   .error-scroll {
