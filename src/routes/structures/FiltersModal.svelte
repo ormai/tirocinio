@@ -8,6 +8,8 @@
   import { type Filter } from '$lib/table/Table.svelte';
   import { onMount } from 'svelte';
 
+  // FIXME: choice filters don't update after import
+
   interface Props {
     filters: ReadonlyArray<Filter<StructureView>>;
     open: boolean;
@@ -21,6 +23,7 @@
       if (row.capacity && this.bound) {
         return compareOrderEq(this.orderEq, row.capacity, this.bound);
       }
+      if (!row.capacity && this.bound) return false;
       return true;
     }
   }
@@ -132,10 +135,5 @@
 <style>
   hr {
     width: 350px;
-    margin: 0.8rem auto;
-    color: var(--border);
-    height: 0.8px;
-    background: var(--border);
-    border: none;
   }
 </style>

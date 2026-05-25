@@ -4,11 +4,11 @@
   import { MAX_SMALLINT } from '$lib/form/Numeric.svelte';
 
   /** Takes the value and the number of a row and validates it. */
-  type Validator<V = unknown> = (value: V, row: number) => string | null;
+  type Validator<V = unknown> = (value: V, row: number) => Promise<string | null>;
 
   /** Imported table column validator for a numeric column with optional cells. */
   export function isOptionalNumber(min = 0, max = MAX_SMALLINT): Validator {
-    return (v) => {
+    return async (v) => {
       if (v === '' || v == null) return null;
       const num = Number(v);
       if (isNaN(num)) return m.import_validator_numeric();
@@ -20,7 +20,7 @@
 
   /** Imported table column validator for a numeric column with required cells. */
   export function isRequiredNumber(min = 0, max = MAX_SMALLINT): Validator {
-    return (value, row) => {
+    return async (value, row) => {
       if (value == null || value === '') return m.import_validator_missing('');
       return isOptionalNumber(min, max)(value, row);
     };
@@ -31,7 +31,7 @@
 
   /** Imported table column validator for an email address column. */
   export function isEmail(presence: 'required' | 'optional'): Validator {
-    return (value) => {
+    return async (value) => {
       if (presence === 'required' && (value == null || value === '')) {
         return m.import_validator_missing('');
       }
@@ -82,7 +82,7 @@
      */
     headers: Record<
       Exclude<Key, 'id'>,
-      { label: LocalizedString; numeric: boolean; required?: boolean }
+      { label: LocalizedString | string; numeric: boolean; required?: boolean }
     >;
 
     /** Optional mapping of each key to a custom validator function. */
@@ -190,11 +190,11 @@
     }
   }
 
-  function validate() {
+  async function validate() {
     const good: T[] = [];
     const bad: RowError[] = [];
 
-    rawFileRows.forEach((raw, idx) => {
+    for (const [idx, raw] of rawFileRows.entries()) {
       const rowNum = idx + 1;
       const rowErrors: RowError[] = [];
       const parsed: Record<string, unknown> = {};
@@ -203,7 +203,7 @@
         const col = schemaFileMapping[key];
         const rawVal = col ? raw[col] : undefined;
         if (validators[key]) {
-          const msg = validators[key](rawVal, rowNum);
+          const msg = await validators[key](rawVal, rowNum);
           if (msg) {
             rowErrors.push({
               row: rowNum,
@@ -222,7 +222,7 @@
       } else {
         bad.push(...rowErrors);
       }
-    });
+    }
 
     validRows = good;
     errors = bad;
@@ -245,14 +245,16 @@
 
     const ws = XLSX.utils.json_to_sheet(errorRows);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Errors');
-    XLSX.writeFile(wb, 'import-errors.xlsx');
+    XLSX.utils.book_append_sheet(wb, ws, m.errors_column());
+    XLSX.writeFile(wb, m.import_report_filename());
   }
 
   const unmappedRequired = $derived(
     schemaKeys.filter((k) => headers[k as string].required && !schemaFileMapping[k]),
   );
   const errorRowCount = $derived(new Set(errors.map((e) => e.row)).size);
+
+  let validationLoading = $state(false);
 
   function getModalActions(step: Step): Action[] {
     switch (step) {
@@ -272,8 +274,16 @@
           { label: m.modal_back(), onClick: reset, role: 'secondary' },
           {
             label: m.import_confirm_mapping(),
-            onClick: validate,
+            onClick: async () => {
+              validationLoading = true;
+              try {
+                await validate();
+              } finally {
+                validationLoading = false;
+              }
+            },
             disabled: unmappedRequired.length !== 0,
+            loading: validationLoading,
           },
         ];
       case 'review':

@@ -51,6 +51,7 @@
       if (row.enrollmentYear && this.bound) {
         return compareOrderEq(this.orderEq, row.enrollmentYear, this.bound);
       }
+      if (!row.enrollmentYear && this.bound) return false;
       return true;
     }
   }
@@ -71,7 +72,7 @@
     {
       key: 'enrollmentYear',
       label: m.students_year(),
-      numeric: false,
+      numeric: true,
       sortable: true,
       searchable: true,
     },

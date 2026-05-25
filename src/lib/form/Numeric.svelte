@@ -42,7 +42,7 @@
 
 <div class="input-host" {...props}>
   {#if label}
-    <label for="student-number">{label}</label>
+    <label for={name}>{label}</label>
   {/if}
   <input
     class="numeric"

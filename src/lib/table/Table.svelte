@@ -65,7 +65,6 @@
   import { SvelteSet } from 'svelte/reactivity';
   import { fade } from 'svelte/transition';
   import '$lib/assets/table.css';
-  import Modal from '$lib/Modal.svelte';
 
   type Key = keyof T;
 
@@ -94,10 +93,10 @@
     deleteModalOpen: boolean;
     addModalOpen: boolean;
     importModalOpen?: boolean;
+    settingsModalOpen?: boolean;
     getRowInfo: (row: T) => string;
     label: ({ count }: { count: number }) => LocalizedString;
     allFilteredOutMessage?: LocalizedString;
-    settings?: Snippet;
     uniqKey: string;
   }
 
@@ -113,16 +112,14 @@
     exportModalOpen = $bindable(false),
     deleteModalOpen = $bindable(false),
     addModalOpen = $bindable(false),
+    importModalOpen = $bindable(undefined),
+    settingsModalOpen = $bindable(undefined),
     getRowInfo,
     label,
     allFilteredOutMessage = m.table_all_filtered_out({ entity: label({ count: 1 }) }),
-    settings,
     uniqKey,
-    importModalOpen = $bindable(undefined),
   }: Props = $props();
   /* eslint-enable no-useless-assignment */
-
-  let settingsOpen = $state(false);
 
   function filterAndSort(data: ReadonlyArray<T>): Array<T> {
     let rows = data.filter((row) =>
@@ -230,18 +227,6 @@
   let paginated = $derived(filtered.slice(page * pageSize, (page + 1) * pageSize));
 </script>
 
-{#if settings}
-  <Modal
-    title={m.table_settings()}
-    bind:open={settingsOpen}
-    actions={[
-      { label: m.modal_dismiss(), onClick: () => (settingsOpen = false), role: 'secondary' },
-    ]}
-  >
-    {@render settings()}
-  </Modal>
-{/if}
-
 <div class="toolbar">
   <div class="row">
     <div class="input-icon">
@@ -317,10 +302,10 @@
         </button>
       {/if}
 
-      {#if settings}
+      {#if settingsModalOpen !== undefined}
         <button
           class="secondary icon-host"
-          onclick={() => (settingsOpen = true)}
+          onclick={() => (settingsModalOpen = true)}
           {@attach tooltip(m.table_settings())}
         >
           <Settings />

@@ -17,16 +17,18 @@
   class:error={kind === 'error'}
   class:info={kind === 'info'}
 >
-  {#if kind === 'ok'}
-    <CircleCheck size={14} />
-  {:else if kind === 'warn'}
-    <TriangleAlert size={14} />
-  {:else if kind === 'error'}
-    <OctagonX size={14} />
-  {:else if kind === 'info'}
-    <BadgeInfo size={14} />
-  {/if}
-  {@render children()}
+  <div style="min-width: 16px">
+    {#if kind === 'ok'}
+      <CircleCheck size={16} />
+    {:else if kind === 'warn'}
+      <TriangleAlert size={16} />
+    {:else if kind === 'error'}
+      <OctagonX size={16} />
+    {:else if kind === 'info'}
+      <BadgeInfo size={16} />
+    {/if}
+  </div>
+  <span>{@render children()}</span>
 </div>
 
 <style>

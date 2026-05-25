@@ -375,3 +375,18 @@ code {
 .no-select {
 	user-select: none;
 }
+
+.column {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+hr {
+	width: 100%;
+	margin: 0.8rem auto;
+	color: var(--border);
+	height: 0.8px;
+	background: var(--border);
+	border: none;
+}

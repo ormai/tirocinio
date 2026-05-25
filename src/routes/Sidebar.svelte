@@ -23,7 +23,7 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
-  import { SIDEBAR_COLLAPSED } from '$lib/cookies';
+  import { setCookie, SIDEBAR_COLLAPSED } from '$lib/cookies';
   import LanguageSwitcher from '$lib/LanguageSwitcher.svelte';
   import { m } from '$lib/paraglide/messages';
   import { deLocalizeHref } from '$lib/paraglide/runtime';
@@ -63,11 +63,7 @@
   // svelte-ignore state_referenced_locally
   sidebar.collapsed = collapsed === null ? sidebar.mobile : collapsed;
 
-  $effect(() => {
-    document.cookie = `${SIDEBAR_COLLAPSED}=${sidebar.collapsed}; path=/; max-age=${
-      60 * 60 * 24 * 365
-    }; SameSite=Lax`;
-  });
+  $effect(() => setCookie(SIDEBAR_COLLAPSED, sidebar.collapsed));
 
   const destinations = [
     { path: '/', label: m.sidebar_home(), icon: House },

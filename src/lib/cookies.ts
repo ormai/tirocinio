@@ -14,3 +14,7 @@ export function boolFromCookie(value?: string): boolean | null {
   }
   return null;
 }
+
+export function setCookie(name: string, value: unknown, path = '/', maxAge = 60 * 60 * 24 * 365) {
+  document.cookie = `${name}=${value}; path=${path}; max-age=${maxAge}; SameSite=Lax`;
+}

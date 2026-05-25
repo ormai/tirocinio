@@ -1,8 +1,17 @@
 <script lang="ts">
   import spinner from '$lib/assets/spinner.svg?raw';
+  import type { Snippet } from 'svelte';
+  import type { HTMLButtonAttributes } from 'svelte/elements';
   import { fade } from 'svelte/transition';
 
-  let { loading = false, enabled = true, children, grow = true, ...rest } = $props();
+  interface Props extends HTMLButtonAttributes {
+    loading?: boolean;
+    enabled?: boolean;
+    grow?: boolean;
+    children: Snippet;
+  }
+
+  let { loading = false, enabled = true, children, grow = true, ...rest }: Props = $props();
 </script>
 <button
   {...rest}
@@ -17,7 +26,7 @@
     </div>
   {/if}
   <span
-    style:translate={loading ? '0.6rem' : '0'}
+    style:translate={loading ? '0.3rem' : '0'}
     style:transition="translate 100ms ease {loading ? '0ms' : '50ms'}"
   >
     {@render children()}

@@ -14,11 +14,10 @@
   import TitleBar from '../TitleBar.svelte';
   import type { PageProps } from './$types';
   import AddEditStructureModal from './AddEditStructureModal.svelte';
+  import CapacitiesManagement from './CapacitiesManagement.svelte';
   import FiltersModal from './FiltersModal.svelte';
 
   let { data, form }: PageProps = $props();
-
-  // TODO: how to manage the tuples (capacity, year) in the UI?
 
   const columns = [
     { key: 'name', label: m.structures_name(), numeric: false, sortable: true, searchable: true },
@@ -42,6 +41,7 @@
   let exportModalOpen = $state(false);
   let importModalOpen = $state(false);
   let filtersModalOpen = $state(false);
+  let settingsModalOpen = $state(false);
   let filters: ReadonlyArray<Filter<StructureView>> = $state([]);
 </script>
 
@@ -77,12 +77,26 @@
     { label: LocalizedString; numeric: boolean; required: boolean }
   >}
   title={m.table_import_modal({ entities: m.structures({ count: 2 }) })}
-  validators={{ capacity: isOptionalNumber(0, MAX_INT) }}
+  validators={{
+    name: async (name) => {
+      if (!name) return m.import_validator_missing();
+      const body = new FormData();
+      body.append('name', name as string);
+      const res = await fetch('?/structureExists', { method: 'POST', body });
+      const result = deserialize(await res.text()) as ActionResult;
+      if (result.type === 'success') {
+        if (result.data?.exists === true) return m.import_structure_duplicate_name();
+      } else {
+        error(m.error());
+      }
+      return null;
+    },
+    capacity: isOptionalNumber(0, MAX_INT),
+  }}
   onImport={async (rows: StructureView[]) => {
-    const data = new FormData();
-    data.append('rows', JSON.stringify(rows));
-    data.append('year', '2026');
-    const res = await fetch('?/import', { method: 'POST', body: data });
+    const body = new FormData();
+    body.append('rows', JSON.stringify(rows));
+    const res = await fetch('?/import', { method: 'POST', body });
     const result = deserialize(await res.text()) as ActionResult;
     if (res.ok && result.type === 'success') {
       importModalOpen = false;
@@ -100,6 +114,13 @@
   data={data.structures as ReadonlyArray<StructureView>}
 />
 
+<CapacitiesManagement
+  bind:open={settingsModalOpen}
+  yearCapacities={data.yearCapacities}
+  yearCapacitiesExplicitlySet={data.yearCapacitiesExplicitlySet}
+  structures={data.structures as StructureView[]}
+/>
+
 {#snippet body(row: StructureView)}
   <td class="truncate20">{row.name}</td>
   <td class="truncate20">{row.ward}</td>
@@ -107,10 +128,6 @@
   <td class="truncate20">{row.kind}</td>
   <td class="truncate50">{row.site}</td>
   <td class="numeric">{row.capacity}</td>
-{/snippet}
-
-{#snippet settings()}
-  TODO: manage capacities here.
 {/snippet}
 
 <section class="container">
@@ -128,10 +145,10 @@
     bind:exportModalOpen
     bind:filtersModalOpen
     bind:importModalOpen
+    bind:settingsModalOpen
     getRowInfo={(row: StructureView) => row.name ?? `${row.area}-${row.site}-${row.kind}`}
     label={m.structures}
     allFilteredOutMessage={m.structures_all_filtered_out()}
     uniqKey="str-tab-int"
-    {settings}
   />
 </section>

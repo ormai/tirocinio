@@ -51,23 +51,23 @@ export const sessions = pgTable(
 
 export const sites = pgTable('sites', {
   id: serial().primaryKey(),
-  name: varchar().unique(),
+  name: varchar().notNull().unique(),
 }, (site) => [uniqueIndex('site_name').on(site.name)]);
 
 export const structures = pgTable('structures', {
   id: serial().primaryKey(),
-  name: varchar({ length: 255 }),
+  name: varchar({ length: 255 }).unique().notNull(),
   ward: varchar({ length: 255 }),
   area: varchar({ length: 255 }),
   kind: varchar({ length: 255 }),
   siteId: integer('site_id').references(() => sites.id),
-});
+}, (structure) => [uniqueIndex('structure_name').on(structure.name)]);
 
 export const capacities = pgTable(
   'capacities',
   {
-    structureId: integer('structure_id').references(() => structures.id),
-    year: integer(),
+    structureId: integer('structure_id').references(() => structures.id, { onDelete: 'cascade' }),
+    year: smallint(),
     capacity: integer().notNull(),
   },
   (capacities) => [
@@ -81,7 +81,7 @@ export const preferenceCollectionIntervals = pgTable('preference_collection_inte
   endTime: timestamp('end_time').notNull(),
   durationMonths: smallint('duration_months').notNull(),
   numberOfPreferences: smallint('number_of_preferences').notNull(),
-  year: integer().notNull(),
+  year: smallint().notNull(),
 });
 
 export const preferences = pgTable(
@@ -104,10 +104,20 @@ export const assignments = pgTable(
   {
     studentId: integer('student_id').references(() => users.id),
     structureId: integer('structure_id').references(() => structures.id),
-    year: integer().notNull(),
+    year: smallint().notNull(),
     month: smallint().notNull(),
   },
   (assignments) => [
     primaryKey({ columns: [assignments.studentId, assignments.structureId] }),
   ],
+);
+
+/** App settings, readable and writable by administrators */
+export const settings = pgTable(
+  'settings',
+  {
+    key: varchar().primaryKey(),
+    value: text(),
+    updatedAt: timestamp('updated_at').defaultNow(),
+  },
 );

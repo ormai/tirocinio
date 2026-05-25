@@ -1,3 +1,5 @@
+<!-- @component A general-purpose modal dialog -->
+
 <script lang="ts">
   import { m } from '$lib/paraglide/messages';
   import { tooltip } from '$lib/tooltip.svelte';
@@ -81,7 +83,7 @@
   let shaking = $state(false);
   function shake() {
     shaking = true;
-    setTimeout(() => (shaking = false), 439);
+    setTimeout(() => (shaking = false), 400);
   }
 
   $effect(() => {
@@ -93,7 +95,7 @@
     if (dismissible) {
       open = false;
     } else {
-      shake();
+      if (!shaking) shake();
     }
   }
 
@@ -160,10 +162,6 @@
 {/if}
 
 <style>
-  dialog::backdrop {
-    background: transparent;
-  }
-
   .backdrop {
     position: fixed;
     inset: 0;
@@ -175,9 +173,9 @@
   }
 
   dialog {
-    position: relative;
     background: var(--body-light-bg);
-    color: var(--body-light); border: 1px solid var(--border);
+    color: var(--body-light);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 0;
     width: 100%;
@@ -186,8 +184,15 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.38);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     will-change: transform, opacity;
+
+    position: fixed;
+    inset: 0;
+
+    &::backdrop {
+      background: transparent;
+    }
   }
 
   header {
@@ -233,8 +238,8 @@
 
   @keyframes shake {
     to, from { transform: translateX(0); }
-    20% { transform: translateX(-8px); }
-    40% { transform: translateX(8px); }
+    20% { transform: translateX(-10px); }
+    40% { transform: translateX(10px); }
     60% { transform: translateX(-5px); }
     80% { transform: translateX(5px); }
   }
