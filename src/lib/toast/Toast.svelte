@@ -7,8 +7,14 @@
   import { fly } from 'svelte/transition';
   import type { ToastOpts } from './Toaster.svelte';
 
-  let { toast, ondismiss, visible }: { toast: ToastOpts; ondismiss: () => void; visible: boolean } =
-    $props();
+  interface Props {
+    toast: ToastOpts;
+    onDismiss: () => void;
+    visible: boolean;
+    mobile: boolean;
+  }
+
+  let { toast, onDismiss, visible, mobile }: Props = $props();
 
   let swipeStart = 0;
   let swipePosition = $state(0);
@@ -32,12 +38,14 @@
   style:transform={`translateX(${swipePosition}px)`}
   role="alert"
   in:fly={{ y: -50, duration: 280, easing: sineIn }}
-  out:fly={{ x: 200, duration: 380, easing: circOut }}
+  out:fly={{ x: mobile ? 200 : 800, duration: 480, easing: circOut }}
   ontouchstart={(e) => swipeStart = e.touches[0].clientX}
   ontouchmove={(e) => swipePosition = e.touches[0].clientX - swipeStart}
-  ontouchend={() => Math.abs(swipePosition) >= 100 ? ondismiss() : swipePosition = 0}
+  ontouchend={() => Math.abs(swipePosition) >= 100 ? onDismiss() : swipePosition = 0}
 >
-  <Icon color={`var(--${toast.type === 'default' ? 'body-light' : toast.type})`} size={24} />
+  <div style="height: 36px; display: flex; align-items: center;">
+    <Icon color={`var(--${toast.type === 'default' ? 'body-light' : toast.type})`} size={28} />
+  </div>
 
   <div class="body">
     {#if toast.title}<p class="title">{toast.title}</p>{/if}
@@ -46,7 +54,7 @@
 
   <button
     class="tertiary close"
-    onclick={ondismiss}
+    onclick={onDismiss}
     aria-label={m.modal_dismiss()}
     {@attach tooltip(m.modal_dismiss())}
   >
@@ -81,7 +89,7 @@
     color: var(--color);
     border: 1px solid var(--border-color); 
     border-radius: var(--radius);
-    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    /*transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);*/
   }
 
   .body {
@@ -97,10 +105,14 @@
     align-items: center;
   }
 
+  .body:not(:has(.title)) .message {
+    margin-top: 7px;
+  }
+
   .message {
-    margin-top: .2em;
-    font-size: .8em;
-    opacity: 0.88;
+    font-size: .8rem;
+    opacity: 0.96;
+    line-height: 1.3rem;
   }
 
   @media (hover: none) and (pointer: coarse) {

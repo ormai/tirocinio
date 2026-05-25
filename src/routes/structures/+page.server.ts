@@ -83,6 +83,7 @@ export const actions: Actions = {
         const year = await getYear(tx);
         await updateCapacity(id, year, structure.capacity, tx);
       }
+      console.debug(`Add new structure id=${id}`);
       return { added: true };
     });
   },
@@ -101,11 +102,11 @@ export const actions: Actions = {
         kind: structure.kind,
         siteId: structure.site ? await getSite(structure.site) : undefined,
       }).where(eq(structures.id, structure.id!));
-      console.debug(`Update structure with id=${structure.id}`);
       if (structure.capacity != null) {
         const year = await getYear(tx);
         await updateCapacity(structure.id!, year, structure.capacity, tx);
       }
+      console.debug(`Update structure with id=${structure.id}`);
       return { edited: true };
     });
   },
@@ -133,6 +134,7 @@ export const actions: Actions = {
         .where(eq(structures.name, name));
       existence[name] = structure != null;
     }
+    console.debug(`Check existence for ${data.length} structures`);
     return existence;
   },
 
@@ -166,6 +168,7 @@ export const actions: Actions = {
           };
         }).filter((capacity): capacity is typeof capacity & { capacity: number } => capacity.capacity != null),
       );
+      console.debug(`Import ${data.length} structures`);
     });
 
     return { inserted: data.length };
@@ -181,11 +184,13 @@ export const actions: Actions = {
       return fail(400, '`year` must be a number in [0, 32767]');
     }
     await setSetting('yearCapacities', String(year));
+    console.debug(`Set year for capacities to ${year}`);
   },
 
   unsetYearCapacities: async ({ locals }) => {
     requireAdmin(locals);
     await setSetting('yearCapacities', null);
+    console.debug(`unset year for capacities`);
   },
 
   capacitiesExist: async ({ locals, request }) => {
@@ -211,6 +216,7 @@ export const actions: Actions = {
           existence[name].structuresExists = false;
         }
       }
+      console.debug(`Check for existence of ${data.length} capacities`);
       return existence;
     });
   },
@@ -244,6 +250,7 @@ export const actions: Actions = {
       }));
 
       await tx.insert(capacities).values(caps);
+      console.debug(`Import ${data.length} capacities`);
       return { inserted: data.length };
     });
   },

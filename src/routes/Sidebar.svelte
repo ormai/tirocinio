@@ -352,7 +352,7 @@
 
     aside {
       position: fixed;
-      z-index: 200;
+      z-index: 4;
       height: 100dvh;
       transform: translateX(0);
 
@@ -371,7 +371,7 @@
       display: block;
       position: fixed;
       inset: 0;
-      z-index: 199;
+      z-index: 3;
       background: rgba(0, 0, 0, 0.45);
       opacity: 0;
       pointer-events: none;

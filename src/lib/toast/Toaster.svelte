@@ -1,8 +1,4 @@
 <script module lang="ts">
-  // FIXME: enter animation is not fluid
-  // FIXME: exit animation is too short
-  // FIXME: content alignment is broken
-
   export interface ToastOpts {
     /** A unique identifier used by Svelte's #each block as key */
     id: number;
@@ -55,6 +51,7 @@
 
 <script lang="ts">
   import Toast from '$lib/toast/Toast.svelte';
+  import { MediaQuery } from 'svelte/reactivity';
 
   /** How many stacked toasts are shown at once. */
   const stackDepth = 6;
@@ -66,6 +63,8 @@
       return () => clearTimeout(timer);
     }
   });
+
+  const mobile = new MediaQuery('max-width: 480px');
 </script>
 
 <div class="toaster">
@@ -78,7 +77,7 @@
       style:transform={`translateY(${-i * 4}px) scaleX(${1 - i * 0.03})`}
       style:opacity={1 - i * 0.18}
     >
-      <Toast {toast} visible={i === 0} ondismiss={() => toasts.shift()} />
+      <Toast {toast} visible={i === 0} onDismiss={() => toasts.shift()} mobile={mobile.current} />
     </div>
   {/each}
 </div>
