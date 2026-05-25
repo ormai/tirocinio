@@ -8,8 +8,6 @@
   import { type Filter } from '$lib/table/Table.svelte';
   import { onMount } from 'svelte';
 
-  // FIXME: choice filters don't update after import
-
   interface Props {
     filters: ReadonlyArray<Filter<StructureView>>;
     open: boolean;

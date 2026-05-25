@@ -5,15 +5,19 @@
   import type { Filter, Row } from './Table.svelte';
 
   /**
-   * A filter for that allows a choice among a set of options.
+   * A filter that allows a choice among a set of options.
    */
   export abstract class ChoiceFilter<T extends Row> implements Filter<T> {
     selected = $state<string>();
     selectedField = $state<string>();
-    options: Set<string>;
+    #values: () => Iterable<string> | null | undefined;
 
     constructor(values: () => Iterable<string> | null | undefined) {
-      this.options = new Set(values());
+      this.#values = values;
+    }
+
+    get options(): Set<string> {
+      return new Set(this.#values() ?? []);
     }
 
     abstract isSatisfied(row: T): boolean;

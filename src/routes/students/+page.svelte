@@ -152,7 +152,7 @@
     email: (v) => {
       const error = isEmail('required')(v);
       if (error != null) return error;
-      if (validationData?.existsByEmail[String(v)] === true) {
+      if (validationData?.existsByEmail[v as string] === true) {
         return m.import_students_duplicate_email();
       }
       return null;
