@@ -118,16 +118,22 @@ export const actions: Actions = {
     return { count: ids.length };
   },
 
-  structureExists: async ({ locals, request }) => {
+  structuresExist: async ({ locals, request }) => {
     requireAdmin(locals);
 
     const form = await request.formData();
-    const name = form.get('name')?.toString();
-    if (!name) return fail(400, 'Structure name is required');
-    const [selection] = await db.select({ id: structures.id })
-      .from(structures)
-      .where(eq(structures.name, name));
-    return { exists: selection != null };
+    const names = form.get('names');
+    if (!names) return fail(400, 'Array of structures to check is required');
+    const data = JSON.parse(names as string) as string[];
+
+    const existence: Record<string, unknown> = {};
+    for (const name of data) {
+      const [structure] = await db.select({ id: structures.id })
+        .from(structures)
+        .where(eq(structures.name, name));
+      existence[name] = structure != null;
+    }
+    return existence;
   },
 
   import: async ({ locals, request }) => {
@@ -182,24 +188,30 @@ export const actions: Actions = {
     await setSetting('yearCapacities', null);
   },
 
-  capacityExists: async ({ locals, request }) => {
+  capacitiesExist: async ({ locals, request }) => {
     requireAdmin(locals);
 
-    const data = await request.formData();
-    const name = data.get('structure-name')?.toString();
-    if (!name) return fail(400, 'A structure name is required');
+    const form = await request.formData();
+    const names = form.get('names')?.toString();
+    if (!names) return fail(400, 'An array of structure names is required');
+    const data = JSON.parse(names as string) as string[];
 
     return await db.transaction(async (tx) => {
-      const [structure] = await tx.select({ id: structures.id }).from(structures).where(eq(structures.name, name));
-      if (!structure) {
-        return { structuresExists: false };
-      }
-
       const year = await getYear(tx);
-      const [capacity] = await tx.select().from(capacities).where(
-        and(eq(capacities.structureId, structure.id), eq(capacities.year, year)),
-      );
-      return { exists: capacity != null };
+      const existence: Record<string, { structuresExists?: boolean; exists?: boolean }> = {};
+      for (const name of data) {
+        existence[name] = {};
+        const [structure] = await tx.select({ id: structures.id }).from(structures).where(eq(structures.name, name));
+        if (structure) {
+          const [capacity] = await tx.select().from(capacities).where(
+            and(eq(capacities.structureId, structure.id), eq(capacities.year, year)),
+          );
+          existence[name].exists = capacity != null;
+        } else {
+          existence[name].structuresExists = false;
+        }
+      }
+      return existence;
     });
   },
 

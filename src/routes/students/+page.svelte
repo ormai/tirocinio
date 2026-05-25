@@ -85,6 +85,11 @@
   let exportModalOpen = $state(false);
   let filtersModalOpen = $state(false);
   let importModalOpen = $state(false);
+
+  let validationData: {
+    existsByEmail: Record<string, boolean>;
+    existsByNumber: Record<number, boolean>;
+  } | null = null;
 </script>
 
 <ExportModal
@@ -119,9 +124,39 @@
     { label: LocalizedString; numeric: boolean; required: boolean }
   >}
   title={m.table_import_modal({ entities: m.students({ count: 2 }) })}
+  preValidate={async (rows) => {
+    const data = new FormData();
+    data.append(
+      'students',
+      JSON.stringify((rows as StudentView[]).map((row) => {
+        return { email: row.email, number: row.number };
+      })),
+    );
+    const res = await fetch('?/studentsExist', { method: 'POST', body: data });
+    const result = deserialize(await res.text()) as ActionResult;
+    if (res.ok && result.type === 'success' && result.data) {
+      validationData = result.data as typeof validationData;
+    } else {
+      error(m.error());
+    }
+  }}
   validators={{
-    number: isRequiredNumber(0, MAX_INT),
-    email: isEmail('required'),
+    number: (v) => {
+      const error = isRequiredNumber(0, MAX_INT)(v);
+      if (error != null) return error;
+      if (validationData?.existsByNumber[Number(v)] === true) {
+        return m.import_students_duplicate_number();
+      }
+      return null;
+    },
+    email: (v) => {
+      const error = isEmail('required')(v);
+      if (error != null) return error;
+      if (validationData?.existsByEmail[String(v)] === true) {
+        return m.import_students_duplicate_email();
+      }
+      return null;
+    },
     enrollmentYear: isOptionalNumber(0, MAX_SMALLINT),
   }}
   onImport={async (rows: StudentView[]) => {

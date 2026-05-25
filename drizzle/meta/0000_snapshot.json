@@ -1,5 +1,5 @@
 {
-  "id": "6fcc8841-d15d-45e1-9e50-13d0f2e01136",
+  "id": "69c47a72-192f-42b6-9793-bc2571725f0c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -22,7 +22,7 @@
         },
         "year": {
           "name": "year",
-          "type": "integer",
+          "type": "smallint",
           "primaryKey": false,
           "notNull": true
         },
@@ -88,7 +88,7 @@
         },
         "year": {
           "name": "year",
-          "type": "integer",
+          "type": "smallint",
           "primaryKey": false,
           "notNull": false
         },
@@ -111,7 +111,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -165,7 +165,7 @@
         },
         "year": {
           "name": "year",
-          "type": "integer",
+          "type": "smallint",
           "primaryKey": false,
           "notNull": true
         }
@@ -331,6 +331,38 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.settings": {
+      "name": "settings",
+      "schema": "",
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.sites": {
       "name": "sites",
       "schema": "",
@@ -345,10 +377,26 @@
           "name": "name",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "site_name": {
+          "name": "site_name",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
@@ -378,7 +426,7 @@
           "name": "name",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "ward": {
           "name": "ward",
@@ -405,7 +453,23 @@
           "notNull": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "structure_name": {
+          "name": "structure_name",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "structures_site_id_sites_id_fk": {
           "name": "structures_site_id_sites_id_fk",
@@ -422,7 +486,15 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "structures_name_unique": {
+          "name": "structures_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -453,7 +525,7 @@
           "name": "encoded_password",
           "type": "varchar(380)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "name": {
           "name": "name",
@@ -475,13 +547,25 @@
         },
         "outstanding_otp": {
           "name": "outstanding_otp",
-          "type": "smallint",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
         "outstanding_otp_expires_at": {
           "name": "outstanding_otp_expires_at",
           "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_email": {
+          "name": "new_email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mfa_secret": {
+          "name": "mfa_secret",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -511,6 +595,21 @@
         },
         "number_index": {
           "name": "number_index",
+          "columns": [
+            {
+              "expression": "number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "mfa_secret": {
+          "name": "mfa_secret",
           "columns": [
             {
               "expression": "number",

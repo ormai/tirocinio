@@ -61,6 +61,9 @@
     );
     XLSX.writeFile(wb, m.year_capacities_template_filename({ year: yearCapacities }));
   }
+
+  let validationData: Record<string, { structuresExists?: boolean; exists?: boolean }> | null =
+    null;
 </script>
 
 <ImportModal
@@ -70,21 +73,24 @@
     name: { label: nameLabel, numeric: false, required: true },
     capacity: { label: capacityLabel, numeric: true, required: true },
   }}
+  preValidate={async (rows) => {
+    const body = new FormData();
+    body.append('names', JSON.stringify(rows.map((row) => row.name)));
+    const res = await fetch('?/capacitiesExist', { method: 'POST', body });
+    const result = deserialize(await res.text()) as ActionResult;
+    if (res.ok && result.type === 'success' && result.data) {
+      validationData = result.data as typeof validationData;
+    } else {
+      error(m.error());
+    }
+  }}
   validators={{
-    name: async (name) => {
+    name: (name) => {
       if (!name) return m.import_validator_missing();
-      const body = new FormData();
-      body.append('structure-name', name as string);
-      const res = await fetch('?/capacityExists', { method: 'POST', body });
-      const result = deserialize(await res.text()) as ActionResult;
-      if (result.type === 'success') {
-        if (result.data?.structuresExists === false) {
-          return m.import_capacity_structure_not_found();
-        } else if (result.data?.exists === true) {
-          return m.import_capacity_duplicate({ year: yearCapacities });
-        }
-      } else {
-        error(m.error());
+      if (validationData && validationData[name as string]?.structuresExists === false) {
+        return m.import_capacity_structure_not_found();
+      } else if (validationData && validationData[name as string]?.exists === true) {
+        return m.import_capacity_duplicate({ year: yearCapacities });
       }
       return null;
     },

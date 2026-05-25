@@ -4,11 +4,11 @@
   import { MAX_SMALLINT } from '$lib/form/Numeric.svelte';
 
   /** Takes the value and the number of a row and validates it. */
-  type Validator<V = unknown> = (value: V, row: number) => Promise<string | null>;
+  type Validator<V = unknown> = (value: V) => string | null;
 
   /** Imported table column validator for a numeric column with optional cells. */
   export function isOptionalNumber(min = 0, max = MAX_SMALLINT): Validator {
-    return async (v) => {
+    return (v) => {
       if (v === '' || v == null) return null;
       const num = Number(v);
       if (isNaN(num)) return m.import_validator_numeric();
@@ -20,9 +20,9 @@
 
   /** Imported table column validator for a numeric column with required cells. */
   export function isRequiredNumber(min = 0, max = MAX_SMALLINT): Validator {
-    return async (value, row) => {
+    return (value) => {
       if (value == null || value === '') return m.import_validator_missing('');
-      return isOptionalNumber(min, max)(value, row);
+      return isOptionalNumber(min, max)(value);
     };
   }
 
@@ -31,7 +31,7 @@
 
   /** Imported table column validator for an email address column. */
   export function isEmail(presence: 'required' | 'optional'): Validator {
-    return async (value) => {
+    return (value) => {
       if (presence === 'required' && (value == null || value === '')) {
         return m.import_validator_missing('');
       }
@@ -88,9 +88,13 @@
     /** Optional mapping of each key to a custom validator function. */
     validators?: Partial<Record<Key, Validator>>;
     onImport: (rows: T[]) => Promise<void>;
+
+    /** Used to get unique constraint validation check for all rows from the server, before actually validating */
+    preValidate?: (rows: Record<Key, unknown>[]) => Promise<void>;
   }
 
-  let { open = $bindable(false), title, headers, validators = {}, onImport }: Props = $props();
+  let { open = $bindable(false), title, headers, preValidate, validators = {}, onImport }: Props =
+    $props();
 
   const schemaKeys: Key[] = $derived(Object.keys(headers));
 
@@ -194,6 +198,16 @@
     const good: T[] = [];
     const bad: RowError[] = [];
 
+    if (preValidate !== undefined) {
+      const reversedMapping = Object.fromEntries(
+        Object.entries(schemaFileMapping).map(([key, val]) => [val, key]),
+      );
+      const remappedRows = rawFileRows.map((row) =>
+        Object.fromEntries(Object.entries(row).map(([key, val]) => [reversedMapping[key], val]))
+      );
+      await preValidate(remappedRows as Record<Key, unknown>[]);
+    }
+
     for (const [idx, raw] of rawFileRows.entries()) {
       const rowNum = idx + 1;
       const rowErrors: RowError[] = [];
@@ -203,7 +217,7 @@
         const col = schemaFileMapping[key];
         const rawVal = col ? raw[col] : undefined;
         if (validators[key]) {
-          const msg = await validators[key](rawVal, rowNum);
+          const msg = validators[key](rawVal);
           if (msg) {
             rowErrors.push({
               row: rowNum,

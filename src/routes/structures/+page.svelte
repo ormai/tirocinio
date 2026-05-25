@@ -43,6 +43,8 @@
   let filtersModalOpen = $state(false);
   let settingsModalOpen = $state(false);
   let filters: ReadonlyArray<Filter<StructureView>> = $state([]);
+
+  let validationData: Record<string, boolean> | null = null;
 </script>
 
 <DeleteSelectedModal
@@ -77,17 +79,22 @@
     { label: LocalizedString; numeric: boolean; required: boolean }
   >}
   title={m.table_import_modal({ entities: m.structures({ count: 2 }) })}
+  preValidate={async (rows) => {
+    const body = new FormData();
+    body.append('names', JSON.stringify(rows.map((row) => row.name)));
+    const res = await fetch('?/structuresExist', { method: 'POST', body });
+    const result = deserialize(await res.text()) as ActionResult;
+    if (res.ok && result.type === 'success' && result.data) {
+      validationData = result.data as typeof validationData;
+    } else {
+      error(m.error());
+    }
+  }}
   validators={{
-    name: async (name) => {
+    name: (name) => {
       if (!name) return m.import_validator_missing();
-      const body = new FormData();
-      body.append('name', name as string);
-      const res = await fetch('?/structureExists', { method: 'POST', body });
-      const result = deserialize(await res.text()) as ActionResult;
-      if (result.type === 'success') {
-        if (result.data?.exists === true) return m.import_structure_duplicate_name();
-      } else {
-        error(m.error());
+      if (validationData && validationData[name as string] === true) {
+        return m.import_structure_duplicate_name();
       }
       return null;
     },

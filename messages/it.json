@@ -231,5 +231,7 @@
   "import_structure_duplicate_name": "Esiste già una struttura con questo nome",
   "import_capacity_duplicate": "Questa struttura ha già una capienza per l'anno {year}",
   "import_capacity_structure_not_found": "Non esiste una struttura con questo nome",
-  "capacities_imported": "{count} capienze importate con successo per l'anno {year}"
+  "capacities_imported": "{count} capienze importate con successo per l'anno {year}",
+  "import_students_duplicate_number": "Esiste già uno studente con questa matricola",
+  "import_students_duplicate_email": "Esiste già uno studente con questa email"
 }

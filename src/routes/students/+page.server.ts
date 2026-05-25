@@ -107,6 +107,37 @@ export const actions: Actions = {
     return { count: ids.length };
   },
 
+  studentsExist: async ({ locals, request }) => {
+    requireAdmin(locals);
+
+    const form = await request.formData();
+    const studentsField = form.get('students');
+    if (!studentsField) return fail(400, 'Array of students to check is required');
+    const data = JSON.parse(studentsField as string) as Pick<StudentView, 'email' | 'number'>[];
+
+    const existsByEmail: Record<string, boolean> = {};
+    const existsByNumber: Record<number, boolean> = {};
+
+    for (const { email, number } of data) {
+      if (number == null || isNaN(number) || number < 0 || number > 2147483647) {
+        return fail(400, '`number` must be a valid number in range [0, 2147483647]');
+      }
+      if (!email) return fail(400, 'Student `email` is required');
+
+      const [byNumber] = await db.select({ id: users.id })
+        .from(users)
+        .where(eq(users.number, number));
+      existsByNumber[number] = byNumber != null;
+
+      const [byEmail] = await db.select({ id: users.id })
+        .from(users)
+        .where(eq(users.email, email));
+      existsByEmail[email] = byEmail != null;
+    }
+
+    return { existsByEmail, existsByNumber };
+  },
+
   import: async ({ locals, request }) => {
     requireAdmin(locals);
 
@@ -114,8 +145,6 @@ export const actions: Actions = {
     const rows = form.get('rows');
     if (!rows) return fail(400, 'An array of structures to import is required');
     const data = JSON.parse(rows as string) as StudentView[];
-
-    // FIXME: handle unique constraint validation
 
     await db.insert(users).values(data.map((student) => {
       return { role: 'student' as const, ...student };

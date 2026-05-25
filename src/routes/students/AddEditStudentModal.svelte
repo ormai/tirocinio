@@ -14,8 +14,6 @@
   import { fade } from 'svelte/transition';
   import type { ActionData } from './$types';
 
-  // FIXME: edit doesn't work. Button is always disabled.
-
   interface Props {
     editing: StudentView | null;
     open: boolean;
