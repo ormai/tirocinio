@@ -93,7 +93,7 @@
     await sendForm('?/importCapacities', { rows: JSON.stringify(rows) })
       .then(async (data) => {
         importModalOpen = false;
-        success(m.capacities_imported({ count: data.inserted, year: yearCapacities }));
+        success(m.capacities_imported({ count: data.inserted as number, year: yearCapacities }));
         await invalidateAll();
       })
       .catch(() => error(m.error()));
@@ -180,7 +180,7 @@
 
     <span style="font-size: 0.8rem">
       <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-      {@html m.year_capacities_hint({ nameKey: m.structures_name(), capacityKey: m.structures_capacity() })}
+      {@html m.year_capacities_hint({ nameKey: m.structures_name() })}
     </span>
 
     <button class="secondary long" onclick={downloadTemplate}>

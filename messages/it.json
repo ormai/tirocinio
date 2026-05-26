@@ -57,7 +57,7 @@
   "profile_student_number": "Matricola",
   "profile_surname": "Cognome",
   "profile_title": "Informazioni personali",
-  "profile_update": "Salva modifiche",
+  "save_changes": "Salva modifiche",
   "profile_update_notice": "I tuoi dettagli personali sono stati aggiornati",
   "profile_verify_email_desc": "Segui il link di verifica che abbiamo inviato al tuo nuovo indirizzo email.",
   "profile_verify_email_title": "Verifica la tua nuova email",
@@ -97,7 +97,6 @@
       "match": { "countPlural=one": "{count} studente eliminato", "countPlural=other": "{count} studenti eliminati" }
     }
   ],
-  "students_edit_confirm": "Salva modifiche",
   "students_email": "Email",
   "students_email_missing": "L'indirizzo email è obbligatorio",
   "students_email_taken": "Esiste già uno studente con questo indirizzo email",
@@ -164,7 +163,7 @@
   "structures_added_confirm": "Struttura aggiunta con successo",
   "structures_all_filtered_out": "Nessuna struttura soddisfa i filtri",
   "column_filter": "{column} è",
-  "filter_choose": "Scegli",
+  "filter_choose": "— scegli —",
   "table_settings": "Opzioni aggiuntive",
   "table_import_modal": "Importa {entities}",
   "import_map_hint": "Mappa le colonne di \"{fileName}\" con le colonne attese.",
@@ -223,7 +222,7 @@
   "year_capacities_remove": "Rimuovi",
   "year_capacities_download_template": "Scarica modello delle capienze per l'anno {year} (.xlsx)",
   "year_capacities_import": "Importa capienze per l'anno {year}",
-  "year_capacities_hint": "Puoi importare capienze a partire dal modello generato usando le strutture presenti, o usando un tuo modello. Per associare le capienze viene usato il <code>{nameKey}</code> univoco di ogni struttura. Per saltare una struttura rimuovi la riga corrispondente o lascia vuota la cella <code>{capacityKey}</code> nel foglio importato.",
+  "year_capacities_hint": "Puoi importare capienze a partire dal modello generato usando le strutture presenti, o usando un tuo modello. Per associare le capienze viene usato il <code>{nameKey}</code> univoco di ogni struttura. Per saltare una struttura rimuovi la riga corrispondente.",
   "import_report_filename": "resoconto-errori-importazione.xlsx",
   "year_capacities_template_filename": "capienze-strutture-{year}.xlsx",
   "year_capacities_template_sheetname": "Capienze ({year})",
@@ -233,5 +232,13 @@
   "import_capacity_structure_not_found": "Non esiste una struttura con questo nome",
   "capacities_imported": "{count} capienze importate con successo per l'anno {year}",
   "import_students_duplicate_number": "Esiste già uno studente con questa matricola",
-  "import_students_duplicate_email": "Esiste già uno studente con questa email"
+  "import_students_duplicate_email": "Esiste già uno studente con questa email",
+  "students_settings_hint": "Queste opzioni determinano se gli studenti verranno accettati automaticamente al momento della registrazione.",
+  "students_settings_auto_accept": "Accetta automaticamente tutti gli studenti",
+  "students_settings_email_suffix": "Accetta automaticamente studenti con indirizzo email che termina con",
+  "students_settings_email_suffix_info": "Se questo campo viene impostato a un valore «vuoto», gli studenti andranno accettati manualmente.",
+  "students_settings_email_suffix_invalid": "Suffisso email non valido. Un suffiso valido è simile a: «@example.com».",
+  "students_accepted": "Accettato",
+  "students_filters_accepted_true": "Vero",
+  "students_filters_accepted_false": "Falso"
 }

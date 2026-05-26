@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "registered_at" timestamp DEFAULT now() NOT NULL;

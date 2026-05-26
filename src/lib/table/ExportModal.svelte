@@ -63,7 +63,7 @@
 >
   <div class="row-spaced">
     <label for="export-format">{m.export_choose_format()}</label>
-    <select id="export-format" bind:value={format}>
+    <select name="export-format" bind:value={format}>
       <option value="xlsx">{m.export_format_xlsx()}</option>
       <option value="csv">{m.export_format_csv()}</option>
     </select>

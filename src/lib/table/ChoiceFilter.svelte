@@ -52,12 +52,13 @@
   interface Props {
     filter: Filter<Row> & { selected?: string; selectedField?: string; options: Set<string> };
     label: string;
+    maxWidth?: string;
   }
 
-  let { filter, label }: Props = $props();
+  let { filter, label, maxWidth = '380px' }: Props = $props();
 </script>
 
-<div class="row-spaced">
+<div class="row-spaced" style:--max-width={maxWidth}>
   <span>{label}</span>
 
   <select
@@ -68,7 +69,7 @@
       }
     }}
   >
-    <option disabled value={undefined}>{m.filter_choose()}</option>
+    <option value={undefined}>{m.filter_choose()}</option>
     {#each filter.options as opt (opt)}
       <option value={opt}>{opt}</option>
     {/each}
@@ -87,7 +88,7 @@
 <style>
   .row-spaced {
     gap: 1rem;
-    max-width: 380px;
+    max-width: var(--max-width);
     margin: auto;
   }
 

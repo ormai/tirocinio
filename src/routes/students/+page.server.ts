@@ -2,13 +2,23 @@ import { yearFromString } from '$lib/form/academic-year';
 import { requireAdmin } from '$lib/server/api-security';
 import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
-import type { StudentView } from '$lib/server/user';
+import {
+  getAutoAcceptAllStudents,
+  getAutoAcceptEmailSuffix,
+  setAutoAcceptAllStudents,
+  setAutoAcceptEmailSuffix,
+  type StudentView,
+} from '$lib/server/user';
 import { type ActionFailure, type Actions, fail, isActionFailure } from '@sveltejs/kit';
 import { and, eq, inArray, ne } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals }): Promise<{ students: ReadonlyArray<StudentView> }> => {
+export const load: PageServerLoad = async (
+  { locals },
+): Promise<{ students: ReadonlyArray<StudentView>; autoAcceptAllStudents: boolean; autoAcceptEmailSuffix: string }> => {
   requireAdmin(locals);
+
+  // FIXME: STABLE ORDER
   return {
     students: await db.select({
       id: users.id,
@@ -17,7 +27,10 @@ export const load: PageServerLoad = async ({ locals }): Promise<{ students: Read
       surname: users.surname,
       email: users.email,
       enrollmentYear: users.enrollmentYear,
+      accepted: users.accepted,
     }).from(users).where(eq(users.role, 'student')),
+    autoAcceptAllStudents: await getAutoAcceptAllStudents(),
+    autoAcceptEmailSuffix: await getAutoAcceptEmailSuffix(),
   };
 };
 
@@ -51,6 +64,39 @@ async function validateStudent(
 }
 
 export const actions: Actions = {
+  updateSettings: async ({ locals, request }) => {
+    requireAdmin(locals);
+    const form = await request.formData();
+
+    const emailSuffix = form.get('email-suffix');
+    if (emailSuffix != null) { // empty string is valid here
+      await setAutoAcceptEmailSuffix(String(emailSuffix));
+      console.debug(`Update auto accept email suffix setting to '${emailSuffix}'`);
+    }
+
+    // Checkbox in form data is either 'on' or it's not there at all.
+    const autoAccept = form.get('auto-accept');
+    await setAutoAcceptAllStudents(autoAccept === 'on');
+    console.debug(`Update auto accept all student setting to ${autoAccept === 'on'}`);
+  },
+
+  toggleAccepted: async ({ locals, request }) => {
+    requireAdmin(locals);
+    const form = await request.formData();
+    const id = Number(form.get('id'));
+    const val = form.get('val');
+    if (!val) {
+      return fail(400, 'A `val` to set must be provided');
+    }
+    if (!isNaN(id)) {
+      await db.update(users).set({ accepted: Boolean(val) }).where(eq(users.id, id));
+    } else {
+      return fail(400, 'A user `id` must be provided');
+    }
+    console.debug(`Set accepted to ${val} for user ${id}`);
+    return true;
+  },
+
   add: async ({ locals, request }) => {
     requireAdmin(locals);
 
@@ -88,10 +134,7 @@ export const actions: Actions = {
       return fail(409, { emailTaken: true });
     }
 
-    await db.update(users).set({
-      email: student.email!,
-      ...student,
-    }).where(eq(users.id, student.id));
+    await db.update(users).set({ email: student.email!, ...student }).where(eq(users.id, student.id));
 
     console.debug(`Edit student: ${student.id}`);
     return { edited: true };
@@ -143,7 +186,7 @@ export const actions: Actions = {
 
     const form = await request.formData();
     const rows = form.get('rows');
-    if (!rows) return fail(400, 'An array of structures to import is required');
+    if (!rows) return fail(400, 'An array of students to import is required');
     const data = JSON.parse(rows as string) as StudentView[];
 
     await db.insert(users).values(data.map((student) => {

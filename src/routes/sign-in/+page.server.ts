@@ -4,6 +4,7 @@ import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
 import { sendOtpEmail } from '$lib/server/multi-factor-authentication';
 import { createSession, deleteSession } from '$lib/server/session';
+import { shouldBeAccepted } from '$lib/server/user';
 import { type Actions, fail, redirect } from '@sveltejs/kit';
 import bcrypt from 'bcrypt';
 import { eq } from 'drizzle-orm';
@@ -72,7 +73,7 @@ export const actions = {
     if (user) {
       await db.update(users).set(otp).where(eq(users.id, user.id));
     } else {
-      await db.insert(users).values({ email, role: 'student', ...otp });
+      await db.insert(users).values({ email, role: 'student', ...otp, accepted: await shouldBeAccepted(email) });
     }
     await sendOtpEmail(email, otp.outstandingOtp, OTP_DURATION_MS);
     return { verifyOtp: true, email };

@@ -8,6 +8,9 @@
   export interface Row extends Record<string, unknown> {
     /** A unique identifier for the row/entity. Usually comes directly from the database. */
     id: number;
+
+    /** The index of the row in the original array. */
+    idx?: number;
   }
 
   /**
@@ -141,7 +144,9 @@
 
   let search = $state('');
   let sort: Sort = $state({ key: undefined, direction: 1 });
-  let filtered = $derived(filterAndSort(data));
+  let filtered = $derived(filterAndSort(data.map((row, i) => {
+    return { idx: i, ...row };
+  })));
 
   // The 'select all' checkbox won't be updated just by reactive properties
   let selectAllCheckbox = $state<HTMLInputElement>();
@@ -320,12 +325,14 @@
     <thead>
       <tr>
         <th class="action">
-          <input
-            type="checkbox"
-            bind:this={selectAllCheckbox}
-            onclick={toggleSelectAll}
-            {@attach tooltip(selected.size > 0 ? m.table_deselect_all() : m.table_select_all())}
-          />
+          <div>
+            <input
+              type="checkbox"
+              bind:this={selectAllCheckbox}
+              onclick={toggleSelectAll}
+              {@attach tooltip(selected.size > 0 ? m.table_deselect_all() : m.table_select_all())}
+            />
+          </div>
         </th>
         <th></th>
         {#each columns as { key, label, numeric, sortable } (key)}
@@ -373,23 +380,27 @@
       {#each paginated as row (row.id)}
         {@const rowInfo = getRowInfo(row)}
         <tr>
-          <td>
-            <input
-              type="checkbox"
-              checked={selected.has(row.id)}
-              onclick={() => toggleSelected(row.id)}
-              {@attach tooltip(selected.has(row.id) ? m.table_deselect_row({ rowInfo }) : m.table_select_row({ rowInfo }))}
-            />
+          <td class="action">
+            <div style="padding: 0 calc(var(--spacing))">
+              <input
+                type="checkbox"
+                checked={selected.has(row.id)}
+                onclick={() => toggleSelected(row.id)}
+                {@attach tooltip(selected.has(row.id) ? m.table_deselect_row({ rowInfo }) : m.table_select_row({ rowInfo }))}
+              />
+            </div>
           </td>
           <td class="action">
-            <button
-              class="tertiary"
-              style="min-width: calc(16px + 2 * var(--spacing))"
-              {@attach tooltip(m.table_edit_row({ rowInfo }))}
-              onclick={() => (editing = row)}
-            >
-              <Pencil size={16} />
-            </button>
+            <div>
+              <button
+                class="tertiary"
+                style="min-width: calc(16px + 2 * var(--spacing))"
+                {@attach tooltip(m.table_edit_row({ rowInfo }))}
+                onclick={() => (editing = row)}
+              >
+                <Pencil size={16} />
+              </button>
+            </div>
           </td>
           {@render body(row)}
         </tr>

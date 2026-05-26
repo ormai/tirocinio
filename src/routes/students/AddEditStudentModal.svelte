@@ -10,6 +10,7 @@
   import { error, m } from '$lib/paraglide/messages';
   import type { StudentView } from '$lib/server/user.js';
   import { success } from '$lib/toast/Toaster.svelte';
+  import { Save } from '@lucide/svelte';
   import { untrack } from 'svelte';
   import { fade } from 'svelte/transition';
   import type { ActionData } from './$types';
@@ -104,11 +105,12 @@
       role: 'secondary',
     },
     {
-      label: editing !== null ? m.students_edit_confirm() : m.students_add_confirm(),
+      label: editing !== null ? m.save_changes() : m.students_add_confirm(),
       disabled: !canSubmit,
       form: 'add-edit-student',
       onClick: () => {},
       loading,
+      icon: Save,
     },
   ]}
 >

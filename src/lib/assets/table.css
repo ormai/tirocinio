@@ -40,6 +40,13 @@
 
       &.action {
         padding: var(--spacing);
+        line-height: 0;
+
+        div {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
       }
     }
 

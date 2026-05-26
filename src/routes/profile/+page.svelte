@@ -266,7 +266,7 @@
         </button>
         <div class="button">
           <LoadingButton enabled={formDirty && formValid} {loading}>{
-            m.profile_update()
+            m.save_changes()
           }</LoadingButton>
         </div>
       </div>

@@ -44,7 +44,7 @@ export default function onSubmit(
  * @throws {ActionResult} if the request status code is not in range 200-299, or the type of the
  * `ActionResult` is not `'success'`.
  */
-export async function sendForm(action: string, data: Record<string, string>): Promise<Record<string, any>> {
+export async function sendForm(action: string, data: Record<string, string>): Promise<Record<string, unknown>> {
   const body = new FormData();
   for (const [name, value] of Object.entries(data)) {
     body.append(name, value);

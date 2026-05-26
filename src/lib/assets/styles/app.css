@@ -259,6 +259,11 @@ div.select-host {
 	}
 }
 
+label:has(input:disabled),
+.input-host:has(input:disabled) {
+	opacity: 0.6;
+}
+
 option {
 	color: var(--body-light);
 	background: var(--body-light-bg)
@@ -271,15 +276,16 @@ select {
 	background: transparent;
 }
 
+label {
+	color: var(--body-light);
+	font-size: 0.85em;
+	margin-bottom: 0.3em;
+	font-family: var(--font-sans-serif);
+}
+
 .input-host {
 	display: flex;
 	flex-direction: column;
-
-	label {
-		color: var(--body-light);
-		font-size: 0.85em;
-		margin-bottom: 0.3em;
-	}
 
 	.error {
 		margin-top: 0.6em;
@@ -389,4 +395,9 @@ hr {
 	height: 0.8px;
 	background: var(--border);
 	border: none;
+}
+
+span.secondary {
+	font-size: 0.85rem;
+	color: var(--body-light);
 }

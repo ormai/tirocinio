@@ -97,7 +97,7 @@
     await sendForm('?/import', { rows: JSON.stringify(rows) })
       .then(async (data) => {
         importModalOpen = false;
-        success(m.structures_imported({ count: data.inserted }));
+        success(m.structures_imported({ count: data.inserted as number }));
         await invalidateAll();
       })
       .catch(() => error(m.error()));

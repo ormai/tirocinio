@@ -7,6 +7,7 @@
   import { error, m } from '$lib/paraglide/messages';
   import type { StructureView } from '$lib/server/structure';
   import { success } from '$lib/toast/Toaster.svelte';
+  import { Save } from '@lucide/svelte';
   import { fade } from 'svelte/transition';
   import type { ActionData } from './$types';
 
@@ -86,11 +87,12 @@
       role: 'secondary',
     },
     {
-      label: editing !== null ? m.students_edit_confirm() : m.students_add_confirm(),
+      label: editing !== null ? m.save_changes() : m.students_add_confirm(),
       disabled: !canSubmit,
       form: 'add-edit-structure',
       onClick: () => {},
       loading,
+      icon: Save,
     },
   ]}
 >
@@ -131,8 +133,8 @@
     <div class="input-host">
       <label for="capacity">{m.structures_capacity()}</label>
       <input
-        id="capacity"
         name="capacity"
+        id="capacity"
         type="number"
         min="0"
         max="2147483647"

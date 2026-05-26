@@ -88,6 +88,7 @@
 
   label {
   	flex: 1;
+  	margin: 0;
   	cursor: pointer;
   	text-align: center;
   	padding: 5px 0;

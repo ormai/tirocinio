@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { deserialize } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import AcademicYearField from '$lib/form/AcademicYear.svelte';
   import { MAX_INT, MAX_SMALLINT } from '$lib/form/Numeric.svelte';
+  import { sendForm } from '$lib/form/submit';
   import Modal from '$lib/Modal.svelte';
   import { type LocalizedString, m } from '$lib/paraglide/messages';
   import type { StudentView } from '$lib/server/user.js';
+  import Switch from '$lib/Switch.svelte';
+  import Choice, { ChoiceFilter } from '$lib/table/ChoiceFilter.svelte';
   import DeleteSelectedModal from '$lib/table/DeleteSelectedModal.svelte';
   import ExportModal from '$lib/table/ExportModal.svelte';
   import ImportModal, {
@@ -19,12 +21,12 @@
   import { error, success } from '$lib/toast/Toaster.svelte';
   import { tooltip } from '$lib/tooltip.svelte.js';
   import { BrushCleaning } from '@lucide/svelte';
-  import { type ActionResult } from '@sveltejs/kit';
   import { onMount } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import TitleBar from '../TitleBar.svelte';
   import type { PageProps } from './$types';
   import AddEditStudentModal from './AddEditStudentModal.svelte';
+  import Settings from './Settings.svelte';
 
   onMount(() => {
     const saved = window.localStorage.getItem('students-filters');
@@ -76,6 +78,13 @@
       sortable: true,
       searchable: true,
     },
+    {
+      key: 'accepted',
+      label: m.students_accepted(),
+      numeric: false,
+      sortable: false,
+      searchable: false,
+    },
   ] as const;
 
   let selected = $state(new SvelteSet<number>());
@@ -85,12 +94,31 @@
   let exportModalOpen = $state(false);
   let filtersModalOpen = $state(false);
   let importModalOpen = $state(false);
+  let settingsModalOpen = $state(false);
 
   let validationData: {
     existsByEmail: Record<string, boolean>;
     existsByNumber: Record<number, boolean>;
   } | null = null;
+  const acceptedLoading = new SvelteSet<number>();
+
+  class AcceptedFilter extends ChoiceFilter<StudentView> {
+    isSatisfied(row: StudentView): boolean {
+      if (this.isActive) {
+        return this.selected === m.students_filters_accepted_true()
+          ? row.accepted === true
+          : row.accepted === false;
+      }
+      return true;
+    }
+  }
+
+  const acceptedFilter = new AcceptedFilter(
+    () => [m.students_filters_accepted_true(), m.students_filters_accepted_false()],
+  );
 </script>
+
+<Settings {data} bind:open={settingsModalOpen} />
 
 <ExportModal
   title={m.table_export_modal({ count: selected.size, entity: m.students({ count: selected.size }) })}
@@ -117,7 +145,7 @@
     ) => [key, {
       label,
       numeric,
-      required: key !== 'name' && key !== 'surname' && key !== 'enrollmentYear',
+      required: key !== 'name' && key !== 'surname' && key !== 'enrollmentYear' && key != 'accepted',
     }]),
   ) as Record<
     keyof StudentView,
@@ -125,20 +153,12 @@
   >}
   title={m.table_import_modal({ entities: m.students({ count: 2 }) })}
   preValidate={async (rows) => {
-    const data = new FormData();
-    data.append(
-      'students',
-      JSON.stringify((rows as StudentView[]).map((row) => {
+    await sendForm('?/studentsExist', {
+      students: JSON.stringify((rows as StudentView[]).map((row) => {
         return { email: row.email, number: row.number };
       })),
-    );
-    const res = await fetch('?/studentsExist', { method: 'POST', body: data });
-    const result = deserialize(await res.text()) as ActionResult;
-    if (res.ok && result.type === 'success' && result.data) {
-      validationData = result.data as typeof validationData;
-    } else {
-      error(m.error());
-    }
+    }).then((data) => validationData = data as typeof validationData)
+      .catch(() => error(m.error()));
   }}
   validators={{
     number: (v) => {
@@ -160,30 +180,33 @@
     enrollmentYear: isOptionalNumber(0, MAX_SMALLINT),
   }}
   onImport={async (rows: StudentView[]) => {
-    const data = new FormData();
-    data.append('rows', JSON.stringify(rows));
-    const res = await fetch('?/import', { method: 'POST', body: data });
-    const result = deserialize(await res.text()) as ActionResult;
-    if (res.ok && result.type === 'success') {
-      success(m.students_imported({ count: result.data?.inserted }));
-      importModalOpen = false;
-      await invalidateAll();
-    } else {
-      error(m.error());
-    }
+    await sendForm('?/import', { rows: JSON.stringify(rows) })
+      .then(async (data) => {
+        success(m.students_imported({ count: data.inserted as number }));
+        importModalOpen = false;
+        await invalidateAll();
+      })
+      .catch(() => error(m.error()));
   }}
 />
 
 <Modal
   bind:open={filtersModalOpen}
   title={m.table_filters()}
+  onDismiss={() => {
+    acceptedFilter.selectedField = undefined;
+    yearFilter.boundField.resetTo();
+    yearFilter.orderEqField = 'lt';
+  }}
   actions={[
     { label: m.modal_dismiss(), onClick: () => (filtersModalOpen = false), role: 'secondary' },
     {
       label: m.modal_apply(),
-      disabled: !yearFilter.hasChanged || !yearFilter.isValid,
+      disabled: !(yearFilter.hasChanged && yearFilter.isValid)
+        && !acceptedFilter.hasChanged,
       onClick: () => {
         yearFilter.apply();
+        acceptedFilter.apply();
         filtersModalOpen = false;
       },
     },
@@ -206,15 +229,43 @@
       <BrushCleaning />
     </button>
   </div>
+
+  <hr>
+
+  <Choice
+    maxWidth="100%"
+    label={m.column_filter({ column: m.students_accepted() })}
+    filter={acceptedFilter}
+  />
 </Modal>
 
-{#snippet body(row: StudentView)}
+{#snippet body(row: StudentView & { idx?: number })}
   <td class="numeric">{row.number}</td>
   <td class="truncate20">{row.name}</td>
   <td class="truncate20">{row.surname}</td>
   <td class="truncate50">{row.email}</td>
   <td class="numeric">
     {#if row.enrollmentYear}{row.enrollmentYear}/{row.enrollmentYear + 1}{/if}
+  </td>
+  <td class="action">
+    <div>
+      <Switch
+        name="{row.id}-accepted"
+        loading={acceptedLoading.has(row.id)}
+        checked={row.accepted === true}
+        height="28px"
+        width="3.2rem"
+        onchange={async (e) => {
+          const el = e.target as HTMLInputElement;
+          if (el == null) return;
+          acceptedLoading.add(row.id);
+          await sendForm('?/toggleAccepted', { id: String(row.id), val: String(el.checked) })
+            .then(() => data.students[row.idx!].accepted = el.checked)
+            .catch(() => error(m.error()))
+            .finally(() => acceptedLoading.delete(row.id));
+        }}
+      />
+    </div>
   </td>
 {/snippet}
 
@@ -225,7 +276,7 @@
     data={data.students}
     {columns}
     {body}
-    filters={[yearFilter]}
+    filters={[yearFilter, acceptedFilter]}
     bind:selected
     bind:editing
     bind:addModalOpen
@@ -233,6 +284,7 @@
     bind:filtersModalOpen
     bind:exportModalOpen
     bind:importModalOpen
+    bind:settingsModalOpen
     getRowInfo={(row: StudentView) => `${row.name} ${row.surname}`}
     label={m.students}
     uniqKey="stu-tab-int"
@@ -241,6 +293,6 @@
 
 <style>
   .row-spaced.filter {
-    text-align: center;
+    text-align: end;
   }
 </style>

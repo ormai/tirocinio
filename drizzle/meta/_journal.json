@@ -8,6 +8,20 @@
       "when": 1779722153735,
       "tag": "0000_lean_psylocke",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1779733787191,
+      "tag": "0001_quick_wrecker",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779800794193,
+      "tag": "0002_glossy_lockheed",
+      "breakpoints": true
     }
   ]
 }

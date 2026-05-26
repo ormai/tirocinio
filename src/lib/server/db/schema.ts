@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm';
 import {
+  boolean,
   integer,
   pgTable,
   primaryKey,
@@ -30,6 +31,8 @@ export const users = pgTable(
     outstandingOtpExpiresAt: timestamp('outstanding_otp_expires_at'),
     newEmail: varchar('new_email'),
     mfaSecret: uuid('mfa_secret'),
+    accepted: boolean().default(false),
+    registeredAt: timestamp('registered_at').notNull().defaultNow(),
     role: text({ enum: ['admin', 'student'] }).default('student').notNull(),
   },
   (users) => [
