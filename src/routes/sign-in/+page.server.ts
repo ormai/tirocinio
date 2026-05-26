@@ -6,7 +6,7 @@ import { sendOtpEmail } from '$lib/server/multi-factor-authentication';
 import { createSession, deleteSession } from '$lib/server/session';
 import { shouldBeAccepted } from '$lib/server/user';
 import { type Actions, fail, redirect } from '@sveltejs/kit';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { randomInt } from 'node:crypto';
 import type { PageServerLoad } from './$types';

@@ -6,7 +6,7 @@ import { users } from '$lib/server/db/schema';
 import { sendVerificationEmail } from '$lib/server/multi-factor-authentication';
 import { BCRYPT_ROUNDS } from '$lib/server/user';
 import { fail } from '@sveltejs/kit';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { randomUUID } from 'crypto';
 import { eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
@@ -47,6 +47,7 @@ export const actions = {
       if (!passwordRegExp.test(newPassword)) {
         return fail(400, 'New password is not secure enough');
       }
+      console.log(locals.user);
       if (
         !passwordRegExp.test(currentPassword)
         || !(await bcrypt.compare(currentPassword, locals.user?.encodedPassword ?? ''))
@@ -79,7 +80,7 @@ export const actions = {
 
     let emailVerificationSent = false;
     if (newEmail && mfaSecret) {
-      // Site note: If the default admin user changes their email the default account gets recreated.
+      // NOTE: If the default admin user changes their email the default account gets recreated.
       await sendVerificationEmail(locals.user.email, `${url.origin}/verify?t=${mfaSecret}`);
       emailVerificationSent = true;
     }

@@ -21,6 +21,7 @@ const authentication: Handle = async ({ event, resolve }) => {
           name: users.name,
           surname: users.surname,
           enrollmentYear: users.enrollmentYear,
+          encodedPassword: users.encodedPassword,
           role: users.role,
         })
         .from(users)
