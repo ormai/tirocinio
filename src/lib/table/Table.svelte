@@ -248,7 +248,7 @@
     </button>
   </div>
 
-  <div class="row" style="justify-content: space-between;">
+  <div class="row" style="justify-content: space-between">
     <div id="selection-controls" class="row">
       {#if selected.size > 0}
         <div transition:fade class="row">
@@ -466,11 +466,11 @@
         flex-direction: row-reverse;
       }
 
-      >div {
+      > div {
         width: 100%;
       }
 
-      >div:first-child {
+      > div:first-child {
         flex: 1 1 100%;
         .input-icon {
           flex: 1;
@@ -494,10 +494,10 @@
   }
 
   .row {
-  	display: flex;
-  	gap: 0.5rem;
-  	align-items: center;
-  	justify-content: center;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
   }
 
   span {

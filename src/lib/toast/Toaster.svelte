@@ -96,15 +96,15 @@
     left: 50%;
     transform: translateX(-50%);
   }
- 
+
   .toast-host {
     position: absolute;
     width: 100%;
     top: 0;
     left: 0;
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.38, 1) .1s;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.38, 1) 0.1s;
   }
- 
+
   @media (max-width: 480px) {
     .toaster {
       bottom: 1em;

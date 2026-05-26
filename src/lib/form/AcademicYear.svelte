@@ -60,7 +60,7 @@
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
       border-left: none;
-        pointer-events: none;
+      pointer-events: none;
     }
 
     div {

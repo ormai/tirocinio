@@ -139,7 +139,7 @@
 
       <button
         class="tertiary"
-        style="width: initial;"
+        style="width: initial"
         onclick={() => sidebar.collapsed = !sidebar.collapsed}
         aria-label={toggleLabel}
         {@attach tooltip({ content: toggleLabel, placement: 'right' })}
@@ -162,7 +162,7 @@
       {/each}
     </nav>
 
-    <div style="flex-grow: 1;"></div>
+    <div style="flex-grow: 1"></div>
 
     <footer>
       <div class="row collapsible switcher" inert={sidebar.collapsed}>
@@ -172,7 +172,7 @@
       <div class="row collapsible switcher" inert={sidebar.collapsed}>
         <ColorSchemeSwitcher
           colorScheme={colorScheme as (ColorScheme | undefined)}
-          style="border: none; width: 100%;"
+          style="border: none; width: 100%"
         />
       </div>
 
@@ -185,7 +185,7 @@
         <LogOut /> <span class="signout-text">{m.signout()}</span>
       </button>
 
-      <div style="height: 1rem;"></div>
+      <div style="height: 1rem"></div>
 
       <a
         href={resolve('/profile')}
@@ -265,7 +265,10 @@
   .collapsible {
     white-space: nowrap;
     max-width: 48rem;
-    transition: max-width 0.15s cubic-bezier(0.785, 0.135, 0.15, 0.86), opacity 0.12s ease-in-out, margin-left 0.12s ease;
+    transition:
+      max-width 0.15s cubic-bezier(0.785, 0.135, 0.15, 0.86),
+      opacity 0.12s ease-in-out,
+      margin-left 0.12s ease;
   }
 
   .collapsed .collapsible {
@@ -293,13 +296,13 @@
     align-items: center;
 
     &:hover {
-  		background: hsl(from var(--body-light-bg) h s calc(l + 5));
+      background: hsl(from var(--body-light-bg) h s calc(l + 5));
       transition: background 200ms ease-in-out;
     }
 
     &:active {
-  		background: hsl(from var(--body-light-bg) h calc(s + 5) calc(l + 10));
-  		transition: 80ms cubic-bezier(0.075, 0.82, 0.165, 1);
+      background: hsl(from var(--body-light-bg) h calc(s + 5) calc(l + 10));
+      transition: 80ms cubic-bezier(0.075, 0.82, 0.165, 1);
     }
 
     &.active {
@@ -323,7 +326,7 @@
   }
 
   @media (max-width: 767px) {
-    a, button, .switcher  {
+    a, button, .switcher {
       border: 1px solid var(--border) !important;
     }
 

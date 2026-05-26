@@ -9,7 +9,7 @@
     border-collapse: collapse;
     border-spacing: 0;
 
-    tbody>tr:nth-of-type(even) {
+    tbody > tr:nth-of-type(even) {
       background: var(--body-light-bg);
     }
 
@@ -50,8 +50,7 @@
       }
     }
 
-    >*:last-child>tr:last-child {
-
+    > *:last-child > tr:last-child {
       td,
       th {
         border-bottom: none;

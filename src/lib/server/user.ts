@@ -8,7 +8,10 @@ import { getSetting, setSetting } from './settings';
 export type User = InferSelectModel<typeof users>;
 
 /** The currently authenticated user. A view without some server-specific fields. */
-export type AuthUser = Pick<User, 'id' | 'number' | 'email' | 'name' | 'surname' | 'enrollmentYear' | 'role' | 'encodedPassword'>;
+export type AuthUser = Pick<
+  User,
+  'id' | 'number' | 'email' | 'name' | 'surname' | 'enrollmentYear' | 'role' | 'encodedPassword'
+>;
 
 export type StudentView = Pick<User, 'id' | 'number' | 'name' | 'surname' | 'email' | 'enrollmentYear' | 'accepted'>;
 

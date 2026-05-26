@@ -43,7 +43,7 @@
   ontouchmove={(e) => swipePosition = e.touches[0].clientX - swipeStart}
   ontouchend={() => Math.abs(swipePosition) >= 100 ? onDismiss() : swipePosition = 0}
 >
-  <div style="height: 36px; display: flex; align-items: center;">
+  <div style="height: 36px; display: flex; align-items: center">
     <Icon color={`var(--${toast.type === 'default' ? 'body-light' : toast.type})`} size={28} />
   </div>
 
@@ -80,14 +80,12 @@
     max-width: 380px;
     padding: 1em;
     overflow: hidden;
-    box-shadow:
-      0 4px 12px rgba(0, 0, 0, 0.09),
-      0 1px 3px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.09), 0 1px 3px rgba(0, 0, 0, 0.06);
     touch-action: pan-y;
 
     background: var(--background);
     color: var(--color);
-    border: 1px solid var(--border-color); 
+    border: 1px solid var(--border-color);
     border-radius: var(--radius);
     /*transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);*/
   }
@@ -97,7 +95,7 @@
   }
 
   .title {
-    font-size:.9em;
+    font-size: 0.9em;
     font-weight: 600;
     letter-spacing: -0.01em;
     height: 24px;
@@ -110,7 +108,7 @@
   }
 
   .message {
-    font-size: .8rem;
+    font-size: 0.8rem;
     opacity: 0.96;
     line-height: 1.3rem;
   }
@@ -143,7 +141,11 @@
   }
 
   @keyframes shrink {
-    from { transform: scaleX(1); }
-    to   { transform: scaleX(0); }
+    from {
+      transform: scaleX(1);
+    }
+    to {
+      transform: scaleX(0);
+    }
   }
 </style>

@@ -13,7 +13,7 @@
   {#if sidebar.mobile}
     <button
       class="tertiary"
-      style="width: initial;"
+      style="width: initial"
       onclick={() => sidebar.collapsed = !sidebar.collapsed}
       aria-label={m.sidebar_expand()}
       {@attach tooltip({ content: m.sidebar_expand(), placement: 'right' })}

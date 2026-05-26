@@ -16,7 +16,7 @@
     "svelteAttrShorthand": true,
     "svelteDirectiveShorthand": true
   },
-  "includes": ["**/*.{ts,js,json,svelte}"],
+  "includes": ["**/*.{ts,js,json,svelte,css,yaml,yml}", "**/Dockerfile", "**/*.dockerignore"],
   "excludes": ["**/node_modules", "dist", "build", "target", "**/-lock.lock", "static", "drizzle"],
   "plugins": [
     "https://plugins.dprint.dev/json-0.21.3.wasm",
@@ -24,6 +24,7 @@
     "https://plugins.dprint.dev/typescript-0.95.15.wasm",
     "https://plugins.dprint.dev/dockerfile-0.3.3.wasm",
     "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.6.0.wasm",
-    "https://plugins.dprint.dev/g-plane/markup_fmt-v0.27.0.wasm"
+    "https://plugins.dprint.dev/g-plane/markup_fmt-v0.27.0.wasm",
+    "https://plugins.dprint.dev/g-plane/malva-v0.15.3.wasm"
   ]
 }

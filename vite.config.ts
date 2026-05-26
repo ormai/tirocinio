@@ -18,7 +18,7 @@ export default defineConfig({
   },
   css: {
     lightningcss: {
-      exclude: Features.LightDark,
+      exclude: Features.LightDark | Features.Nesting,
     },
   },
   plugins: [

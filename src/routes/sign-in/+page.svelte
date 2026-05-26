@@ -83,7 +83,7 @@
 <LanguageSwitcher
   spacing="calc(var(--spacing) * 2)"
   width="initial"
-  style="position: absolute; bottom: 1rem; right: 1rem;"
+  style="position: absolute; bottom: 1rem; right: 1rem"
 />
 
 <svelte:head>
@@ -151,7 +151,7 @@
       <SegmentedButtons
         options={[{ label: m.signin_student(), value: 'student' }, { label: m.signin_admin(), value: 'admin' }]}
         bind:selected={signInType}
-        style="margin-bottom: 1cm;"
+        style="margin-bottom: 1cm"
       />
 
       <div class="input-host">
@@ -187,7 +187,7 @@
 
 <style>
   .button-row {
-    display:flex;
+    display: flex;
     align-items: center;
     gap: 0.5em;
     margin-top: 1cm;
