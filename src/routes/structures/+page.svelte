@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { deserialize } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { MAX_INT } from '$lib/form/Numeric.svelte';
+  import { sendForm } from '$lib/form/submit';
   import { type LocalizedString, m } from '$lib/paraglide/messages';
   import type { StructureView } from '$lib/server/structure';
   import DeleteSelectedModal from '$lib/table/DeleteSelectedModal.svelte';
@@ -9,7 +9,6 @@
   import ImportModal, { isOptionalNumber } from '$lib/table/ImportModal.svelte';
   import Table, { type Filter } from '$lib/table/Table.svelte';
   import { error, success } from '$lib/toast/Toaster.svelte';
-  import { type ActionResult } from '@sveltejs/kit';
   import { SvelteSet } from 'svelte/reactivity';
   import TitleBar from '../TitleBar.svelte';
   import type { PageProps } from './$types';
@@ -80,15 +79,9 @@
   >}
   title={m.table_import_modal({ entities: m.structures({ count: 2 }) })}
   preValidate={async (rows) => {
-    const body = new FormData();
-    body.append('names', JSON.stringify(rows.map((row) => row.name)));
-    const res = await fetch('?/structuresExist', { method: 'POST', body });
-    const result = deserialize(await res.text()) as ActionResult;
-    if (res.ok && result.type === 'success' && result.data) {
-      validationData = result.data as typeof validationData;
-    } else {
-      error(m.error());
-    }
+    await sendForm('?/structuresExist', { names: JSON.stringify(rows.map((row) => row.name)) })
+      .then((data) => validationData = data as typeof validationData)
+      .catch(() => error(m.error()));
   }}
   validators={{
     name: (name) => {
@@ -101,17 +94,13 @@
     capacity: isOptionalNumber(0, MAX_INT),
   }}
   onImport={async (rows: StructureView[]) => {
-    const body = new FormData();
-    body.append('rows', JSON.stringify(rows));
-    const res = await fetch('?/import', { method: 'POST', body });
-    const result = deserialize(await res.text()) as ActionResult;
-    if (res.ok && result.type === 'success') {
-      importModalOpen = false;
-      success(m.structures_imported({ count: result.data?.inserted }));
-      await invalidateAll();
-    } else {
-      error(m.error());
-    }
+    await sendForm('?/import', { rows: JSON.stringify(rows) })
+      .then(async (data) => {
+        importModalOpen = false;
+        success(m.structures_imported({ count: data.inserted }));
+        await invalidateAll();
+      })
+      .catch(() => error(m.error()));
   }}
 />
 

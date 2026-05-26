@@ -1,4 +1,4 @@
-import { applyAction } from '$app/forms';
+import { applyAction, deserialize } from '$app/forms';
 import type { ActionResult } from '@sveltejs/kit';
 import type { Field } from './field.svelte';
 
@@ -33,4 +33,26 @@ export default function onSubmit(
     await applyAction(result);
     await after(result);
   };
+}
+
+/**
+ * Utility to manually submit a form without having to create it in HTML.
+ *
+ * @param action the action to submit the form to
+ * @param data Arbitrary data to submit.
+ * @returns The data returned by the form action on the server
+ * @throws {ActionResult} if the request status code is not in range 200-299, or the type of the
+ * `ActionResult` is not `'success'`.
+ */
+export async function sendForm(action: string, data: Record<string, string>): Promise<Record<string, any>> {
+  const body = new FormData();
+  for (const [name, value] of Object.entries(data)) {
+    body.append(name, value);
+  }
+  const res = await fetch(action, { method: 'POST', body });
+  const result = deserialize(await res.text()) as ActionResult;
+  if (res.ok && result.type === 'success' && result.data) {
+    return result.data;
+  }
+  throw result;
 }

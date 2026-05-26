@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { deserialize, enhance } from '$app/forms';
+  import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import Banner from '$lib/Banner.svelte';
   import Numeric, { MAX_INT, MAX_SMALLINT, NumericField } from '$lib/form/Numeric.svelte';
-  import onSubmit from '$lib/form/submit';
+  import onSubmit, { sendForm } from '$lib/form/submit';
   import LoadingButton from '$lib/LoadingButton.svelte';
   import Modal from '$lib/Modal.svelte';
   import { m } from '$lib/paraglide/messages';
@@ -11,7 +11,6 @@
   import ImportModal, { isRequiredNumber } from '$lib/table/ImportModal.svelte';
   import { error, success } from '$lib/toast/Toaster.svelte';
   import { FileDown, FileUp } from '@lucide/svelte';
-  import type { ActionResult } from '@sveltejs/kit';
   import * as XLSX from 'xlsx';
 
   interface Props {
@@ -74,15 +73,9 @@
     capacity: { label: capacityLabel, numeric: true, required: true },
   }}
   preValidate={async (rows) => {
-    const body = new FormData();
-    body.append('names', JSON.stringify(rows.map((row) => row.name)));
-    const res = await fetch('?/capacitiesExist', { method: 'POST', body });
-    const result = deserialize(await res.text()) as ActionResult;
-    if (res.ok && result.type === 'success' && result.data) {
-      validationData = result.data as typeof validationData;
-    } else {
-      error(m.error());
-    }
+    await sendForm('?/capacitiesExist', { names: JSON.stringify(rows.map((row) => row.name)) })
+      .then((data) => validationData = data as typeof validationData)
+      .catch(() => error(m.error()));
   }}
   validators={{
     name: (name) => {
@@ -97,17 +90,13 @@
     capacity: isRequiredNumber(0, MAX_INT),
   }}
   onImport={async (rows: ImportCapacity[]) => {
-    const body = new FormData();
-    body.append('rows', JSON.stringify(rows));
-    const res = await fetch('?/importCapacities', { method: 'POST', body });
-    const result = deserialize(await res.text()) as ActionResult;
-    if (res.ok && result.type === 'success') {
-      importModalOpen = false;
-      success(m.capacities_imported({ count: result.data?.inserted, year: yearCapacities }));
-      await invalidateAll();
-    } else {
-      error(m.error());
-    }
+    await sendForm('?/importCapacities', { rows: JSON.stringify(rows) })
+      .then(async (data) => {
+        importModalOpen = false;
+        success(m.capacities_imported({ count: data.inserted, year: yearCapacities }));
+        await invalidateAll();
+      })
+      .catch(() => error(m.error()));
   }}
 />
 
