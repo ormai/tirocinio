@@ -11,7 +11,7 @@ import {
   updateCapacity,
 } from '$lib/server/structure';
 import { type ActionFailure, fail, isActionFailure } from '@sveltejs/kit';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, desc, eq, inArray } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -30,7 +30,8 @@ export const load: PageServerLoad = async ({ locals }) => {
     capacity: capacities.capacity,
   }).from(structures)
     .leftJoin(capacities, and(eq(structures.id, capacities.structureId), eq(capacities.year, year)))
-    .leftJoin(sites, eq(structures.siteId, sites.id));
+    .leftJoin(sites, eq(structures.siteId, sites.id))
+    .orderBy(desc(structures.id));
 
   return {
     structures: selectedStructures,
@@ -115,7 +116,7 @@ export const actions: Actions = {
     requireAdmin(locals);
     const ids = (await request.formData()).getAll('id').map(Number);
     await db.delete(structures).where(inArray(structures.id, ids));
-    console.debug(`Delete structures: ${ids}`);
+    console.debug(`Delete structures ids: ${ids}`);
     return { count: ids.length };
   },
 

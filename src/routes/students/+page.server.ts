@@ -10,7 +10,7 @@ import {
   type StudentView,
 } from '$lib/server/user';
 import { type ActionFailure, type Actions, fail, isActionFailure } from '@sveltejs/kit';
-import { and, eq, inArray, ne } from 'drizzle-orm';
+import { and, desc, eq, inArray, ne } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (
@@ -18,17 +18,21 @@ export const load: PageServerLoad = async (
 ): Promise<{ students: ReadonlyArray<StudentView>; autoAcceptAllStudents: boolean; autoAcceptEmailSuffix: string }> => {
   requireAdmin(locals);
 
-  // FIXME: STABLE ORDER
+  const students = await db.select({
+    id: users.id,
+    number: users.number,
+    name: users.name,
+    surname: users.surname,
+    email: users.email,
+    enrollmentYear: users.enrollmentYear,
+    accepted: users.accepted,
+  })
+    .from(users)
+    .where(eq(users.role, 'student'))
+    .orderBy(desc(users.id));
+
   return {
-    students: await db.select({
-      id: users.id,
-      number: users.number,
-      name: users.name,
-      surname: users.surname,
-      email: users.email,
-      enrollmentYear: users.enrollmentYear,
-      accepted: users.accepted,
-    }).from(users).where(eq(users.role, 'student')),
+    students,
     autoAcceptAllStudents: await getAutoAcceptAllStudents(),
     autoAcceptEmailSuffix: await getAutoAcceptEmailSuffix(),
   };
@@ -85,15 +89,15 @@ export const actions: Actions = {
     const form = await request.formData();
     const id = Number(form.get('id'));
     const val = form.get('val');
-    if (!val) {
+    if (val == null) {
       return fail(400, 'A `val` to set must be provided');
     }
     if (!isNaN(id)) {
-      await db.update(users).set({ accepted: Boolean(val) }).where(eq(users.id, id));
+      await db.update(users).set({ accepted: val === 'true' }).where(eq(users.id, id));
     } else {
       return fail(400, 'A user `id` must be provided');
     }
-    console.debug(`Set accepted to ${val} for user ${id}`);
+    console.debug(`Set accepted to ${val === 'true'} for user ${id}`);
     return true;
   },
 
@@ -146,7 +150,7 @@ export const actions: Actions = {
     const data = await request.formData();
     const ids = data.getAll('id').map(Number);
     await db.delete(users).where(inArray(users.id, ids));
-    console.debug(`Delete students: ${ids}`);
+    console.debug(`Delete students ids: ${ids}`);
     return { count: ids.length };
   },
 
