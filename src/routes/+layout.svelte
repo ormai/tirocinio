@@ -4,6 +4,7 @@
   import { page } from '$app/state';
   import Toaster from '$lib/toast/Toaster.svelte';
   import type { LayoutProps } from './$types';
+  import ColorSchemeSwitcher, { ColorScheme } from './ColorSchemeSwitcher.svelte';
   import Sidebar, { onclick as onSidebarDismiss } from './Sidebar.svelte';
   import SignOut, { onSignOut } from './SignOut.svelte';
 
@@ -26,7 +27,7 @@
       {@render children()}
     </Sidebar>
   {:else if data.user?.role === 'student'}
-    You are a student
+    <ColorSchemeSwitcher colorScheme={data.colorScheme as (ColorScheme | undefined)} />
     {@render children()}
     <button onclick={onSignOut}>Sign Out</button>
   {:else}

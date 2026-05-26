@@ -59,9 +59,10 @@
       boundField: NumericField;
     };
     label: string;
+    textWidth?: string;
   }
 
-  let { filter, label }: Props = $props();
+  let { filter, label, textWidth = '18%' }: Props = $props();
 
   onMount(() => {
     if (filter.orderEqField !== filter.orderEq) {
@@ -70,12 +71,14 @@
   });
 </script>
 
-<div class="row-spaced">
-  <span>{label}</span>
-  <div class="controls">
+<div class="row-spaced row-filter">
+  <span style="width: {textWidth}">{label}</span>
+
+  <div class="control">
     <OrderEqSelector bind:orderEq={filter.orderEqField} />
     <Numeric field={filter.boundField} initialValue={filter.bound} style="flex-grow: 1" />
   </div>
+
   <button
     class="secondary icon-host"
     disabled={!filter.isActive}
@@ -85,19 +88,3 @@
     <BrushCleaning />
   </button>
 </div>
-
-<style>
-  .row-spaced {
-    gap: 1rem;
-    max-width: 380px;
-    margin: auto;
-  }
-  .controls {
-    width: 50%;
-    display: flex;
-    gap: 0.4rem;
-  }
-  span {
-    width: 20%;
-  }
-</style>

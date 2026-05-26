@@ -212,14 +212,18 @@
     },
   ]}
 >
-  <div class="row-spaced filter">
-    {m.students_year()}
-    <OrderEqSelector bind:orderEq={yearFilter.orderEqField} />
-    <AcademicYearField
-      field={yearFilter.boundField}
-      maxWidth={200}
-      initialValue={yearFilter.bound}
-    />
+  <div class="row-spaced row-filter">
+    <span style="width: 30%">{m.students_year()}</span>
+
+    <div class="control">
+      <OrderEqSelector bind:orderEq={yearFilter.orderEqField} />
+      <AcademicYearField
+        field={yearFilter.boundField}
+        maxWidth={200}
+        initialValue={yearFilter.bound}
+      />
+    </div>
+
     <button
       class="secondary icon-host"
       onclick={() => yearFilter.clear()}
@@ -234,6 +238,7 @@
 
   <Choice
     maxWidth="100%"
+    textWidth="30%"
     label={m.column_filter({ column: m.students_accepted() })}
     filter={acceptedFilter}
   />
@@ -290,9 +295,3 @@
     uniqKey="stu-tab-int"
   />
 </section>
-
-<style>
-  .row-spaced.filter {
-    text-align: end;
-  }
-</style>

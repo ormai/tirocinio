@@ -484,7 +484,7 @@
     }
 
     span.clip-short {
-      max-width: 5ch;
+      max-width: 4ch;
       text-overflow: ellipsis;
       overflow: hidden;
       font-size: 0.8rem;

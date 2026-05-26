@@ -53,15 +53,17 @@
     filter: Filter<Row> & { selected?: string; selectedField?: string; options: Set<string> };
     label: string;
     maxWidth?: string;
+    textWidth?: string;
   }
 
-  let { filter, label, maxWidth = '380px' }: Props = $props();
+  let { filter, label, maxWidth = '380px', textWidth = '18%' }: Props = $props();
 </script>
 
-<div class="row-spaced" style:--max-width={maxWidth}>
-  <span>{label}</span>
+<div class="row-spaced row-filter" style:--max-width={maxWidth}>
+  <span style="width: {textWidth}">{label}</span>
 
   <select
+    class="control"
     bind:value={filter.selectedField}
     {@attach () => {
       if (!filter.selectedField && filter.selected) {
@@ -84,19 +86,3 @@
     <BrushCleaning />
   </button>
 </div>
-
-<style>
-  .row-spaced {
-    gap: 1rem;
-    max-width: var(--max-width);
-    margin: auto;
-  }
-
-  select {
-    width: 50%;
-  }
-
-  span {
-    width: 20%;
-  }
-</style>

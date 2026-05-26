@@ -390,7 +390,7 @@
       position: fixed;
       inset-block: 0;
       inset-inline-start: 0;
-      width: 20px;
+      width: 1.5rem;
       z-index: 201;
       touch-action: pan-y;
     }

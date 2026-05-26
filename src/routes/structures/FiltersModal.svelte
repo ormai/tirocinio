@@ -131,7 +131,4 @@
 </Modal>
 
 <style>
-  hr {
-    width: 350px;
-  }
 </style>
