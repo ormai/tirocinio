@@ -25,7 +25,6 @@
     { label: m.modal_cancel(), onClick: () => (open = false), role: 'secondary' },
     {
       label: m.modal_delete(),
-      onClick: () => {},
       role: 'danger',
       form: 'delete-students',
       loading,

@@ -1,3 +1,5 @@
+<!-- @component A button wrapper capable of showing a state of progress -->
+
 <script lang="ts">
   import spinner from '$lib/assets/spinner.svg?raw';
   import type { Snippet } from 'svelte';

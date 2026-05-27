@@ -144,7 +144,7 @@
       action="?/{signInType}"
       novalidate
       use:enhance={({ cancel }) =>
-      onSubmit(cancel, [email, password], () => (loading = false), async () => {
+      onSubmit(cancel, [email, password], () => (loading = true), async () => {
         loading = false;
       })}
     >

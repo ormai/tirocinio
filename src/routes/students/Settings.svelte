@@ -42,7 +42,6 @@
     {
       label: m.save_changes(),
       loading: updateSettingsLoading,
-      onClick: () => {},
       disabled: !settingsHaveChanged || !autoAcceptEmailSuffix.valid,
       icon: Save,
       form: 'students-settings',

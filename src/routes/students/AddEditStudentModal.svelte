@@ -108,7 +108,6 @@
       label: editing !== null ? m.save_changes() : m.students_add_confirm(),
       disabled: !canSubmit,
       form: 'add-edit-student',
-      onClick: () => {},
       loading,
       icon: Save,
     },

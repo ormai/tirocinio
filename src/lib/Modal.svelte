@@ -15,7 +15,7 @@
     label: string;
 
     /** @prop onClick Side effect of the action. */
-    onClick: () => void;
+    onClick?: () => void;
 
     /** @prop icon Optional icon to prepend to the label. */
     icon?: Component;

@@ -12,24 +12,30 @@
   import Modal from '$lib/Modal.svelte';
   import { m } from '$lib/paraglide/messages';
   import { error, success } from '$lib/toast/Toaster.svelte';
+  import { LogOut } from '@lucide/svelte';
 
   interface Props {
     /** @props onDismiss Side effect to run when the action is executed, such as closing a popover. */
     onDismiss?: () => void;
   }
+
   let { onDismiss = () => {} }: Props = $props();
 
-  let form: HTMLFormElement;
+  let loading = $state(false);
 </script>
 
 <form
-  bind:this={form}
+  id="signout-form"
   method="POST"
   action="/sign-in?/signout"
   use:enhance={() => {
+    loading = true;
     return async ({ result }) => {
       if (result.status === 303 && result.type === 'redirect') {
         success(`${m.signout_success()} 👋`);
+        loading = false;
+        confirmModalOpen = false;
+        onDismiss();
       } else {
         error(m.error());
       }
@@ -46,11 +52,9 @@
     { label: m.modal_cancel(), onClick: () => (confirmModalOpen = false), role: 'secondary' },
     {
       label: m.modal_confirm(),
-      onClick: () => {
-        form.requestSubmit();
-        confirmModalOpen = false;
-        onDismiss();
-      },
+      loading,
+      form: 'signout-form',
+      icon: LogOut,
     },
   ]}
 />

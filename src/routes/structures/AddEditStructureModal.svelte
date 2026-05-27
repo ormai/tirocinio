@@ -90,7 +90,6 @@
       label: editing !== null ? m.save_changes() : m.students_add_confirm(),
       disabled: !canSubmit,
       form: 'add-edit-structure',
-      onClick: () => {},
       loading,
       icon: Save,
     },
