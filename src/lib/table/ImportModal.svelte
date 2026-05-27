@@ -26,9 +26,6 @@
     };
   }
 
-  // https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Form_validation#:~:text=emailRegExp
-  const emailRegExp = /^[\w.!#$%&'*+/=?^`{|}~-]+@[a-z\d-]+(?:\.[a-z\d-]+)*$/i;
-
   /** Imported table column validator for an email address column. */
   export function isEmail(presence: 'required' | 'optional'): Validator {
     return (value) => {
@@ -50,6 +47,7 @@
   import { ChevronDown, ChevronUp, Download, FileSpreadsheet, FileUp } from '@lucide/svelte';
   import { SvelteMap } from 'svelte/reactivity';
   import * as XLSX from 'xlsx';
+    import { emailRegExp } from '$lib/email';
 
   type Key = keyof T;
 

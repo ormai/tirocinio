@@ -10,6 +10,7 @@ import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { randomInt } from 'node:crypto';
 import type { PageServerLoad } from './$types';
+import { emailRegExp } from '$lib/email';
 
 /** Otp valid for 10 minutes. */
 const OTP_DURATION_MS = 1000 * 60 * 10;
@@ -60,6 +61,7 @@ export const actions = {
     const data = await request.formData();
     const email = data.get('email')?.toString().toLowerCase().trim();
     if (!email) return fail(400, { emailMissing: true });
+    if (!emailRegExp.test(email)) return fail(400, '`email` must be a well-formed email');
 
     const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
     if (user && user.role !== 'student') {
@@ -83,6 +85,7 @@ export const actions = {
     const data = await request.formData();
     const email = data.get('email')?.toString();
     if (!email) return fail(400, { emailMissing: true });
+    if (!emailRegExp.test(email)) return fail(400, '`email` must be a well-formed email');
 
     const otpRaw = data.get('otp');
     if (!otpRaw) return fail(400, { email, otpMissing: true });

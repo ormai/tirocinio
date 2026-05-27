@@ -1,3 +1,4 @@
+import { emailRegExp } from '$lib/email';
 import { yearFromString } from '$lib/form/academic-year';
 import { passwordRegExp } from '$lib/form/field.svelte';
 import { requireAuth } from '$lib/server/api-security';
@@ -57,6 +58,7 @@ export const actions = {
     }
 
     const newEmail = email !== locals.user.email ? email : undefined;
+    if (newEmail && emailRegExp.test(newEmail)) return fail(400, '`newEmail` must be a well-formed email');
 
     if (newEmail && await db.$count(users, eq(users.email, newEmail)) > 0) {
       return fail(409, { emailTaken: true });
