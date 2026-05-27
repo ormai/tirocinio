@@ -52,6 +52,8 @@
 
 <style>
   .academic-year {
+    opacity: 1 !important;
+
     input:first-of-type {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;

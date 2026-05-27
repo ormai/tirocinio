@@ -4,32 +4,30 @@
   import { page } from '$app/state';
   import Toaster from '$lib/toast/Toaster.svelte';
   import type { LayoutProps } from './$types';
-  import ColorSchemeSwitcher, { ColorScheme } from './ColorSchemeSwitcher.svelte';
-  import Sidebar, { onclick as onSidebarDismiss } from './Sidebar.svelte';
-  import SignOut, { onSignOut } from './SignOut.svelte';
+  import SideBar, { onclick as onSideBarDismiss } from './SideBar.svelte';
+  import SignOut from './SignOut.svelte';
+  import TopBar from './TopBar.svelte';
 
   let { data, children }: LayoutProps = $props();
 </script>
 
 <Toaster />
 
-<SignOut onDismiss={onSidebarDismiss} />
+<SignOut onDismiss={onSideBarDismiss} />
 
 {#if page.url.pathname.endsWith('sign-in')}
   {@render children()}
 {:else}
   {#if data.user?.role === 'admin'}
-    <Sidebar
+    <SideBar
       user={data.user}
       collapsed={data.sidebarCollapsed}
       colorScheme={data.colorScheme}
     >
       {@render children()}
-    </Sidebar>
+    </SideBar>
   {:else if data.user?.role === 'student'}
-    <ColorSchemeSwitcher colorScheme={data.colorScheme as (ColorScheme | undefined)} />
-    {@render children()}
-    <button onclick={onSignOut}>Sign Out</button>
+    <TopBar user={data.user} colorScheme={data.colorScheme}>{@render children()}</TopBar>
   {:else}
     Error: unknown role
   {/if}

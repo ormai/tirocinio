@@ -50,6 +50,7 @@
     ArrowDownUp,
     ArrowUp01,
     ArrowUpAZ,
+    BrushCleaning,
     ChevronFirst,
     ChevronLast,
     ChevronLeft,
@@ -58,7 +59,6 @@
     Funnel,
     Pencil,
     Plus,
-    RotateCcw,
     Search,
     Settings,
     Trash,
@@ -276,7 +276,7 @@
           {@attach tooltip(m.table_clear_filters())}
           transition:fade
         >
-          <RotateCcw />
+          <BrushCleaning />
         </button>
       {/if}
     </div>

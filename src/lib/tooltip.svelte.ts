@@ -3,6 +3,8 @@ import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/shift-away.css';
 import { untrack } from 'svelte';
 
+// TODO maybe disable tooltips on mobile
+
 /**
  * An attachment to give a tooltip to an element.
  *

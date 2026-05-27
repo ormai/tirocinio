@@ -240,5 +240,7 @@
   "students_settings_email_suffix_invalid": "Invalid suffix. A valid suffix looks like this: «@example.com».",
   "students_accepted": "Accepted",
   "students_filters_accepted_true": "True",
-  "students_filters_accepted_false": "False"
+  "students_filters_accepted_false": "False",
+  "menu_open": "Open Menu",
+  "menu_close": "Close Menu"
 }

@@ -40,6 +40,7 @@
 
 <script lang="ts" generics="T extends Record<string, unknown>">
   import Banner from '$lib/Banner.svelte';
+  import { emailRegExp } from '$lib/email';
   import Modal, { type Action } from '$lib/Modal.svelte';
   import { m } from '$lib/paraglide/messages';
   import { add as showToast } from '$lib/toast/Toaster.svelte';
@@ -47,7 +48,6 @@
   import { ChevronDown, ChevronUp, Download, FileSpreadsheet, FileUp } from '@lucide/svelte';
   import { SvelteMap } from 'svelte/reactivity';
   import * as XLSX from 'xlsx';
-    import { emailRegExp } from '$lib/email';
 
   type Key = keyof T;
 

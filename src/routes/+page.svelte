@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { sidebar } from './Sidebar.svelte';
+  import TitleBar from './TitleBar.svelte';
 </script>
 
-{#if sidebar.mobile}
-  <button onclick={() => (sidebar.collapsed = !sidebar.collapsed)}>Toggle</button>
-{/if}
+<section class="container">
+  <TitleBar title="Home" />
 
-<p>
-  Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam ducimus distinctio debitis
-  aliquam sunt molestiae non quaerat, in omnis praesentium rem qui delectus, sint nihil
-  perspiciatis? Ullam sunt illum impedit.
-</p>
+  <p>
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam ducimus distinctio debitis
+    aliquam sunt molestiae non quaerat, in omnis praesentium rem qui delectus, sint nihil
+    perspiciatis? Ullam sunt illum impedit.
+  </p>
+</section>

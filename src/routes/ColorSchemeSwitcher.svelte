@@ -5,7 +5,7 @@
 </script>
 
 <script lang="ts">
-  import { COLOR_SCHEME } from '$lib/cookies';
+  import { COLOR_SCHEME, setCookie } from '$lib/cookies';
   import { tooltip } from '$lib/tooltip.svelte';
   import type { LocalizedString } from '@inlang/paraglide-js';
   import { Moon, Sun, SunMoon } from '@lucide/svelte';
@@ -18,17 +18,14 @@
     'only dark': { label: m.color_scheme_dark(), icon: Moon },
   } as const;
 
-  let { colorScheme = 'light dark', ...props }: {
+  let { colorScheme = 'light dark', spacing = 'var(--spacing)', ...props }: {
     colorScheme: ColorScheme | undefined;
+    spacing?: string;
   } & HTMLSelectAttributes = $props();
 
   let Icon = $derived(options[colorScheme].icon);
 
-  $effect(() => {
-    document.cookie = `${COLOR_SCHEME}=${colorScheme}; path=/; max-age=${
-      60 * 60 * 24 * 365
-    }; SameSite=Lax`;
-  });
+  $effect(() => setCookie(COLOR_SCHEME, colorScheme));
 </script>
 
 <svelte:head>
@@ -36,8 +33,13 @@
 </svelte:head>
 
 <div class="select-host" {@attach tooltip(m.color_scheme_switcher_tooltip())}>
-  <div class="icon-before"><Icon aria-hidden="true" /></div>
-  <select name="color-scheme-switcher" bind:value={colorScheme} {...props}>
+  <div class="icon-before" style:left={spacing}><Icon /></div>
+  <select
+    name="color-scheme-switcher"
+    bind:value={colorScheme}
+    style:padding-left="calc({spacing} * 1.7 + 24px)"
+    {...props}
+  >
     {#each Object.entries(options) as [value, { label }] (value)}
       <option {value}>{label}</option>
     {/each}

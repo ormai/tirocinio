@@ -2,19 +2,20 @@
   import { m } from '$lib/paraglide/messages';
   import { tooltip } from '$lib/tooltip.svelte.js';
   import { Menu } from '@lucide/svelte';
-  import { sidebar } from './Sidebar.svelte';
+  import { sideBar } from './SideBar.svelte';
 
   let { title }: { title: string } = $props();
+  // TODO: doesn't show sidebar toggle for students
 </script>
 
 <svelte:head><title>{title}</title></svelte:head>
 
 <header>
-  {#if sidebar.mobile}
+  {#if sideBar.mobile}
     <button
       class="tertiary"
       style="width: initial"
-      onclick={() => sidebar.collapsed = !sidebar.collapsed}
+      onclick={() => sideBar.collapsed = !sideBar.collapsed}
       aria-label={m.sidebar_expand()}
       {@attach tooltip({ content: m.sidebar_expand(), placement: 'right' })}
     >

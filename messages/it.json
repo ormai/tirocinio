@@ -240,5 +240,7 @@
   "students_settings_email_suffix_invalid": "Suffisso email non valido. Un suffiso valido è simile a: «@example.com».",
   "students_accepted": "Accettato",
   "students_filters_accepted_true": "Vero",
-  "students_filters_accepted_false": "Falso"
+  "students_filters_accepted_false": "Falso",
+  "menu_open": "Apri menù",
+  "menu_close": "Chiudi menù"
 }

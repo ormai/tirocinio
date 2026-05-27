@@ -122,10 +122,13 @@ html {
 }
 
 html {
+  width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
 body {
+  width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
@@ -137,9 +140,17 @@ body {
 }
 
 section.container {
+  overflow: auto;
   max-width: min(70ch, 100% - 2rem);
   margin: auto;
   padding: 1.3rem 0;
+}
+
+.top-bar-layout section.container {
+  max-width: unset;
+
+  padding: 0 3px;
+  margin: -3px;
 }
 
 section:has(.scroller table) {
@@ -217,17 +228,7 @@ label:has(> input[type="file"]) {
   }
 
   &.tertiary {
-    background: transparent;
     border: none;
-    padding: var(--spacing);
-
-    &:hover {
-      background: hsl(from var(--body-light-bg) h s calc(l + 3));
-    }
-
-    &:active {
-      background: hsl(from var(--body-light-bg) h s calc(l + 6));
-    }
   }
 
   &.danger {
@@ -244,6 +245,19 @@ label:has(> input[type="file"]) {
       border-color: hsl(from var(--danger-bg) h s calc(l - 10));
       transition: 80ms cubic-bezier(0.075, 0.82, 0.165, 1);
     }
+  }
+}
+
+button.tertiary, select {
+  background: transparent !important;
+  padding: var(--spacing);
+
+  &:hover {
+    background: hsl(from var(--body-light-bg) h s calc(l + 3)) !important;
+  }
+
+  &:active {
+    background: hsl(from var(--body-light-bg) h s calc(l + 6)) !important;
   }
 }
 
@@ -292,6 +306,7 @@ div.select-host {
   }
 
   select {
+    width: 100%;
     padding-left: calc(var(--spacing) * 3 + 24px);
   }
 }

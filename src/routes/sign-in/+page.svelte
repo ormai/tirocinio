@@ -83,7 +83,7 @@
 <LanguageSwitcher
   spacing="calc(var(--spacing) * 2)"
   width="initial"
-  style="position: absolute; bottom: 1rem; right: 1rem"
+  containerStyle="position: absolute; bottom: 1rem; right: 1rem"
 />
 
 <svelte:head>
@@ -126,6 +126,7 @@
 
       <div class="button-row">
         <button
+          type="button"
           class="secondary icon-host"
           onclick={() => otp = false}
           {@attach tooltip(m.nav_back())}

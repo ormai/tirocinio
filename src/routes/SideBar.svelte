@@ -2,7 +2,7 @@
   /** Viewport width under which the Sidebar switches to mobile mode. */
   export const BREAK_POINT: number = 767;
 
-  export const sidebar = $state({
+  export const sideBar = $state({
     /** @property {boolean} Wether the sidebar is currently collapsed or not. */
     collapsed: false,
 
@@ -14,8 +14,8 @@
    * Hook for when an element of the sidebar is clicked, or pressed.
    */
   export function onclick() {
-    if (sidebar.mobile) {
-      sidebar.collapsed = true;
+    if (sideBar.mobile) {
+      sideBar.collapsed = true;
     }
   }
 </script>
@@ -53,17 +53,17 @@
   }
 
   let { user, collapsed, colorScheme, children }: Props = $props();
-  let toggleLabel = $derived(sidebar.collapsed ? m.sidebar_expand() : m.sidebar_collapse());
+  let toggleLabel = $derived(sideBar.collapsed ? m.sidebar_expand() : m.sidebar_collapse());
 
   const maxWidth = new MediaQuery(`max-width: ${BREAK_POINT}px`);
   $effect(() => {
-    sidebar.mobile = maxWidth.current;
+    sideBar.mobile = maxWidth.current;
   });
 
   // svelte-ignore state_referenced_locally
-  sidebar.collapsed = collapsed === null ? sidebar.mobile : collapsed;
+  sideBar.collapsed = collapsed === null ? sideBar.mobile : collapsed;
 
-  $effect(() => setCookie(SIDEBAR_COLLAPSED, sidebar.collapsed));
+  $effect(() => setCookie(SIDEBAR_COLLAPSED, sideBar.collapsed));
 
   const destinations = [
     { path: '/', label: m.sidebar_home(), icon: House },
@@ -78,7 +78,7 @@
   let start = { x: 0, y: 0 };
 
   function onTouchStart(e: TouchEvent) {
-    if (sidebar.mobile) {
+    if (sideBar.mobile) {
       start = { x: e.touches[0].clientX, y: e.touches[0].clientY };
     }
   }
@@ -88,14 +88,14 @@
     if ((Math.abs(dx) > 6 || Math.abs(dy) > 6) && (Math.abs(dx / dy) < 1.2)) {
       return; // Swipe is not horizontal
     }
-    dragDx = sidebar.collapsed
+    dragDx = sideBar.collapsed
       ? Math.min(0, dx - asideWidth)
       : Math.max(-asideWidth, Math.min(0, dx));
   }
 
   function onTouchEnd() {
     if (dragDx !== null) {
-      sidebar.collapsed = sidebar.collapsed
+      sideBar.collapsed = sideBar.collapsed
         ? Math.abs(dragDx + asideWidth) < 60
         : Math.abs(dragDx) >= 60;
     }
@@ -103,7 +103,7 @@
   }
 </script>
 
-{#if sidebar.mobile && sidebar.collapsed}
+{#if sideBar.mobile && sideBar.collapsed}
   <div
     class="swipe"
     role="presentation"
@@ -116,9 +116,9 @@
 
 <div
   class="overlay"
-  class:visible={!sidebar.collapsed}
+  class:visible={!sideBar.collapsed}
   role="presentation"
-  onclick={() => (sidebar.collapsed = true)}
+  onclick={() => (sideBar.collapsed = true)}
 >
 </div>
 
@@ -126,13 +126,13 @@
   <aside
     tabindex="-1"
     bind:offsetWidth={asideWidth}
-    class:collapsed={sidebar.collapsed}
+    class:collapsed={sideBar.collapsed}
     class:no-transition={dragDx !== null}
     style:transform={dragDx !== null ? `translateX(${dragDx}px)` : undefined}
     ontouchstart={onTouchStart}
     ontouchmove={onTouchMove}
     ontouchend={onTouchEnd}
-    inert={sidebar.mobile && sidebar.collapsed}
+    inert={sideBar.mobile && sideBar.collapsed}
   >
     <header>
       <span class="collapsible">Sidebar</span>
@@ -140,11 +140,11 @@
       <button
         class="tertiary"
         style="width: initial"
-        onclick={() => sidebar.collapsed = !sidebar.collapsed}
+        onclick={() => sideBar.collapsed = !sideBar.collapsed}
         aria-label={toggleLabel}
         {@attach tooltip({ content: toggleLabel, placement: 'right' })}
       >
-        {#if sidebar.collapsed}<PanelLeftOpen />{:else}<PanelLeftClose />{/if}
+        {#if sideBar.collapsed}<PanelLeftOpen />{:else}<PanelLeftClose />{/if}
       </button>
     </header>
 
@@ -155,7 +155,7 @@
           class="row"
           class:active={deLocalizeHref(page.url.pathname).endsWith(path)}
           {onclick}
-          {@attach sidebar.collapsed && tooltip({ content: label, placement: 'right' })}
+          {@attach sideBar.collapsed && tooltip({ content: label, placement: 'right' })}
         >
           <Icon /><span class="collapsible">{label}</span>
         </a>
@@ -165,11 +165,11 @@
     <div style="flex-grow: 1"></div>
 
     <footer>
-      <div class="row collapsible switcher" inert={sidebar.collapsed}>
-        <LanguageSwitcher border="none" />
+      <div class="row collapsible switcher" inert={sideBar.collapsed}>
+        <LanguageSwitcher style="border: none; width: 100%" />
       </div>
 
-      <div class="row collapsible switcher" inert={sidebar.collapsed}>
+      <div class="row collapsible switcher" inert={sideBar.collapsed}>
         <ColorSchemeSwitcher
           colorScheme={colorScheme as (ColorScheme | undefined)}
           style="border: none; width: 100%"
@@ -180,7 +180,7 @@
         onclick={onSignOut}
         class="tertiary collapsible row"
         style="text-align: initial; justify-content: start; gap: 0"
-        inert={sidebar.collapsed}
+        inert={sideBar.collapsed}
       >
         <LogOut /> <span class="signout-text">{m.signout()}</span>
       </button>
@@ -191,8 +191,8 @@
         href={resolve('/profile')}
         class="row"
         {onclick}
-        class:active={page.url.pathname.endsWith('/profile')}
-        {@attach sidebar.collapsed && tooltip({ content: m.sidebar_profile(), placement: 'right' })}
+        class:active={deLocalizeHref(page.url.pathname).endsWith('/profile')}
+        {@attach sideBar.collapsed && tooltip({ content: m.sidebar_profile(), placement: 'right' })}
       >
         <CircleUserRound />
         <span class="collapsible">
@@ -205,7 +205,7 @@
       </a>
     </footer>
   </aside>
-  <main inert={sidebar.mobile && !sidebar.collapsed} tabindex="-1">
+  <main inert={sideBar.mobile && !sideBar.collapsed} tabindex="-1">
     {@render children()}
   </main>
 </div>

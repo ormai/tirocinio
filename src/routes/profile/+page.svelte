@@ -233,28 +233,30 @@
         </span>
       </div>
 
-      <PasswordField
-        name="current-password"
-        field={currentPassword}
-        label={m.profile_current_password()}
-      />
+      {#if data.user.role === 'admin'}
+        <PasswordField
+          name="current-password"
+          field={currentPassword}
+          label={m.profile_current_password()}
+        />
 
-      <div class="row">
-        <div>
-          <PasswordField
-            name="new-password"
-            field={newPassword}
-            label={m.profile_new_password()}
-          />
-        </div>
+        <div class="row">
+          <div>
+            <PasswordField
+              name="new-password"
+              field={newPassword}
+              label={m.profile_new_password()}
+            />
+          </div>
 
-        <div>
-          <PasswordField
-            field={newPasswordConfirm}
-            label={m.profile_confirm_new_password()}
-          />
+          <div>
+            <PasswordField
+              field={newPasswordConfirm}
+              label={m.profile_confirm_new_password()}
+            />
+          </div>
         </div>
-      </div>
+      {/if}
 
       <div class="button-row" style:margin-top="2rem">
         <button
