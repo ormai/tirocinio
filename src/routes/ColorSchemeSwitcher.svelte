@@ -18,9 +18,15 @@
     'only dark': { label: m.color_scheme_dark(), icon: Moon },
   } as const;
 
-  let { colorScheme = 'light dark', spacing = 'var(--spacing)', ...props }: {
+  let {
+    colorScheme = 'light dark',
+    spacingLeft = 'calc(var(--spacing) * 2)',
+    spacingRight = 'calc(var(--spacing) * 3 + 24px)',
+    ...props
+  }: {
     colorScheme: ColorScheme | undefined;
-    spacing?: string;
+    spacingLeft?: string;
+    spacingRight?: string;
   } & HTMLSelectAttributes = $props();
 
   let Icon = $derived(options[colorScheme].icon);
@@ -33,11 +39,11 @@
 </svelte:head>
 
 <div class="select-host" {@attach tooltip(m.color_scheme_switcher_tooltip())}>
-  <div class="icon-before" style:left={spacing}><Icon /></div>
+  <div class="icon-before" style:left={spacingLeft}><Icon /></div>
   <select
     name="color-scheme-switcher"
     bind:value={colorScheme}
-    style:padding-left="calc({spacing} * 1.7 + 24px)"
+    style:padding-left={spacingRight}
     {...props}
   >
     {#each Object.entries(options) as [value, { label }] (value)}

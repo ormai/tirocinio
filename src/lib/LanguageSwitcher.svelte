@@ -6,8 +6,9 @@
 
   let {
     width = '100%',
-    spacing = 'var(--spacing)',
     containerStyle = '',
+    spacingLeft = 'calc(var(--spacing) * 2)',
+    spacingRight = 'calc(var(--spacing) * 3 + 24px)',
     ...props
   } = $props();
 
@@ -25,11 +26,11 @@
   style={containerStyle}
   {@attach tooltip(m.language_switcher_tooltip())}
 >
-  <div class="icon-before" style:left={spacing}><Languages /></div>
+  <div class="icon-before" style:left={spacingLeft}><Languages /></div>
   <select
     id="language-switcher"
     bind:value={locale}
-    style:padding-left="calc({spacing} * 1.7 + 24px)"
+    style:padding-left={spacingRight}
     {...props}
   >
     {#each locales as locale (locale)}

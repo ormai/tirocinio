@@ -1,4 +1,5 @@
 import { SESSION_COOKIE } from '$lib/cookies';
+import { emailRegExp } from '$lib/email';
 import { passwordRegExp } from '$lib/form/field.svelte';
 import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
@@ -10,7 +11,6 @@ import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { randomInt } from 'node:crypto';
 import type { PageServerLoad } from './$types';
-import { emailRegExp } from '$lib/email';
 
 /** Otp valid for 10 minutes. */
 const OTP_DURATION_MS = 1000 * 60 * 10;

@@ -166,13 +166,17 @@
 
     <footer>
       <div class="row collapsible switcher" inert={sideBar.collapsed}>
-        <LanguageSwitcher style="border: none; width: 100%" />
+        <LanguageSwitcher
+          style="border: none; width: 100%"
+          spacingLeft="var(--spacing)"
+        />
       </div>
 
       <div class="row collapsible switcher" inert={sideBar.collapsed}>
         <ColorSchemeSwitcher
           colorScheme={colorScheme as (ColorScheme | undefined)}
           style="border: none; width: 100%"
+          spacingLeft="var(--spacing)"
         />
       </div>
 

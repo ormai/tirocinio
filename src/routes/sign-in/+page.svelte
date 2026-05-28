@@ -81,7 +81,6 @@
 </script>
 
 <LanguageSwitcher
-  spacing="calc(var(--spacing) * 2)"
   width="initial"
   containerStyle="position: absolute; bottom: 1rem; right: 1rem"
 />

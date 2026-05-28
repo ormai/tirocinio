@@ -56,11 +56,10 @@
       <Hamburger>
         <ColorSchemeSwitcher
           colorScheme={colorScheme as (ColorScheme | undefined)}
-          spacing="calc(var(--spacing) * 2)"
           style="border: none"
         />
 
-        <LanguageSwitcher spacing="calc(var(--spacing) * 2)" style="border: none" />
+        <LanguageSwitcher style="border: none" />
 
         <button
           onclick={onSignOut}
