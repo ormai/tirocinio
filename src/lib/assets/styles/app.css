@@ -69,9 +69,8 @@ html {
   --border: light-dark(#ccc, #444);
 
   /* Main color: hyperlinks, focus style, active states of components and forms */
-  /* --primary: light-dark(SandyBrown, SaddleBrown); */
   --primary: light-dark(Plum, DarkOrchid);
-  /* --primary: light-dark(PaleTurquoise, DarkCyan); */
+  --on-primary: var(--body);
   --primary-bg: hsl(from var(--primary) h s l / 0.15);
   --primary-border: hsl(from var(--primary) h s calc(l - 20) / 0.1);
   --primary-text: light-dark(
@@ -110,8 +109,16 @@ html {
   --focus-shadow: 0 0 0 3px rgb(from var(--primary) r g b / 0.5);
 }
 
+@supports (color: AccentColor) and (color: AccentColorText) {
+  html {
+    --primary: AccentColor;
+    --on-primary: AccentColorText;
+  }
+}
+
 ::selection {
-  background-color: rgb(from light-dark(Coral, LightCoral) r g b / 0.4);
+  background: Highlight;
+  color: HighlightText;
 }
 
 :focus-visible {
@@ -143,7 +150,7 @@ section.container {
   overflow: auto;
   max-width: min(70ch, 100% - 2rem);
   margin: auto;
-  padding: 1.3rem 0;
+  padding: 1.3rem 3px; /* 3px for the box-shadow when the element is focused*/
 }
 
 .top-bar-layout section.container {
@@ -173,6 +180,9 @@ label:has(> input[type="file"]) {
   border-radius: var(--radius);
   border-color: var(--primary);
   background: var(--primary);
+  &:not(.tertiary), &:not(.secondary), &:not(:disabled) {
+    color: var(--on-primary);
+  }
   transition:
     background 0.2s cubic-bezier(0.77, 0, 0.175, 1),
     border 80ms ease,
@@ -251,6 +261,7 @@ label:has(> input[type="file"]) {
 button.tertiary, select {
   background: transparent !important;
   padding: var(--spacing);
+  color: var(--body) !important;
 
   &:hover {
     background: hsl(from var(--body-light-bg) h s calc(l + 3)) !important;

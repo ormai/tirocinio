@@ -195,7 +195,7 @@
         href={resolve('/profile')}
         class="row"
         {onclick}
-        class:active={deLocalizeHref(page.url.pathname).endsWith('/profile')}
+        class:active={deLocalizeHref(page.url.pathname).endsWith('profile')}
         {@attach sideBar.collapsed && tooltip({ content: m.sidebar_profile(), placement: 'right' })}
       >
         <CircleUserRound />
@@ -306,11 +306,12 @@
 
     &:active {
       background: hsl(from var(--body-light-bg) h calc(s + 5) calc(l + 10));
-      transition: 80ms cubic-bezier(0.075, 0.82, 0.165, 1);
+      transition: background 80ms cubic-bezier(0.075, 0.82, 0.165, 1);
     }
 
     &.active {
       background: var(--primary);
+      color: var(--on-primary);
     }
   }
 
