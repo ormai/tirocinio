@@ -1,4 +1,4 @@
-<!-- @component Form for creating and editing a collection -->
+<!-- @component Form for creating and editing a {@link Collection} -->
 
 <script lang="ts">
   import { browser } from '$app/environment';

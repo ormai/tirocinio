@@ -226,9 +226,7 @@
         {#if email.dirty && email.error}
           <span transition:fade class="error">{email.error}</span>
         {/if}
-        <span
-          style="font-size: 0.75rem; color: var(--body-light); display: flex; align-items: center; gap: 0.4rem; margin-top: 0.3rem"
-        >
+        <span class="info">
           <Info size={16} style="display: inline" /> {m.profile_email_info()}
         </span>
       </div>
@@ -240,21 +238,26 @@
           label={m.profile_current_password()}
         />
 
-        <div class="row">
-          <div>
-            <PasswordField
-              name="new-password"
-              field={newPassword}
-              label={m.profile_new_password()}
-            />
-          </div>
+        <div>
+          <div class="row">
+            <div>
+              <PasswordField
+                name="new-password"
+                field={newPassword}
+                label={m.profile_new_password()}
+              />
+            </div>
 
-          <div>
-            <PasswordField
-              field={newPasswordConfirm}
-              label={m.profile_confirm_new_password()}
-            />
+            <div>
+              <PasswordField
+                field={newPasswordConfirm}
+                label={m.profile_confirm_new_password()}
+              />
+            </div>
           </div>
+          <span class="info">
+            <Info size={16} style="display: inline" /> {m.profile_password_info()}
+          </span>
         </div>
       {/if}
 
@@ -301,5 +304,14 @@
     .button-row {
       flex-wrap: wrap;
     }
+  }
+
+  .info {
+    font-size: 0.75rem;
+    color: var(--body-light);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.3rem;
   }
 </style>

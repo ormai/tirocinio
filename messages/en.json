@@ -280,5 +280,6 @@
   "preferences_active_collection": "Ongoing collection:",
   "preferences_delete_collection": "Delete collection",
   "preferences_edit_collection": "Edit Collection",
-  "preferences_delete_warning": "Confirm the deletion of this collection. As a result of this operation, all preferences contained in this collection will be deleted. <strong class=\"danger\">This action is irreversible</strong>."
+  "preferences_delete_warning": "Confirm the deletion of this collection. As a result of this operation, all preferences contained in this collection will be deleted. <strong class=\"danger\">This action is irreversible</strong>.",
+  "profile_password_info": "Changing your password will terminate all sessions, except the current one."
 }

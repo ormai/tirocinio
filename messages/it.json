@@ -280,5 +280,6 @@
   "preferences_active_collection": "Raccolta in corso",
   "preferences_delete_collection": "Elimina raccolta",
   "preferences_edit_collection": "Modifica raccolta",
-  "preferences_delete_warning": "Conferma di volere eliminare questa raccolta. Come risultato di questa operazione tutte le preferenze contenute nella raccolta verrano eliminate. <strong class=\"danger\">Questa operazione è irreversibile</strong>."
+  "preferences_delete_warning": "Conferma di volere eliminare questa raccolta. Come risultato di questa operazione tutte le preferenze contenute nella raccolta verrano eliminate. <strong class=\"danger\">Questa operazione è irreversibile</strong>.",
+  "profile_password_info": "Cambiare la password causa la terminazione di tutte le sessioni, eccetto quella corrente."
 }

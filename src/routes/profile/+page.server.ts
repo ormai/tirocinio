@@ -3,13 +3,13 @@ import { yearFromString } from '$lib/form/academic-year';
 import { passwordRegExp } from '$lib/form/field.svelte';
 import { requireAuth } from '$lib/server/api-security';
 import { db } from '$lib/server/db';
-import { users } from '$lib/server/db/schema';
+import { sessions, users } from '$lib/server/db/schema';
 import { sendVerificationEmail } from '$lib/server/multi-factor-authentication';
 import { BCRYPT_ROUNDS } from '$lib/server/user';
 import { fail } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
 import { randomUUID } from 'crypto';
-import { eq } from 'drizzle-orm';
+import { and, eq, ne } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = ({ locals }) => {
@@ -48,7 +48,6 @@ export const actions = {
       if (!passwordRegExp.test(newPassword)) {
         return fail(400, 'New password is not secure enough');
       }
-      console.log(locals.user);
       if (
         !passwordRegExp.test(currentPassword)
         || !(await bcrypt.compare(currentPassword, locals.user?.encodedPassword ?? ''))
@@ -69,15 +68,20 @@ export const actions = {
     // NOTE: `undefined` is ignored by drizzle, `null` is the same as in SQL.
     // See: https://orm.drizzle.team/docs/update
     if (newPassword || name || surname || number || newEmail || mfaSecret || enrollmentYear) {
-      await db.update(users).set({
-        encodedPassword: newPassword ? await bcrypt.hash(newPassword, BCRYPT_ROUNDS) : undefined,
-        name: name !== locals.user.name ? name : undefined,
-        surname: surname !== locals.user.surname ? surname : undefined,
-        number,
-        newEmail,
-        mfaSecret,
-        enrollmentYear,
-      }).where(eq(users.id, locals.user.id));
+      await db.transaction(async (tx) => {
+        await tx.update(users).set({
+          encodedPassword: newPassword ? await bcrypt.hash(newPassword, BCRYPT_ROUNDS) : undefined,
+          name: name !== locals.user.name ? name : undefined,
+          surname: surname !== locals.user.surname ? surname : undefined,
+          number,
+          newEmail,
+          mfaSecret,
+          enrollmentYear,
+        }).where(eq(users.id, locals.user.id));
+        if (newPassword) {
+          await tx.delete(sessions).where(and(eq(sessions.userId, locals.user.id), ne(sessions.id, locals.session.id)));
+        }
+      });
     }
 
     let emailVerificationSent = false;
