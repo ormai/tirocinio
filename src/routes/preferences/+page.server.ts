@@ -20,6 +20,10 @@ function isValidationFailure(e: unknown): e is ActionFailure<string> {
   return isActionFailure(e);
 }
 
+function getUtcDate(date: string, offset: number) {
+  return new Date(new Date(date).getTime() + offset * 60_000);
+}
+
 function validateCollection(form: FormData): Partial<Collection> | ActionFailure<string> {
   const start = form.get('start-time');
   if (!start) return fail(400, '`start-time` is required');
@@ -38,13 +42,15 @@ function validateCollection(form: FormData): Partial<Collection> | ActionFailure
   if (isNaN(numberOfPreferences) || numberOfPreferences < 0 || numberOfPreferences > 32767) {
     return fail(400, '`number-of-prefs` is required, and must be a valid number in [0, 32767]');
   }
+  const timezoneOffset = Number(form.get('timezone-offset'));
+  if (isNaN(timezoneOffset)) return fail(400, '`timezone-offset` is required');
   return {
     id: Number(form.get('id')),
     year,
     durationMonths,
     numberOfPreferences,
-    startTime: new Date(String(start)),
-    endTime: new Date(String(end)),
+    startTime: getUtcDate(String(start), timezoneOffset),
+    endTime: getUtcDate(String(end), timezoneOffset),
   };
 }
 

@@ -1,6 +1,7 @@
 <!-- @component Form for creating and editing a collection -->
 
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import AcademicYear, { YearField } from '$lib/form/AcademicYear.svelte';
@@ -66,11 +67,10 @@
   });
 
   function inputValueDateTime(date = new Date()): string {
-    const offset = date.getTimezoneOffset() * 60_000;
-    return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+    return date.toLocaleString('sv').replace(' ', 'T').slice(0, 16);
   }
 
-  const now = inputValueDateTime();
+  const now = browser ? inputValueDateTime() : '';
 </script>
 
 <form
@@ -99,6 +99,8 @@
   novalidate
 >
   <input type="hidden" name="id" value={selected?.id} />
+
+  <input type="hidden" name="timezone-offset" value={new Date().getTimezoneOffset()} />
 
   <div class="row-spaced">
     <div class="input-host">

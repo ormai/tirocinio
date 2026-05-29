@@ -106,8 +106,8 @@
 )}
   <a
     class="collection row-spaced link-button"
-    class:first={index === 0}
-    class:last={index === pasts.length - 1}
+    class:first={index === 0 && pasts.length > 1}
+    class:last={index === pasts.length - 1 && pasts.length > 1}
     class:middle={index && index > 0 && index < pasts.length - 1}
     class:active
     // <!-- href={resolve(`/preferences/${collection.id}`)} -->
