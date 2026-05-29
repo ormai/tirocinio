@@ -242,5 +242,43 @@
   "students_filters_accepted_true": "True",
   "students_filters_accepted_false": "False",
   "menu_open": "Open Menu",
-  "menu_close": "Close Menu"
+  "menu_close": "Close Menu",
+  "preferences_title": "Preference collections",
+  "preferences_create": "Create new collection",
+  "preferences_no_active_collection": "There is not an ongoing collection at the moment",
+  "preferences_past_title": "Past collections",
+  "modal_create": "Create",
+  "preferences_year": "Year",
+  "preferences_months": "Number of months",
+  "preferences_prefs_per_month": "Number of preferences expressable for each month",
+  "preferences_start": "Start time",
+  "preferences_end": "End time",
+  "preferences_prefs_per_month_missing": "You must provide a number of preferences per month",
+  "preferences_months_missing": "You must provide a duration in number of months",
+  "preferences_year_missing": "You must provide the year",
+  "preferences_start_missing": "You must provide the start time",
+  "preferences_end_missing": "You must provide the end time",
+  "preferences_start_max": "Start time cannot be after end time",
+  "preferences_start_min": "Start time cannot be a date in the past",
+  "preferences_end_min": "End time cannot be before the start time",
+  "preferences_month": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "month", "countPlural=other": "months" }
+    }
+  ],
+  "preferences_per_month": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "preference per month", "countPlural=other": "preferences per month" }
+    }
+  ],
+  "preferences_from": "from",
+  "preferences_to": "to",
+  "preferences_active_collection": "Ongoing collection:",
+  "preferences_delete_collection": "Delete collection",
+  "preferences_edit_collection": "Edit Collection",
+  "preferences_delete_warning": "Confirm the deletion of this collection. As a result of this operation, all preferences contained in this collection will be deleted. <strong class=\"danger\">This action is irreversible</strong>."
 }

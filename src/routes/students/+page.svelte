@@ -220,7 +220,7 @@
       <AcademicYearField
         field={yearFilter.boundField}
         maxWidth={200}
-        initialValue={yearFilter.bound}
+        value={yearFilter.bound}
       />
     </div>
 

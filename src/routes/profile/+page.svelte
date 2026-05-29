@@ -207,7 +207,7 @@
           field={enrollmentYear}
           label={m.profile_enrollment_year()}
           placeholder={m.profile_missing()}
-          initialValue={data.user.enrollmentYear}
+          value={data.user.enrollmentYear}
         />
       {/if}
 

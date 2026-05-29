@@ -171,7 +171,7 @@
     <AcademicYearField
       field={year}
       label={m.students_year()}
-      initialValue={editing?.enrollmentYear}
+      value={editing?.enrollmentYear}
     />
   </form>
 </Modal>

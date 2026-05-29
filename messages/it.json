@@ -242,5 +242,43 @@
   "students_filters_accepted_true": "Vero",
   "students_filters_accepted_false": "Falso",
   "menu_open": "Apri menù",
-  "menu_close": "Chiudi menù"
+  "menu_close": "Chiudi menù",
+  "preferences_title": "Raccolte di preferenze",
+  "preferences_create": "Crea nuova raccolta",
+  "preferences_no_active_collection": "Al momento non c'è una raccolta in corso",
+  "preferences_past_title": "Raccolte precedenti",
+  "modal_create": "Crea",
+  "preferences_year": "Anno",
+  "preferences_months": "Numero di mesi",
+  "preferences_prefs_per_month": "Numero di preferenze esprimibili per ogni mese",
+  "preferences_start": "Inizio",
+  "preferences_end": "Fine",
+  "preferences_prefs_per_month_missing": "Il numero di preferenze per mese è obbligatorio",
+  "preferences_months_missing": "La duranta in mesi è obbligatoria",
+  "preferences_year_missing": "L'anno è obbligatorio",
+  "preferences_start_missing": "Data e ora di inizio sono obbligatorie",
+  "preferences_end_missing": "Data e ora di fine sono obbligatorie",
+  "preferences_start_max": "L'inizio non può avere luogo dopo la fine",
+  "preferences_start_min": "L'inizio non può essere nel passato",
+  "preferences_end_min": "La fine non può avere luogo prima dell'inizio",
+  "preferences_month": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "mese", "countPlural=other": "mesi" }
+    }
+  ],
+  "preferences_per_month": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "preferenza per mese", "countPlural=other": "preferenze per mese" }
+    }
+  ],
+  "preferences_from": "Dal",
+  "preferences_to": "al",
+  "preferences_active_collection": "Raccolta in corso",
+  "preferences_delete_collection": "Elimina raccolta",
+  "preferences_edit_collection": "Modifica raccolta",
+  "preferences_delete_warning": "Conferma di volere eliminare questa raccolta. Come risultato di questa operazione tutte le preferenze contenute nella raccolta verrano eliminate. <strong class=\"danger\">Questa operazione è irreversibile</strong>."
 }

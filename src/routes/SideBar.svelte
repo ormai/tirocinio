@@ -135,7 +135,7 @@
     inert={sideBar.mobile && sideBar.collapsed}
   >
     <header>
-      <span class="collapsible">Sidebar</span>
+      <span class="collapsible">Tirocinio</span>
 
       <button
         class="tertiary"

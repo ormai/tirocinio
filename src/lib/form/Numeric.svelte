@@ -34,10 +34,20 @@
     max?: number;
     name?: string;
     label?: string;
+    required?: boolean;
   }
 
-  let { field, name, initialValue, placeholder, min = 0, max = MAX_SMALLINT, label, ...props }:
-    Props = $props();
+  let {
+    field,
+    name,
+    initialValue,
+    placeholder,
+    min = 0,
+    max = MAX_SMALLINT,
+    label,
+    required = false,
+    ...props
+  }: Props = $props();
 </script>
 
 <div class="input-host" {...props}>
@@ -53,6 +63,7 @@
     {placeholder}
     {min}
     {max}
+    {required}
     {@attach field.attach}
   >
   {#if field.dirty && field.error}

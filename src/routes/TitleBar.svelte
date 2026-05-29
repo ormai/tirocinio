@@ -5,7 +5,7 @@
   import { sideBar } from './SideBar.svelte';
 
   let { title }: { title: string } = $props();
-  // TODO: doesn't show sidebar toggle for students
+  // TODO: shouldn't show sidebar toggle for students
 </script>
 
 <svelte:head><title>{title}</title></svelte:head>
