@@ -9,9 +9,10 @@ RUN npm prune --production
 
 FROM node:22-alpine
 WORKDIR /app
-COPY --from=builder /app/build build/
-COPY --from=builder /app/drizzle drizzle/
-COPY package.json .
+COPY --from=builder --chown=node:node /app/build build/
+COPY --from=builder --chown=node:node /app/drizzle drizzle/
+COPY --chown=node:node package.json .
 EXPOSE 3000
 ENV NODE_ENV=production
+USER node
 CMD ["node", "build"]
