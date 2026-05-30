@@ -281,5 +281,7 @@
   "preferences_delete_collection": "Elimina raccolta",
   "preferences_edit_collection": "Modifica raccolta",
   "preferences_delete_warning": "Conferma di volere eliminare questa raccolta. Come risultato di questa operazione tutte le preferenze contenute nella raccolta verrano eliminate. <strong class=\"danger\">Questa operazione è irreversibile</strong>.",
-  "profile_password_info": "Cambiare la password causa la terminazione di tutte le sessioni, eccetto quella corrente."
+  "about": "Informazioni",
+  "about_desc": "Un'applicazione web per pianificare tirocini al Corso di Farmacia dell'UNICAL.",
+  "about_license": "Questa applicazione viene fornita senza alcuna garanzia. Per maggiori dettagli, consultare la <a href=\"https://interoperable-europe.ec.europa.eu/licence/mit-license\">licenza MIT</a>. Il codice sorgente è libero da restrizioni e <a href=\"https://github.com/ormai/tirocinio\">disponibile nel pubblico dominio</a>.",
 }

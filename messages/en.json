@@ -281,5 +281,7 @@
   "preferences_delete_collection": "Delete collection",
   "preferences_edit_collection": "Edit Collection",
   "preferences_delete_warning": "Confirm the deletion of this collection. As a result of this operation, all preferences contained in this collection will be deleted. <strong class=\"danger\">This action is irreversible</strong>.",
-  "profile_password_info": "Changing your password will terminate all sessions, except the current one."
+  "about": "About",
+  "about_desc": "A web application for planning internships at the Pharmacy Course at UNICAL.",
+  "about_license": "This application comes with absolutely no warranty. See the <a href=\"https://interoperable-europe.ec.europa.eu/licence/mit-license\">MIT License</a> for more details. The source code is free of restrictions and <a href=\"https://github.com/ormai/tirocinio\">available in the public domain</a>.",
 }

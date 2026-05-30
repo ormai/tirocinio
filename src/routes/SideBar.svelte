@@ -33,6 +33,7 @@
     CircleUserRound,
     Hospital,
     House,
+    Info,
     LogOut,
     PanelLeftClose,
     PanelLeftOpen,
@@ -42,6 +43,7 @@
   } from '@lucide/svelte';
   import { type Snippet } from 'svelte';
   import { MediaQuery } from 'svelte/reactivity';
+  import About from './About.svelte';
   import ColorSchemeSwitcher, { type ColorScheme } from './ColorSchemeSwitcher.svelte';
   import { onSignOut } from './SignOut.svelte';
 
@@ -76,6 +78,7 @@
   let asideWidth = $state(300);
   let dragDx = $state<number | null>(null);
   let start = { x: 0, y: 0 };
+  let aboutModalOpen = $state(false);
 
   function onTouchStart(e: TouchEvent) {
     if (sideBar.mobile) {
@@ -102,6 +105,8 @@
     dragDx = null;
   }
 </script>
+
+<About bind:open={aboutModalOpen} />
 
 {#if sideBar.mobile && sideBar.collapsed}
   <div
@@ -180,13 +185,16 @@
         />
       </div>
 
+      <button class="tertiary row collapsible" onclick={() => aboutModalOpen = true}>
+        <Info /><span class="text">{m.about()}</span>
+      </button>
+
       <button
         onclick={onSignOut}
         class="tertiary collapsible row"
-        style="text-align: initial; justify-content: start; gap: 0"
         inert={sideBar.collapsed}
       >
-        <LogOut /> <span class="signout-text">{m.signout()}</span>
+        <LogOut /> <span class="text">{m.signout()}</span>
       </button>
 
       <div style="height: 1rem"></div>
@@ -227,6 +235,12 @@
     overflow: auto;
   }
 
+  footer button {
+    text-align: initial;
+    justify-content: start;
+    gap: 0;
+  }
+
   aside {
     overflow: hidden auto;
     border-right: 1px solid var(--border);
@@ -262,7 +276,7 @@
     margin-left: var(--spacing);
   }
 
-  aside:not(.collapsed) .row span.collapsible, .signout-text {
+  aside:not(.collapsed) .row span.collapsible, footer button .text {
     margin-left: 0.7rem; /* Let them breathe */
   }
 

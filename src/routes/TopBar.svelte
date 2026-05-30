@@ -6,9 +6,10 @@
   import { deLocalizeHref } from '$lib/paraglide/runtime';
   import type { AuthUser } from '$lib/server/user';
   import { tooltip } from '$lib/tooltip.svelte';
-  import { ArrowLeft, CircleUserRound, LogOut } from '@lucide/svelte';
+  import { ArrowLeft, CircleUserRound, Info, LogOut } from '@lucide/svelte';
   import type { Snippet } from 'svelte';
   import { fly } from 'svelte/transition';
+  import About from './About.svelte';
   import ColorSchemeSwitcher, { type ColorScheme } from './ColorSchemeSwitcher.svelte';
   import Hamburger from './Hamburger.svelte';
   import { onSignOut } from './SignOut.svelte';
@@ -20,7 +21,11 @@
   }
 
   let { children, colorScheme, user }: Props = $props();
+
+  let aboutModalOpen = $state(false);
 </script>
+
+<About bind:open={aboutModalOpen} />
 
 <div class="top-bar-layout">
   <div class="nav-host">
@@ -61,13 +66,11 @@
 
         <LanguageSwitcher style="border: none" />
 
-        <button
-          onclick={onSignOut}
-          class="tertiary"
-          style="justify-content: start; padding-left: calc(var(--spacing) * 2)"
-        >
-          <LogOut />{m.signout()}
+        <button class="tertiary" onclick={() => aboutModalOpen = true}>
+          <Info />{m.about()}
         </button>
+
+        <button onclick={onSignOut} class="tertiary"><LogOut />{m.signout()}</button>
       </Hamburger>
     </nav>
   </div>
@@ -107,6 +110,11 @@
       max-width: min(70ch, 100% - 1.5rem);
       margin-inline: auto;
     }
+  }
+
+  button.tertiary {
+    justify-content: start;
+    padding-left: calc(var(--spacing) * 2);
   }
 
   .button-link {
