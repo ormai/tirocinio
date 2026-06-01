@@ -4,7 +4,7 @@ import { passwordRegExp } from '$lib/form/field.svelte';
 import { requireAuth } from '$lib/server/api-security';
 import { db } from '$lib/server/db';
 import { sessions, users } from '$lib/server/db/schema';
-import { sendVerificationEmail } from '$lib/server/multi-factor-authentication';
+import { sendVerificationEmail } from '$lib/server/email';
 import { BCRYPT_ROUNDS } from '$lib/server/user';
 import { fail } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
@@ -57,7 +57,7 @@ export const actions = {
     }
 
     const newEmail = email !== locals.user.email ? email : undefined;
-    if (newEmail && emailRegExp.test(newEmail)) return fail(400, '`newEmail` must be a well-formed email');
+    if (newEmail && !emailRegExp.test(newEmail)) return fail(400, '`newEmail` must be a well-formed email');
 
     if (newEmail && await db.$count(users, eq(users.email, newEmail)) > 0) {
       return fail(409, { emailTaken: true });
@@ -87,7 +87,7 @@ export const actions = {
     let emailVerificationSent = false;
     if (newEmail && mfaSecret) {
       // NOTE: If the default admin user changes their email the default account gets recreated.
-      await sendVerificationEmail(locals.user.email, `${url.origin}/verify?t=${mfaSecret}`);
+      await sendVerificationEmail(newEmail, `${url.origin}/verify?t=${mfaSecret}`);
       emailVerificationSent = true;
     }
     return { success: true, emailVerificationSent };

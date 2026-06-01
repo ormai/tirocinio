@@ -3,7 +3,7 @@ import { emailRegExp } from '$lib/email';
 import { passwordRegExp } from '$lib/form/field.svelte';
 import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
-import { sendOtpEmail } from '$lib/server/multi-factor-authentication';
+import { sendOtpEmail } from '$lib/server/email';
 import { createSession, deleteSession } from '$lib/server/session';
 import { shouldBeAccepted } from '$lib/server/user';
 import { type Actions, fail, redirect } from '@sveltejs/kit';

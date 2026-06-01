@@ -318,5 +318,9 @@
   "preferences_save_successful": "Le tue preferenze sono state salvate correttamente",
   "preferences_edit": "Modifica",
   "preferences_registered_hint": "Le tue preferenze sono state registrate.",
-  "preferences_editing_hint": "Stai modificando le tue preferenze"
+  "preferences_editing_hint": "Stai modificando le tue preferenze",
+  "email_otp_subject": "Il tuo codice monouso",
+  "email_otp_body": "Usa questo codice di verifica: {code}.\nScade tra {exp}.\n\nSe non hai richiesto alcun codice, ignora questo messaggio.",
+  "email_verification_subject": "Verifica la tua email",
+  "email_verification_body": "Per verifica il tuo nuovo indirizzo email segui questo collegamento:\n\n{url}\n\nSe non hai richiesto il cambio dell'email, ignora questo messaggio."
 }

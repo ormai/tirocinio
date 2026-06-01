@@ -86,7 +86,7 @@ html {
 
   /* Errors and dangerous actions */
   --danger: #dc3545;
-  --danger-bg: light-dark(#ea868f, #340009);
+  --danger-bg: light-dark(#ea868f, #640009);
   --danger-border: #842029;
   --danger-text: light-dark(#842029, #ea868f);
 

@@ -318,5 +318,9 @@
   "preferences_save_successful": "Your preferences have been registered successfully",
   "preferences_edit": "Edit",
   "preferences_registered_hint": "Your preferences have been registered.",
-  "preferences_editing_hint": "You are editing your preferences"
+  "preferences_editing_hint": "You are editing your preferences",
+  "email_otp_subject": "Your single-use code",
+  "email_otp_body": "Use this verification code {code}.\nIt expires in {exp}.\n\nIf you did not request this code, please ignore this email.",
+  "email_verification_subject": "Verify your email",
+  "email_verification_body": "To verify your new email follow this link:\n\n{url}\n\nIf your did not request your email change, please ignore this email."
 }

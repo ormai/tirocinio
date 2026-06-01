@@ -25,9 +25,10 @@
       {/if}
       {#if !data.user.name || !data.user.surname || data.user.number == null
   || data.user.enrollmentYear == null}
-        <Banner kind="warn">{
-          m.student_profile_incomplete_notice({ href: resolve('/profile') })
-        }</Banner>
+        <Banner kind="warn">
+          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+          {@html m.student_profile_incomplete_notice({ href: resolve('/profile') })}
+        </Banner>
         <hr>
       {/if}
       <StudentPreference />
