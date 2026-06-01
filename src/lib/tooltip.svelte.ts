@@ -1,9 +1,8 @@
 import tippy, { type Props } from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/shift-away.css';
+import { browser } from '$app/environment';
 import { untrack } from 'svelte';
-
-// TODO maybe disable tooltips on mobile
 
 /**
  * An attachment to give a tooltip to an element.
@@ -16,6 +15,9 @@ export function tooltip(opts: string | Partial<Props>) {
     props.theme ??= 'app';
     props.inertia ??= true;
     props.animation ??= 'shift-away';
+    if (browser && window.innerWidth < 480) {
+      props.trigger = 'contextmenu';
+    }
     const instance = tippy(node, untrack(() => props));
 
     $effect(() => {

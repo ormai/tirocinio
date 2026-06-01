@@ -5,6 +5,7 @@ words = [
     "bindable",
     "cantarell",
     "consolas",
+    "contextmenu",
     "crypto",
     "defval",
     "inlang",
@@ -24,5 +25,6 @@ words = [
     "svelte's",
     "tippy",
     "touchmove",
+    "touchstart",
     "vitest",
 ]
