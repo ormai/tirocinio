@@ -1,3 +1,5 @@
+<!-- @component Additional settings for the 'students' table -->
+
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { Field } from '$lib/form/field.svelte';

@@ -1,3 +1,5 @@
+<!-- @component A selector for the app color-scheme -->
+
 <script module lang="ts">
   import { m } from '$lib/paraglide/messages';
 

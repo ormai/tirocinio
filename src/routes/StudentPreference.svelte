@@ -1,3 +1,5 @@
+<!-- @component Control that enables the student to cast their preference -->
+
 <script lang="ts">
   import { invalidateAll } from '$app/navigation';
   import { page } from '$app/state';

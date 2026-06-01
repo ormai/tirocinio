@@ -1,3 +1,5 @@
+<!-- @component Interactive input field for an academic year. With validation. -->
+
 <script lang="ts" module>
   export class YearField extends Field {
     constructor(validators: Validator[] = []) {

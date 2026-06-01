@@ -1,3 +1,5 @@
+<!-- @component Shows the state of some process in a colored frame, with an icon -->
+
 <script lang="ts">
   import { BadgeInfo, CircleCheck, OctagonX, TriangleAlert } from '@lucide/svelte';
   import type { Snippet } from 'svelte';

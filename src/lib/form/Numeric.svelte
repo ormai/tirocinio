@@ -1,3 +1,5 @@
+<!-- @component An interactive input field for a numeric value, with validation. -->
+
 <script lang="ts" module>
   /** Maximum value of a four-byte signed integer. Same as the `integer` type of PostgreSQL. */
   export const MAX_INT = 2147483647;

@@ -19,11 +19,7 @@
   {@render children()}
 {:else}
   {#if data.user?.role === 'admin'}
-    <SideBar
-      user={data.user}
-      collapsed={data.sidebarCollapsed}
-      colorScheme={data.colorScheme}
-    >
+    <SideBar user={data.user} collapsed={data.sidebarCollapsed} colorScheme={data.colorScheme}>
       {@render children()}
     </SideBar>
   {:else if data.user?.role === 'student'}

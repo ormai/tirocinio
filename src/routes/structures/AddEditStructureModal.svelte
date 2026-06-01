@@ -1,3 +1,5 @@
+<!-- @component Interactive form to add and edit a structure row -->
+
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';

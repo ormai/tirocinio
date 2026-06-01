@@ -1,3 +1,5 @@
+<!-- @component Container and orchestrator of toast notifications -->
+
 <script module lang="ts">
   export interface ToastOpts {
     /** A unique identifier used by Svelte's #each block as key */

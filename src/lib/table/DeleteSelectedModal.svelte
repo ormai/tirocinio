@@ -1,3 +1,5 @@
+<!-- @component Reusable modal to ask confirmation for deletion of a set of rows by ID, in a table -->
+
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';

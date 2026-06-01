@@ -1,3 +1,5 @@
+<!-- @component Pop-up menu used in the {@link TopBar} layout -->
+
 <script lang="ts">
   import { m } from '$lib/paraglide/messages';
   import { tooltip } from '$lib/tooltip.svelte';

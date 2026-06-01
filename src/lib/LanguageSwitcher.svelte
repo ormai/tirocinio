@@ -1,3 +1,5 @@
+<!-- @component Reusable selector control to set the app language -->
+
 <script>
   import { m } from '$lib/paraglide/messages';
   import { getLocale, locales, setLocale } from '$lib/paraglide/runtime';

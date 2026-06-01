@@ -1,3 +1,5 @@
+<!-- @component The single toast notification -->
+
 <script lang="ts">
   import { m } from '$lib/paraglide/messages';
   import { tooltip } from '$lib/tooltip.svelte';

@@ -1,3 +1,5 @@
+<!-- @component The modal containing the filter for the `structures` table -->
+
 <script lang="ts">
   import Modal from '$lib/Modal.svelte';
   import { m } from '$lib/paraglide/messages';

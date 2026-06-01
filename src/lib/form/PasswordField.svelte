@@ -1,3 +1,5 @@
+<!-- @component Interactive input field for passwords, with show/hide button. -->
+
 <script lang="ts">
   import type { Field } from '$lib/form/field.svelte';
   import { m } from '$lib/paraglide/messages';

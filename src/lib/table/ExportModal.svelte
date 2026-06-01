@@ -1,3 +1,5 @@
+<!-- @component Reusable modal and exporter for tabular data in JSON-like format -->
+
 <script lang="ts" generics="T extends Record<string, unknown>">
   import Modal from '$lib/Modal.svelte';
   import { m } from '$lib/paraglide/messages';

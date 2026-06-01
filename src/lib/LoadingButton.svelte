@@ -1,4 +1,4 @@
-<!-- @component A button wrapper capable of showing a state of progress -->
+<!-- @component A button wrapper capable of showing a state of indeterminate progress -->
 
 <script lang="ts">
   import spinner from '$lib/assets/spinner.svg?raw';

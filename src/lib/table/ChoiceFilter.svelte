@@ -1,3 +1,5 @@
+<!-- @component A {@link Table} filter that allows a choice among a set of options. -->
+
 <script lang="ts" module>
   import { m } from '$lib/paraglide/messages';
   import { tooltip } from '$lib/tooltip.svelte';

@@ -1,3 +1,5 @@
+<!-- @component A table filter that sets an upper/lower limit to a column of numbers -->
+
 <script lang="ts" module>
   /**
    * A filter for those property of {@link T} that are numbers.

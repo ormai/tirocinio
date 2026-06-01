@@ -1,3 +1,5 @@
+<!-- @component The action of terminating the user's session -->
+
 <script module lang="ts">
   let confirmModalOpen = $state(false);
 

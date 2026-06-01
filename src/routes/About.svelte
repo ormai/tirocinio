@@ -1,3 +1,5 @@
+<!-- @component Modal dialog showing information about this app -->
+
 <script lang="ts">
   import Modal from '$lib/Modal.svelte';
   import { m } from '$lib/paraglide/messages';

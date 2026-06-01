@@ -1,3 +1,5 @@
+<!-- @component The collapsible side bar layout, used for the admin -->
+
 <script module lang="ts">
   /** Viewport width under which the Sidebar switches to mobile mode. */
   export const BREAK_POINT: number = 767;

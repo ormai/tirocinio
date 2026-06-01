@@ -1,3 +1,6 @@
+<!-- @component Represents a boolean state. It's build on the HTML checkbox, but it's not intended
+    for multiple choice. -->
+
 <script lang="ts">
   import spinner from '$lib/assets/spinner.svg?raw';
   import type { HTMLInputAttributes } from 'svelte/elements';

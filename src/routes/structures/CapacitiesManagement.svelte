@@ -1,3 +1,5 @@
+<!-- @component Information and controls to manage the capacities of structures -->
+
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
