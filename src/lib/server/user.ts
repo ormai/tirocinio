@@ -10,7 +10,7 @@ export type User = InferSelectModel<typeof users>;
 /** The currently authenticated user. A view without some server-specific fields. */
 export type AuthUser = Pick<
   User,
-  'id' | 'number' | 'email' | 'name' | 'surname' | 'enrollmentYear' | 'role' | 'encodedPassword'
+  'id' | 'number' | 'email' | 'name' | 'surname' | 'enrollmentYear' | 'role' | 'encodedPassword' | 'accepted'
 >;
 
 export type StudentView = Pick<User, 'id' | 'number' | 'name' | 'surname' | 'email' | 'enrollmentYear' | 'accepted'>;

@@ -86,7 +86,12 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+
+    :global(section.container) {
+      max-width: min(70ch, 100% - 1.5rem);
+      margin-inline: auto;
+      padding: 1.5rem 0;
+    }
 
     .nav-host {
       background: var(--body-light-bg);
@@ -104,9 +109,10 @@
     main {
       width: 100%;
       flex-grow: 1;
+      overflow-y: auto;
     }
 
-    nav, main {
+    nav {
       max-width: min(70ch, 100% - 1.5rem);
       margin-inline: auto;
     }

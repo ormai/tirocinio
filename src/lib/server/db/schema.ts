@@ -91,14 +91,16 @@ export const preferences = pgTable(
   'preferences',
   {
     studentId: integer('student_id').references(() => users.id),
-    collectionId: integer('collection_id').references(() => preferenceCollectionIntervals.id),
+    collectionId: integer('collection_id').references(() => preferenceCollectionIntervals.id, { onDelete: 'cascade' }),
     siteId: integer('site_id').references(() => sites.id),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     month: smallint().notNull(),
     weight: smallint().notNull(),
   },
   (preferences) => [
-    primaryKey({ columns: [preferences.studentId, preferences.collectionId, preferences.siteId] }),
+    // The same SITE can be expressed as a preference by a STUDENT in a COLLECTION for multiple MONTHS.
+    // For each MONTH, each SITE can appear only once.
+    primaryKey({ columns: [preferences.studentId, preferences.collectionId, preferences.siteId, preferences.month] }),
   ],
 );
 

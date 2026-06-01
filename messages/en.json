@@ -245,7 +245,7 @@
   "menu_close": "Close Menu",
   "preferences_title": "Preference collections",
   "preferences_create": "Create new collection",
-  "preferences_no_active_collection": "There is not an ongoing collection at the moment",
+  "preferences_no_active_collection": "There is no ongoing collection at the moment",
   "preferences_past_title": "Past collections",
   "modal_create": "Create",
   "preferences_year": "Year",
@@ -284,4 +284,39 @@
   "about": "About",
   "about_desc": "A web application for planning internships at the Pharmacy Course at UNICAL.",
   "about_license": "This application comes with absolutely no warranty. See the <a href=\"https://interoperable-europe.ec.europa.eu/licence/mit-license\">MIT License</a> for more details. The source code is free of restrictions and <a href=\"https://github.com/ormai/tirocinio\">available in the public domain</a>.",
+  "profile_password_info": "Changing your password will terminate all sessions, except the current one.",
+  "student_not_accepted_notice": "Your registration has not been confirmed by an administrator yet.",
+  "student_profile_incomplete_notice": "Your personal details are incomplete. <a href=\"{href}\">Fill them now</a>.",
+  "preferences_collection_interval_overlap": "This interval overlaps with the one of another collection",
+  "preferences_month_head": "Month {n}",
+  "hours": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "{count} hour", "countPlural=other": "{count} hours" }
+    }
+  ],
+  "minutes": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "{count} minute", "countPlural=other": "{count} minutes" }
+    }
+  ],
+  "seconds": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "{count} second", "countPlural=other": "{count} seconds" }
+    }
+  ],
+  "preferences_collection_ends": "Collection ends in",
+  "preferences_cast_hint": "You can cast <em>up to</em> <strong class=\"numeric\">{number}</strong> preferences for each of the <strong class=\"numeric\">{months}</strong> months. The highest preference has the highest priority.",
+  "preferences_cast_title": "Cast your preferences",
+  "preferences_save": "Save preferences",
+  "preferences_update": "Update preferences",
+  "preferences_save_successful": "Your preferences have been registered successfully",
+  "preferences_edit": "Edit",
+  "preferences_registered_hint": "Your preferences have been registered.",
+  "preferences_editing_hint": "You are editing your preferences"
 }

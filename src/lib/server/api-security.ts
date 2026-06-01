@@ -25,3 +25,18 @@ export function requireAdmin(locals: App.Locals): asserts locals is App.Locals &
     error(403, 'Only administrators can access this resource');
   }
 }
+
+/**
+ * Asserts that the currently authenticated user is a student whose account has been accepted by an administrator. Implies {@link requireAuth}.
+ *
+ * @throws {import('@sveltejs/kit').HttpError} with status code 403 if the user doesn't have proper **authorization**.
+ * @throws {import('@sveltejs/kit').Redirect} If the user is not authenticated.
+ */
+export function requireAcceptedStudent(
+  locals: App.Locals,
+): asserts locals is App.Locals & { user: User & { role: 'student'; accepted: true } } {
+  requireAuth(locals);
+  if (locals.user.role !== 'student' || !locals.user.accepted) {
+    error(403, 'Only accepted students can access this resource');
+  }
+}

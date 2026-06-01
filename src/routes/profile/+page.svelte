@@ -284,6 +284,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
+    padding: 3px;
   }
 
   .row, .button-row {

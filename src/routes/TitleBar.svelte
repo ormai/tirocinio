@@ -1,17 +1,17 @@
 <script lang="ts">
+  import { page } from '$app/state';
   import { m } from '$lib/paraglide/messages';
   import { tooltip } from '$lib/tooltip.svelte.js';
   import { Menu } from '@lucide/svelte';
   import { sideBar } from './SideBar.svelte';
 
   let { title }: { title: string } = $props();
-  // TODO: shouldn't show sidebar toggle for students
 </script>
 
-<svelte:head><title>{title}</title></svelte:head>
+<svelte:head><title>Tirocinio · {title}</title></svelte:head>
 
 <header>
-  {#if sideBar.mobile}
+  {#if sideBar.mobile && page.data.user.role === 'admin'}
     <button
       class="tertiary"
       style="width: initial"

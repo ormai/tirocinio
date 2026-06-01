@@ -12,6 +12,8 @@ export type ImportCapacity = Pick<StructureView, 'name' | 'capacity'>;
 
 export type Capacity = InferSelectModel<typeof capacities>;
 
+export type Site = InferSelectModel<typeof sites>;
+
 /** Updates the capacity of a structure for a year, or creates a new record if it doesn't already exist. */
 export async function updateCapacity(
   structureId: number,

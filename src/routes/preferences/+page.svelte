@@ -166,7 +166,6 @@
         <div style="margin-bottom: 0.5rem">{m.preferences_create()}</div>
         <AddEditCollection
           bind:creating
-          bind:selected
           bind:loading
           bind:editModalOpen
         />

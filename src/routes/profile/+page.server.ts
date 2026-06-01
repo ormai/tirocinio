@@ -37,7 +37,7 @@ export const actions = {
     if (number && (number < 0 || number > 2147483647)) {
       return fail(400, 'Number must be in range [0, 2147483647]');
     }
-    if (number && await db.$count(users, eq(users.number, number)) > 0) {
+    if (number && await db.$count(users, and(eq(users.number, number), ne(users.id, locals.user.id))) > 0) {
       return fail(409, { numberTaken: true });
     }
 

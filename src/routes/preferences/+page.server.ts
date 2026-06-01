@@ -20,8 +20,8 @@ function isValidationFailure(e: unknown): e is ActionFailure<string> {
   return isActionFailure(e);
 }
 
-function getUtcDate(date: string, offset: number) {
-  return new Date(new Date(date).getTime() + offset * 60_000);
+function getUTCDate(date: string, offset: number) {
+  return new Date(new Date(`${date}:00.00Z`).getTime() + offset * 60_000);
 }
 
 function validateCollection(form: FormData): Partial<Collection> | ActionFailure<string> {
@@ -49,8 +49,8 @@ function validateCollection(form: FormData): Partial<Collection> | ActionFailure
     year,
     durationMonths,
     numberOfPreferences,
-    startTime: getUtcDate(String(start), timezoneOffset),
-    endTime: getUtcDate(String(end), timezoneOffset),
+    startTime: getUTCDate(String(start), timezoneOffset),
+    endTime: getUTCDate(String(end), timezoneOffset),
   };
 }
 

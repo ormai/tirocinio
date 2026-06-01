@@ -72,21 +72,21 @@ html {
   --primary: light-dark(Plum, DarkOrchid);
   --on-primary: var(--body);
   --primary-bg: hsl(from var(--primary) h s l / 0.15);
-  --primary-border: hsl(from var(--primary) h s calc(l - 20) / 0.1);
+  --primary-border: hsl(from var(--primary) h s calc(l - 10) / 0.5);
   --primary-text: light-dark(
-    hsl(from var(--primary) h s calc(l - 30)),
+    hsl(from var(--primary) h s calc(l - 20)),
     hsl(from var(--primary) h s calc(l + 20))
   );
 
   /* Positive or successful actions and information */
   --success: #198754;
-  --success-bg: light-dark(#a5e7b8, #051b11);
+  --success-bg: light-dark(#a5e7b8, #052b11);
   --success-border: #095f2f;
   --success-text: light-dark(#051b11, #a5e7b8);
 
   /* Errors and dangerous actions */
   --danger: #dc3545;
-  --danger-bg: light-dark(#ea868f, #842029);
+  --danger-bg: light-dark(#ea868f, #340009);
   --danger-border: #842029;
   --danger-text: light-dark(#842029, #ea868f);
 

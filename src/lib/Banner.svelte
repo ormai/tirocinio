@@ -1,13 +1,14 @@
 <script lang="ts">
   import { BadgeInfo, CircleCheck, OctagonX, TriangleAlert } from '@lucide/svelte';
   import type { Snippet } from 'svelte';
+  import type { HTMLAttributes } from 'svelte/elements';
 
-  interface Props {
+  interface Props extends HTMLAttributes<HTMLDivElement> {
     children: Snippet;
     kind: 'ok' | 'warn' | 'error' | 'info';
   }
 
-  let { kind, children }: Props = $props();
+  let { kind, children, ...props }: Props = $props();
 </script>
 
 <div
@@ -16,6 +17,7 @@
   class:warn={kind === 'warn'}
   class:error={kind === 'error'}
   class:info={kind === 'info'}
+  {...props}
 >
   <div style="min-width: 16px">
     {#if kind === 'ok'}

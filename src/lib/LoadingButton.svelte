@@ -19,7 +19,7 @@
   {...rest}
   disabled={!enabled || loading}
   class:loading
-  style:width={grow ? '100%' : 'initial'}
+  style:width={grow ? '100%' : 'unset'}
 >
   {#if loading}
     <div class="icon" transition:fade={{ duration: 100 }}>

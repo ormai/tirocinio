@@ -16,11 +16,13 @@
 
   interface Props {
     creating: boolean;
-    selected: Collection | null;
+    selected?: Collection | null;
     loading: boolean;
     editModalOpen: boolean;
     editDirty?: boolean;
   }
+
+  let intervalOverlapError = $state(false);
 
   const year = new YearField([
     (i) => i.validity.valueMissing && m.preferences_year_missing(),
@@ -29,11 +31,21 @@
     (i) => i.validity.valueMissing && m.preferences_start_missing(),
     (i) => creating && i.validity.rangeUnderflow && m.preferences_start_min(),
     (i) => i.validity.rangeOverflow && m.preferences_start_max(),
-  ]);
+    () => intervalOverlapError && m.preferences_collection_interval_overlap(),
+  ], () => {
+    intervalOverlapError = false;
+    start.validate();
+    end.validate();
+  });
   const end = new Field([
     (i) => i.validity.valueMissing && m.preferences_end_missing(),
     (i) => i.validity.rangeUnderflow && m.preferences_end_min(),
-  ]);
+    () => intervalOverlapError && m.preferences_collection_interval_overlap(),
+  ], () => {
+    intervalOverlapError = false;
+    start.validate();
+    end.validate();
+  });
   const months = new NumericField([
     (i) => i.validity.valueMissing && m.preferences_months_missing(),
   ]);
@@ -55,7 +67,6 @@
   }: Props = $props();
 
   $effect(() => {
-    console.log(start.value);
     editDirty = !creating
       && (year.hasChanged(selected?.year)
         || start.hasChanged(inputValueDateTime(selected?.startTime))
@@ -90,6 +101,10 @@
         creating = false;
         selected = null;
         editModalOpen = false;
+      } else if (result.type === 'failure' && result.data?.intervalOverlap === true) {
+        intervalOverlapError = true;
+        start.validate();
+        end.validate();
       } else {
         error(m.error());
       }
@@ -154,6 +169,7 @@
       label={m.preferences_months()}
       required={true}
       initialValue={selected?.durationMonths}
+      min={1}
     />
 
     <Numeric
@@ -162,6 +178,7 @@
       label={m.preferences_prefs_per_month()}
       required={true}
       initialValue={selected?.numberOfPreferences ?? 3}
+      min={1}
     />
   </div>
 
