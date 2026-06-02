@@ -39,6 +39,7 @@
     LogOut,
     PanelLeftClose,
     PanelLeftOpen,
+    Settings,
     Tickets,
     Users,
     Waypoints,
@@ -71,6 +72,7 @@
 
   const destinations = [
     { path: '/', label: m.sidebar_home(), icon: House },
+    { path: '/settings', label: m.sidebar_settings(), icon: Settings },
     { path: '/structures', label: m.sidebar_structures(), icon: Hospital },
     { path: '/students', label: m.sidebar_students(), icon: Users },
     { path: '/preferences', label: m.sidebar_preferences(), icon: Tickets },
@@ -142,7 +144,7 @@
     inert={sideBar.mobile && sideBar.collapsed}
   >
     <header>
-      <span class="collapsible">Tirocinio</span>
+      <span class="collapsible truncate10">{page.data.appName}</span>
 
       <button
         class="tertiary"

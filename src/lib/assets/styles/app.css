@@ -414,16 +414,26 @@ input[type="radio"] {
   min-width: calc(24px + var(--spacing) * 2 + 2px);
 }
 
-truncate50 {
-  max-width: 50ch;
+.truncate10, .truncate20, .truncate30, .truncate50 {
   text-overflow: ellipsis;
   overflow: hidden;
+  white-space: nowrap;
 }
 
-truncate20 {
+.truncate50 {
+  max-width: 50ch;
+}
+
+.truncate30 {
+  max-width: 30ch;
+}
+
+.truncate20 {
   max-width: 20ch;
-  text-overflow: ellipsis;
-  overflow: hidden;
+}
+
+.truncate10 {
+  max-width: 10ch;
 }
 
 .row-spaced {
@@ -507,4 +517,23 @@ a.link-button {
   &:active {
     background: hsl(from var(--body-light-bg) h calc(s + 5) calc(l + 10));
   }
+}
+
+h1 {
+  font-size: 1.4rem;
+}
+
+h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.text-small {
+  font-size: 0.86rem;
+  line-height: 1.3rem;
 }

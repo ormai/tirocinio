@@ -9,11 +9,23 @@
 -->
 
 <script lang="ts">
+  import type { HTMLFieldsetAttributes } from 'svelte/elements';
+
+  interface Option {
+    value: string;
+    label: string;
+  }
+
+  interface Props extends HTMLFieldsetAttributes {
+    options: Option[];
+    selected: string;
+  }
+
   let {
     options = [],
     selected = $bindable(options[0]?.value),
     ...rest
-  } = $props();
+  }: Props = $props();
 
   let currentIndex = $derived(
     options.findIndex((opt) => opt.value === selected),
@@ -30,15 +42,15 @@
 
 <fieldset style:--count={options.length} style:--index={currentIndex} {...rest}>
   <div class="selection"></div>
-  {#each options as option (option.value)}
-    <label for={option.value} class:active={selected === option.value}>
-      {option.label}
+  {#each options as { value, label } (value)}
+    <label for={value} class:active={selected === value}>
+      {label}
       <input
         type="radio"
-        value={option.value}
-        id={option.value}
+        {value}
+        id={value}
         bind:group={selected}
-        onkeydown={(e) => onKeyDown(e, option.value)}
+        onkeydown={(e) => onKeyDown(e, value)}
       />
     </label>
   {/each}

@@ -159,7 +159,7 @@
   {#if collection}
     <h3 class="row-spaced">{m.preferences_cast_title()}</h3>
 
-    <p class="small" style="padding: 0 0.7rem">
+    <p class="text-small" style="padding: 0 0.7rem">
       <!-- eslint-disable-next-line svelte/no-at-html-tags -->
       {@html m.preferences_cast_hint({
         number: collection.numberOfPreferences,
@@ -309,14 +309,5 @@
 
   select:disabled {
     pointer-events: none;
-  }
-
-  .small {
-    font-size: 0.86rem;
-  }
-
-  h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
   }
 </style>

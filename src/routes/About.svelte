@@ -1,6 +1,7 @@
 <!-- @component Modal dialog showing information about this app -->
 
 <script lang="ts">
+  import { page } from '$app/state';
   import Modal from '$lib/Modal.svelte';
   import { m } from '$lib/paraglide/messages';
 
@@ -17,7 +18,7 @@
   actions={[{ label: m.modal_dismiss(), onClick: () => (open = false), role: 'secondary' }]}
 >
   <div class="column">
-    <h2>Tirocinio</h2>
+    <h2>{page.data.appName}</h2>
 
     <p>© 2026 <a href="https://ormai.me">Mario D'Andrea</a></p>
 

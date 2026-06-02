@@ -10,7 +10,7 @@
   let { title }: { title: string } = $props();
 </script>
 
-<svelte:head><title>Tirocinio · {title}</title></svelte:head>
+<svelte:head><title>{title} - {page.data.appName}</title></svelte:head>
 
 <header>
   {#if sideBar.mobile && page.data.user.role === 'admin'}
@@ -37,9 +37,5 @@
     button {
       min-width: max-content;
     }
-  }
-
-  h1 {
-    font-size: 1.4rem;
   }
 </style>

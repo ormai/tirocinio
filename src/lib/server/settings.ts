@@ -12,3 +12,7 @@ export async function setSetting(key: string, value: string | null, tx: Transact
     .values({ key, value })
     .onConflictDoUpdate({ target: settings.key, set: { value, updatedAt: new Date() } });
 }
+
+export async function getAppName(): Promise<string> {
+  return await getSetting('appName') ?? 'Tirocinio';
+}

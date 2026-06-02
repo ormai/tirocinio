@@ -118,7 +118,7 @@
 />
 
 {#snippet body(row: StructureView)}
-  <td class="truncate20">{row.name}</td>
+  <td class="truncate30">{row.name}</td>
   <td class="truncate20">{row.ward}</td>
   <td class="truncate20">{row.area}</td>
   <td class="truncate20">{row.kind}</td>

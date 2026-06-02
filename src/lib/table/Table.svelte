@@ -227,7 +227,7 @@
       skipInit = true;
     }
   });
-  const pageSize = 18;
+  const pageSize = 19;
   let pageCount = $derived(Math.ceil(filtered.length / pageSize));
   let paginated = $derived(filtered.slice(page * pageSize, (page + 1) * pageSize));
 </script>

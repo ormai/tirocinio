@@ -1,15 +1,8 @@
-import { building } from '$app/environment';
-import { env } from '$env/dynamic/private';
 import { m } from '$lib/paraglide/messages';
 import * as nodemailer from 'nodemailer';
-
-// TODO: SMTP configurable in UI? Only SMTP?
-if (!building) {
-  if (!env.SMTP_USER) throw new Error('SMTP_USER is not set');
-  if (!env.SMTP_PASS) throw new Error('SMTP_PASS is not set');
-  if (!env.SMTP_HOST) throw new Error('SMTP_HOST is not set');
-  if (!env.SMTP_PORT) throw new Error('SMTP_PORT is not set');
-}
+import type { Transporter } from 'nodemailer';
+import { decrypt } from './encryption.server';
+import { getAppName, getSetting } from './settings';
 
 // Nodemailer (https://nodemailer.com/) supports multiple different transports. Such as:
 // - Local `sendmail`
@@ -18,23 +11,45 @@ if (!building) {
 // - custom with Mailgun plugin
 // - OAuth
 // This configuration might need to be changed.
-export const transporter = nodemailer.createTransport({
-  host: env.SMTP_HOST,
-  port: Number(env.SMTP_PORT),
-  secure: false,
-  auth: {
-    user: env.SMTP_USER,
-    pass: env.SMTP_PASS,
-  },
-});
+// Gmail: https://nodemailer.com/guides/using-gmail
+let transporter: Transporter | null = await getTransport();
 
-const from = `"Tirocinio App" <${env.SMTP_USER}>`;
+async function getTransport(): Promise<Transporter | null> {
+  const host = await getSetting('smtpHost');
+  if (!host) return null;
+  const port = Number(await getSetting('smtpPort'));
+  if (isNaN(port) || port < 0 || port > 65535) {
+    console.trace(`SMTP port is invalid: ${port}`);
+    return null;
+  }
+  const user = await getSetting('smtpUsername');
+  if (!user) return null;
+  const pass = await getSetting('smtpPassword');
+  if (!pass) return null;
 
-if (!building) {
-  await transporter.verify(); // will throw
+  return nodemailer.createTransport({ host, port, secure: false, auth: { user, pass: decrypt(pass) } });
 }
 
+export async function updateTransporter() {
+  transporter = await getTransport();
+}
+
+export async function verifyTransporter(): Promise<string | true> {
+  if (!transporter) return 'configNull';
+  try {
+    return await transporter.verify(); // will throw
+  } catch (err) {
+    return (err as { code: string }).code;
+  }
+}
+
+const from = `"${await getAppName()}" <${await getSetting('submitterEmail')}>`;
+
 export async function sendOtpEmail(email: string, otp: number, otpDurationMs: number) {
+  if (!transporter) {
+    console.trace('Transporter is null');
+    return;
+  }
   await transporter.sendMail(
     {
       from,
@@ -46,6 +61,10 @@ export async function sendOtpEmail(email: string, otp: number, otpDurationMs: nu
 }
 
 export async function sendVerificationEmail(email: string, url: string) {
+  if (!transporter) {
+    console.trace('Transporter is null');
+    return;
+  }
   await transporter.sendMail(
     {
       from,

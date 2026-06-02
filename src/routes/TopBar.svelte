@@ -41,7 +41,7 @@
             out:fly={{ x: 20, duration: 200 }}
           >
             <CircleUserRound />
-            <span>
+            <span class="truncate20">
               {#if user && (user.name || user.surname)}
                 {[user.name, user.surname].filter(Boolean).join(' ')}
               {:else}

@@ -280,7 +280,6 @@
   }
 
   h2 {
-    font-size: 1.2rem;
     margin-bottom: 0.6rem;
     margin-top: 1rem;
   }
