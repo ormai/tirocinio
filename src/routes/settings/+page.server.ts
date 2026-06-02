@@ -1,10 +1,15 @@
 import { emailRegExp } from '$lib/email';
+import { passwordRegExp } from '$lib/form/field.svelte';
 import { requireAdmin } from '$lib/server/api-security';
 import { db } from '$lib/server/db';
+import { users } from '$lib/server/db/schema';
 import { updateTransporter, verifyTransporter } from '$lib/server/email';
 import { encrypt } from '$lib/server/encryption.server';
 import { getAppName, getSetting, setSetting } from '$lib/server/settings';
+import { BCRYPT_ROUNDS } from '$lib/server/user';
 import { fail } from '@sveltejs/kit';
+import bcrypt from 'bcryptjs';
+import { eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -60,5 +65,36 @@ export const actions: Actions = {
   verifyEmailConfiguration: async ({ locals }) => {
     requireAdmin(locals);
     return { validity: await verifyTransporter() };
+  },
+
+  addAdminAccount: async ({ locals, request }) => {
+    requireAdmin(locals);
+    const form = await request.formData();
+    const adminEmail = String(form.get('admin-email'));
+    if (!emailRegExp.test(adminEmail)) return fail(400, '`admin-email` must be a valid email address');
+    const adminPassword = String(form.get('admin-password'));
+    if (!passwordRegExp.test(adminPassword)) {
+      return fail(
+        400,
+        '`admin-password` must contain at least 1 lowercase letter, 1 uppercase letter, 1 symbol, 1 digit, and be at least 10 characters long',
+      );
+    }
+    const adminName = String(form.get('admin-name'));
+    if (!adminName) return fail(400, '`admin-name` must be a valid email address');
+    const adminSurname = String(form.get('admin-surname'));
+    if (!adminSurname) return fail(400, '`admin-surname` must be a valid email address');
+
+    return await db.transaction(async (tx) => {
+      if ((await tx.$count(users, eq(users.email, adminEmail))) > 0) {
+        return fail(400, { emailTaken: true });
+      }
+      await tx.insert(users).values({
+        name: adminName,
+        surname: adminSurname,
+        email: adminEmail,
+        encodedPassword: await bcrypt.hash(adminPassword, BCRYPT_ROUNDS),
+        role: 'admin',
+      });
+    });
   },
 };

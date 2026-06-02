@@ -42,7 +42,10 @@
       type="button"
       class="secondary icon-host"
       onclick={() => (visible = !visible)}
-      {@attach tooltip(visible ? m.password_hide() : m.password_show())}
+      {@attach (node) =>
+      tooltip({ content: visible ? m.password_hide() : m.password_show(), appendTo: () => node })(
+        node,
+      )}
     >
       {#if visible}
         <EyeOff />

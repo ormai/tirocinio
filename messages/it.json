@@ -342,5 +342,16 @@
   "settings_email_connection_valid": "La configurazione email funziona correttamente",
   "settings_email_connection_config_null": "La configurazione email è incompleta o invalida",
   "settings_email_connection_eauth": "Autenticazione fallita",
-  "settings_email_connection_error": "Non è stato possibile connettersi: {err}"
+  "settings_email_connection_error": "Non è stato possibile connettersi: {err}",
+  "settings_email_admin_accounts": "Profili amministratore",
+  "settings_email_admin_accounts_desc": "Quando l'applicazione viene avviata per la prima volta, il primo profilo amministratore viene creato usando le credenziali fornite nella configurazione del server. Altri profili amministratore possono essere gestiti qui.",
+  "settings_email_admin_add": "Aggiungi profilo amministratore",
+  "settings_admin_added_succesfully": "Profilo amministratore aggiunto correttamente",
+  "settings_admin_name_required": "Il nome dell'amministratore è obbligatorio",
+  "settings_admin_surname_required": "Il cognome dell'amministratore è obbligatorio",
+  "settings_admin_email_required": "L'email dell'amministratore è obbligatoria",
+  "settings_admin_add": "Aggiungi amministratore",
+  "settings_admin_email_taken": "Un utente con questo indirizzo email esiste già",
+  "settings_admin_password": "Password",
+  "settings_admin_password_confifrm": "Conferma password"
 }

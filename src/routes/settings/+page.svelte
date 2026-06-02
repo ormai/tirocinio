@@ -8,17 +8,19 @@
   import LoadingButton from '$lib/LoadingButton.svelte';
   import { m } from '$lib/paraglide/messages';
   import { error, success } from '$lib/toast/Toaster.svelte';
-  import { Save } from '@lucide/svelte';
+  import { Plus, Save } from '@lucide/svelte';
   import { onMount } from 'svelte';
   import { sineIn } from 'svelte/easing';
   import { fade, fly, slide } from 'svelte/transition';
   import TitleBar from '../TitleBar.svelte';
   import type { PageProps } from './$types';
+  import AddAdminModal from './AddAdminModal.svelte';
 
   let { data }: PageProps = $props();
 
   let loading = $state(false);
   let hydrated = $state(false);
+  let addAccountModalOpen = $state(false);
   onMount(() => hydrated = true);
 
   const appName = new Field([
@@ -70,6 +72,8 @@
   }
 </script>
 
+<AddAdminModal bind:open={addAccountModalOpen} />
+
 <section class="container">
   <TitleBar title={m.sidebar_settings()} />
 
@@ -114,7 +118,7 @@
     {/if}
   </form>
 
-  <h2 style="margin: 1.5rem 0 0.4rem 0">{m.settings_email_section_title()}</h2>
+  <h2>{m.settings_email_section_title()}</h2>
 
   <!-- eslint-disable-next-line svelte/no-at-html-tags -->
   <p class="text-small" style="margin-bottom: 0.8rem">{@html m.settings_email_section_desc()}</p>
@@ -206,7 +210,7 @@
       <div
         class="row-spaced"
         transition:slide={{ easing: sineIn, duration: 160 }}
-        style="margin-top: 1rem"
+        style="margin-top: 0.5rem"
       >
         <button
           class="secondary"
@@ -230,8 +234,8 @@
       </div>
     {:else if data.smtpHost && data.smtpPort && data.smtpUsername}
       <div
-        class="small email"
-        style="display: flex; align-items: center; gap: 0.8rem; margin-top: 1rem"
+        class="text-small email"
+        style="display: flex; align-items: center; gap: 0.8rem; margin-top: 0.5rem"
       >
         <LoadingButton
           {loading}
@@ -252,6 +256,18 @@
       </div>
     {/if}
   </form>
+
+  <h2>{m.settings_email_admin_accounts()}</h2>
+
+  <p class="text-small">{m.settings_email_admin_accounts_desc()}</p>
+
+  <button
+    class="secondary text-small"
+    style="margin-top: 0.5rem"
+    onclick={() => addAccountModalOpen = true}
+  >
+    <Plus size={14} /> {m.settings_email_admin_add()}
+  </button>
 </section>
 
 <style>
@@ -267,6 +283,10 @@
         width: 100%;
       }
     }
+  }
+
+  h2 {
+    margin: 2rem 0 0.6rem 0;
   }
 
   .column {
