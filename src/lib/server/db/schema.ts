@@ -90,7 +90,7 @@ export const preferenceCollectionIntervals = pgTable('preference_collection_inte
 export const preferences = pgTable(
   'preferences',
   {
-    studentId: integer('student_id').references(() => users.id, {onDelete: 'cascade'}),
+    studentId: integer('student_id').references(() => users.id, { onDelete: 'cascade' }),
     collectionId: integer('collection_id').references(() => preferenceCollectionIntervals.id, { onDelete: 'cascade' }),
     siteId: integer('site_id').references(() => sites.id),
     createdAt: timestamp('created_at').defaultNow().notNull(),

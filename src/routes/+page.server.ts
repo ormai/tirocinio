@@ -1,4 +1,4 @@
-import { requireAcceptedStudent, requireAdmin, requireAuth } from '$lib/server/api-security';
+import { requireAcceptedStudent, requireAuth } from '$lib/server/api-security';
 import { db } from '$lib/server/db';
 import {
   capacities,

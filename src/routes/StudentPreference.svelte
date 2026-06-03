@@ -100,6 +100,13 @@
       .catch(() => error(m.error()))
       .finally(() => loading = false);
   }
+
+  let lastNonEmptyRow = $derived.by(() => {
+    const index = preferences[0].findIndex((_, j) =>
+      preferences.every((month) => month[j] == null)
+    );
+    return index === -2 ? prefNum : index;
+  });
 </script>
 
 <div class="column preference-host">
@@ -127,15 +134,21 @@
       style:grid-template-columns="repeat({preferences.length}, max-content)"
     >
       {#each preferences as month, i (i)}
-        <span style:grid-column={i + 1} style:grid-row={1}>
+        <span style:grid-column={i + 2} style:grid-row={1}>
           {m.preferences_month_head({ n: i + 1 })}
         </span>
         {#each month as pref, j (j)}
+          {#if i === 0 && j < (editMode ? lastNonEmptyRow + 1 : lastNonEmptyRow)}
+            <span
+              class="row-num numeric"
+              transition:fly={{ y: -10, duration: 120 }}
+              style="grid-area: {j + 2} / 1"
+            >{j + 1}</span>
+          {/if}
           {#if (existingPrefs != null && !editMode) ? (pref != null) : (j === 0 || month[j - 1] != null)}
             <select
               transition:slide={{ easing: sineIn, duration: 100 }}
-              style:grid-column={i + 1}
-              style:grid-row={j + 2}
+              style:grid-area="{j + 2} / {i + 2}"
               bind:value={month[j]}
               class:missing={j === 0 && pref == null}
               class:present={pref != null}
@@ -203,6 +216,7 @@
   .preferences {
     display: grid;
     text-align: center;
+    align-items: center;
     overflow-x: auto;
     gap: 0.5rem;
     padding: 0.7rem;
@@ -230,10 +244,10 @@
   select:not(:disabled).missing {
     transition: background 1600ms cubic-bezier(0.075, 0.82, 0.165, 1);
     border: var(--border-thickness) solid var(--danger-border);
-    background: var(--danger-bg) !important;
+    background: hsl(from var(--danger-bg) h s l / 0.4) !important;
 
     &:hover {
-      background: hsl(from var(--danger-bg) h s calc(l + 5)) !important;
+      background: hsl(from var(--danger-bg) h s calc(l + 5) / 0.6) !important;
     }
 
     &:focus-visible {
@@ -257,5 +271,9 @@
 
   select:disabled {
     pointer-events: none;
+  }
+
+  .row-num {
+    text-align: end;
   }
 </style>
