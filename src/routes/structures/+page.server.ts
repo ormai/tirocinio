@@ -73,6 +73,9 @@ export const actions: Actions = {
     const structure = validateStructure(await request.formData());
     if (isValidationFailure(structure)) return structure;
     return await db.transaction(async (tx) => {
+      if (await db.$count(structures, eq(structures.name, structure.name!)) > 0) {
+        return fail(400, { nameTaken: true });
+      }
       const [{ id }] = await tx.insert(structures).values({
         name: structure.name!,
         ward: structure.ward,
@@ -96,6 +99,9 @@ export const actions: Actions = {
     if (!structure.id) return fail(400, 'Structure ID is required');
 
     return await db.transaction(async (tx) => {
+      if (await db.$count(structures, eq(structures.name, structure.name!)) > 0) {
+        return fail(400, { nameTaken: true });
+      }
       await tx.update(structures).set({
         name: structure.name,
         ward: structure.ward,

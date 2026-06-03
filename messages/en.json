@@ -390,5 +390,7 @@
   ],
   "admin_home_students_2": ". The last stutent registered <span class=\"admin-home-interpolated\">{duration}</span> ago",
   "admin_home_collection_1": ". A total of <span class=\"admin-home-interpolated\">{count}</span> preferences have been expressed",
-  "admin_home_collection_2": ". Some of the most chosen sites are:"
+  "admin_home_collection_2": ". Some of the most chosen sites are:",
+  "structure_name_taken": "A structure with this name already exists",
+  "structure_name_missing": "Please provide the name of the structure"
 }

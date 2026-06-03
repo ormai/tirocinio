@@ -390,5 +390,7 @@
   ],
   "admin_home_students_2": ". L'ultimo studente si è registrato <span class=\"admin-home-interpolated\">{duration}</span> fa",
   "admin_home_collection_1": ". Sono state espresse complessivamente <span class=\"admin-home-interpolated\">{count}</span> preferenze",
-  "admin_home_collection_2": ". Alcuni dei luoghi più scelti sono:"
+  "admin_home_collection_2": ". Alcuni dei luoghi più scelti sono:",
+  "structure_name_taken": "Esiste già una struttura con questo nome",
+  "structure_name_missing": "Il nome della struttura è obbligatorio"
 }

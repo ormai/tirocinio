@@ -28,9 +28,12 @@
     server = { ...form };
   });
 
-  // TODO: handle name unique constraint violation.
-  // TODO: make at least one field required.
-  const name = new Field();
+  const name = new Field([
+    (i) => i.validity.valueMissing && m.structure_name_missing(),
+    () => server?.nameTaken === true && m.structure_name_taken(),
+  ], () => {
+    if (server) server.nameTaken = false;
+  });
   const ward = new Field();
   const area = new Field();
   const kind = new Field();
@@ -70,6 +73,8 @@
       success(m.structures_added_confirm());
       server.added = false;
       open = false;
+    } else if (server?.nameTaken === true) {
+      name.validate();
     } else {
       error(m.error());
     }
@@ -110,7 +115,10 @@
 
     <div class="input-host">
       <label for="name">{m.structures_name()}</label>
-      <input id="name" name="name" value={editing?.name} {@attach name.attach} />
+      <input id="name" name="name" value={editing?.name} {@attach name.attach} required />
+      {#if name.dirty && name.error}
+        <span class="error" transition:fade>{name.error}</span>
+      {/if}
     </div>
 
     <div class="input-host">
