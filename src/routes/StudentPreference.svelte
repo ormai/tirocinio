@@ -4,28 +4,15 @@
   import { invalidateAll } from '$app/navigation';
   import { page } from '$app/state';
   import Banner from '$lib/Banner.svelte';
+  import Clock from '$lib/Clock.svelte';
+  import { duration } from '$lib/duration';
   import { sendForm } from '$lib/form/submit';
   import LoadingButton from '$lib/LoadingButton.svelte';
   import { m } from '$lib/paraglide/messages';
   import type { Collection } from '$lib/server/preference';
   import { type Site } from '$lib/server/structure';
   import { error, success } from '$lib/toast/Toaster.svelte';
-  import {
-    Clock1,
-    Clock10,
-    Clock11,
-    Clock12,
-    Clock2,
-    Clock3,
-    Clock4,
-    Clock5,
-    Clock6,
-    Clock7,
-    Clock8,
-    Clock9,
-    Pencil,
-    Save,
-  } from '@lucide/svelte';
+  import { Pencil, Save } from '@lucide/svelte';
   import { onMount } from 'svelte';
   import { sineIn } from 'svelte/easing';
   import { fly, slide } from 'svelte/transition';
@@ -87,56 +74,16 @@
     window.localStorage.setItem(`collection${collection.id}`, JSON.stringify({ preferences }));
   });
 
-  function duration(date1: Date, date2: Date): string {
-    let interval = Math.abs(date1.getTime() - date2.getTime());
-    const hours = Math.floor(interval / 3_600_000);
-    interval -= hours * 3_600_000;
-    const minutes = Math.floor(interval / 60_000);
-    interval -= minutes * 60_000;
-    const seconds = Math.floor(interval / 1_000);
-    let format = hours === 0 ? '<strong class="danger">' : '';
-    if (hours > 0) {
-      format += m.hours({ count: hours });
-    }
-    if (hours < 3) {
-      if (hours > 0) format += ', ';
-      format += m.minutes({ count: minutes });
-    }
-    if (hours === 0) {
-      format += ', ' + m.seconds({ count: seconds }) + '</strong>';
-    }
-    return format;
-  }
+  let countDown = $derived(duration(new Date(), collection?.endTime ?? new Date(0), 'danger'));
 
-  let countDown = $derived(duration(new Date(), collection?.endTime ?? new Date(0)));
-  const clocks = [
-    Clock1,
-    Clock2,
-    Clock3,
-    Clock4,
-    Clock5,
-    Clock6,
-    Clock7,
-    Clock8,
-    Clock9,
-    Clock10,
-    Clock11,
-    Clock12,
-  ];
-  let currentClock = $state(0);
-  let Clock = $derived(clocks[currentClock]);
-  $effect(() => {
+  async function onTick() {
     if (collection == null) return;
-    const interval = setInterval(async () => {
-      const now = new Date();
-      if (now > collection.endTime) {
-        await invalidateAll();
-      }
-      countDown = duration(now, collection.endTime);
-      currentClock = (currentClock + 1) % clocks.length;
-    }, 1000);
-    return () => clearInterval(interval);
-  });
+    const now = new Date();
+    if (now > collection.endTime) {
+      await invalidateAll();
+    }
+    countDown = duration(now, collection.endTime, 'danger');
+  }
 
   async function savePreferences() {
     loading = true;
@@ -168,11 +115,12 @@
     </p>
 
     <p class="row-spaced numeric" style="gap: 0.3rem">
-      <Clock size={16} />{m.preferences_collection_ends()}
+      <Clock {onTick} size={16} />{m.preferences_collection_ends()}
       <!-- eslint-disable-next-line svelte/no-at-html-tags -->
       {@html countDown}
     </p>
 
+    <!-- TODO: number rows -->
     <div
       class="preferences"
       tabindex="-1"
