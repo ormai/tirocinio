@@ -3,6 +3,7 @@
   import Banner from '$lib/Banner.svelte';
   import { m } from '$lib/paraglide/messages';
   import type { PageProps } from './$types';
+  import AdminHome from './AdminHome.svelte';
   import StudentPreference from './StudentPreference.svelte';
   import TitleBar from './TitleBar.svelte';
 
@@ -13,11 +14,7 @@
   <TitleBar title="Home" />
 
   {#if data.user.role === 'admin'}
-    <p>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam ducimus distinctio debitis
-      aliquam sunt molestiae non quaerat, in omnis praesentium rem qui delectus, sint nihil
-      perspiciatis? Ullam sunt illum impedit.
-    </p>
+    <AdminHome />
   {:else if data.user.role === 'student'}
     <div class="column">
       {#if !data.user.accepted}

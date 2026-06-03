@@ -353,5 +353,42 @@
   "settings_admin_add": "Aggiungi amministratore",
   "settings_admin_email_taken": "Un utente con questo indirizzo email esiste già",
   "settings_admin_password": "Password",
-  "settings_admin_password_confifrm": "Conferma password"
+  "settings_admin_password_confifrm": "Conferma password",
+  "days": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "{count} giorno", "countPlural=other": "{count} giorni" }
+    }
+  ],
+  "admin_home_structures_1": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "struttura, con una capienza complessiva di",
+        "countPlural=other": "strutture, con una capienza complessiva di"
+      }
+    }
+  ],
+  "admin_home_structures_2": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "posto per l'anno", "countPlural=other": "posti per l'anno" }
+    }
+  ],
+  "admin_home_students_1": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": ", di cui <span class=\"admin-home-interpolated\">{count}</span> non ancora accettato",
+        "countPlural=other": ", di cui <span class=\"admin-home-interpolated\">{count}</span> non ancora accettati"
+      }
+    }
+  ],
+  "admin_home_students_2": ". L'ultimo studente si è registrato <span class=\"admin-home-interpolated\">{duration}</span> fa",
+  "admin_home_collection_1": ". Sono state espresse complessivamente <span class=\"admin-home-interpolated\">{count}</span> preferenze",
+  "admin_home_collection_2": ". Alcuni dei luoghi più scelti sono:"
 }

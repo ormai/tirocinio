@@ -107,6 +107,8 @@ html {
   --border-thickness: 1px;
 
   --focus-shadow: 0 0 0 3px rgb(from var(--primary) r g b / 0.5);
+
+  --line-height: 1.5rem;
 }
 
 @supports (color: AccentColor) and (color: AccentColorText) {
@@ -142,7 +144,7 @@ body {
   align-items: center;
 
   p {
-    line-height: 1.5rem;
+    line-height: var(--line-height);
   }
 }
 
@@ -536,4 +538,10 @@ h3 {
 .text-small {
   font-size: 0.86rem;
   line-height: 1.3rem;
+}
+
+.notice {
+  color: var(--body-lighter);
+  font-style: italic;
+  margin-bottom: 0.6rem;
 }

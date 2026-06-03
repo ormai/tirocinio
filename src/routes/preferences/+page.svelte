@@ -273,12 +273,6 @@
     height: 3rem;
   }
 
-  .notice {
-    color: var(--body-lighter);
-    font-style: italic;
-    margin-bottom: 0.6rem;
-  }
-
   h2 {
     margin-bottom: 0.6rem;
     margin-top: 1rem;

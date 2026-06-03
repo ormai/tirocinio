@@ -1,26 +1,75 @@
-import { requireAcceptedStudent, requireAuth } from '$lib/server/api-security';
+import { requireAcceptedStudent, requireAdmin, requireAuth } from '$lib/server/api-security';
 import { db } from '$lib/server/db';
-import { preferenceCollectionIntervals, preferences, sites } from '$lib/server/db/schema';
-import { fail } from '@sveltejs/kit';
-import { and, eq, gt, lt } from 'drizzle-orm';
+import {
+  capacities,
+  preferenceCollectionIntervals,
+  preferences,
+  sites,
+  structures,
+  users,
+} from '$lib/server/db/schema';
+import { getYear } from '$lib/server/structure';
+import { error, fail } from '@sveltejs/kit';
+import { and, count, desc, eq, gt, lt, sum } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
   requireAuth(locals);
 
-  if (locals.user.role === 'admin') {
-    console.log('TODO: retrieve ADMIN home data');
-  } else {
-    const now = new Date();
-    const [activeCollection] = await db.select()
-      .from(preferenceCollectionIntervals)
-      .where(
-        and(
-          lt(preferenceCollectionIntervals.startTime, now),
-          gt(preferenceCollectionIntervals.endTime, now),
-        ),
-      );
+  const now = new Date();
+  const [activeCollection] = await db.select()
+    .from(preferenceCollectionIntervals)
+    .where(
+      and(
+        lt(preferenceCollectionIntervals.startTime, now),
+        gt(preferenceCollectionIntervals.endTime, now),
+      ),
+    );
 
+  if (locals.user.role === 'admin') {
+    const year = await getYear();
+    const [structs] = await db.select({ count: count(), totalCapacity: sum(capacities.capacity) })
+      .from(structures)
+      .leftJoin(capacities, and(eq(structures.id, capacities.structureId), eq(capacities.year, year)));
+
+    const [latestStudent] = await db.select({ registeredAt: users.registeredAt })
+      .from(users)
+      .where(eq(users.role, 'student'))
+      .orderBy(desc(users.registeredAt))
+      .limit(1);
+
+    const [totalPreferences] = activeCollection
+      ? await db.select({ count: count() })
+        .from(preferences)
+        .where(eq(preferences.collectionId, activeCollection.id))
+      : [{ count: 0 }];
+    const [notAccepted, accepted] = await db.select({ count: count() })
+      .from(users)
+      .where(eq(users.role, 'student'))
+      .groupBy(users.accepted)
+      .orderBy(users.accepted); // false -> 0 first, true -> 1 last
+
+    const popularSites = activeCollection
+      ? await db.select({ name: sites.name })
+        .from(preferences)
+        .leftJoin(sites, and(eq(preferences.siteId, sites.id), eq(preferences.collectionId, activeCollection.id)))
+        .groupBy(sites.id)
+        .orderBy(desc(count(sites.id)))
+        .limit(6)
+      : [];
+
+    return {
+      yearCapacities: year,
+      structsCount: structs.count,
+      totalCapacity: structs.totalCapacity ?? 0,
+      latestStudentRegistration: latestStudent?.registeredAt,
+      totalStudents: (accepted?.count ?? 0) + (notAccepted?.count ?? 0),
+      notAcceptedStudents: notAccepted?.count ?? 0,
+      activeCollection,
+      popularSites: popularSites.map((site) => site.name),
+      totalPreferences: totalPreferences.count,
+    };
+  } else if (locals.user.role === 'student') {
     const prefs = activeCollection
       ? await db.select()
         .from(preferences)
@@ -40,6 +89,8 @@ export const load: PageServerLoad = async ({ locals }) => {
     }
     return { activeCollection, existingPrefs, sites: await db.select().from(sites).orderBy(sites.name) };
   }
+
+  error(403);
 };
 
 export const actions: Actions = {

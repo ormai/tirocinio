@@ -353,5 +353,42 @@
   "settings_admin_add": "Add administrator",
   "settings_admin_email_taken": "A user with this email already exists",
   "settings_admin_password": "Password",
-  "settings_admin_password_confifrm": "Confirm password"
+  "settings_admin_password_confifrm": "Confirm password",
+  "days": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "{count} day", "countPlural=other": "{count} days" }
+    }
+  ],
+  "admin_home_structures_1": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "structure, with a total capacity of",
+        "countPlural=other": "structures, with a total capacity of"
+      }
+    }
+  ],
+  "admin_home_structures_2": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": { "countPlural=one": "place for the year", "countPlural=other": "places for the year" }
+    }
+  ],
+  "admin_home_students_1": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": ", of which <span class=\"admin-home-interpolated\">{count}</span> not yet accepted",
+        "countPlural=other": ", of which <span class=\"admin-home-interpolated\">{count}</span> not yet accepted"
+      }
+    }
+  ],
+  "admin_home_students_2": ". The last stutent registered <span class=\"admin-home-interpolated\">{duration}</span> ago",
+  "admin_home_collection_1": ". A total of <span class=\"admin-home-interpolated\">{count}</span> preferences have been expressed",
+  "admin_home_collection_2": ". Some of the most chosen sites are:"
 }

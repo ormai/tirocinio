@@ -28,6 +28,8 @@
     server = { ...form };
   });
 
+  // TODO: handle name unique constraint violation.
+  // TODO: make at least one field required.
   const name = new Field();
   const ward = new Field();
   const area = new Field();
