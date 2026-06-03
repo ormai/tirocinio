@@ -1,3 +1,4 @@
+import { building } from '$app/environment';
 import { m } from '$lib/paraglide/messages';
 import * as nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
@@ -15,6 +16,7 @@ import { getAppName, getSetting } from './settings';
 let transporter: Transporter | null = await getTransport();
 
 async function getTransport(): Promise<Transporter | null> {
+  if (building) return null;
   const host = await getSetting('smtpHost');
   if (!host) return null;
   const port = Number(await getSetting('smtpPort'));
@@ -43,7 +45,7 @@ export async function verifyTransporter(): Promise<string | true> {
   }
 }
 
-const from = `"${await getAppName()}" <${await getSetting('submitterEmail')}>`;
+const from = building ? '' : `"${await getAppName()}" <${await getSetting('submitterEmail')}>`;
 
 export async function sendOtpEmail(email: string, otp: number, otpDurationMs: number) {
   if (!transporter) {

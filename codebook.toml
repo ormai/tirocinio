@@ -1,4 +1,5 @@
 words = [
+    "SES",
     "Tirocinio",
     "adwaita",
     "bcryptjs",
@@ -22,6 +23,7 @@ words = [
     "nums",
     "oncancel",
     "ondragleave",
+    "openssl",
     "otp",
     "paraglide",
     "segoe",
