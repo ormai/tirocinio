@@ -33,8 +33,8 @@ export const actions = {
       return fail(400, 'Enrollment year must be in range [0, 32767]');
     }
 
-    const number = yearFromString(data.get('student-number')?.toString());
-    if (number && (number < 0 || number > 2147483647)) {
+    const number = Number(data.get('student-number'));
+    if (number < 0 || number > 2147483647) {
       return fail(400, 'Number must be in range [0, 2147483647]');
     }
     if (number && await db.$count(users, and(eq(users.number, number), ne(users.id, locals.user.id))) > 0) {
@@ -67,13 +67,13 @@ export const actions = {
 
     // NOTE: `undefined` is ignored by drizzle, `null` is the same as in SQL.
     // See: https://orm.drizzle.team/docs/update
-    if (newPassword || name || surname || number || newEmail || mfaSecret || enrollmentYear) {
+    if (newPassword || name !== locals.user.name || surname !== locals.user.name || number !== locals.user.number || newEmail || mfaSecret || enrollmentYear) {
       await db.transaction(async (tx) => {
         await tx.update(users).set({
           encodedPassword: newPassword ? await bcrypt.hash(newPassword, BCRYPT_ROUNDS) : undefined,
           name: name !== locals.user.name ? name : undefined,
           surname: surname !== locals.user.surname ? surname : undefined,
-          number,
+          number: number === 0 ? null : number,
           newEmail,
           mfaSecret,
           enrollmentYear,
