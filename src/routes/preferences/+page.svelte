@@ -4,6 +4,7 @@
   import Modal from '$lib/Modal.svelte';
   import { m } from '$lib/paraglide/messages';
   import { type Collection } from '$lib/server/preference';
+  import { dateTimeMedium } from '$lib/time';
   import { error } from '$lib/toast/Toaster.svelte';
   import { tooltip } from '$lib/tooltip.svelte';
   import { CirclePlus, Pencil, Save, Trash } from '@lucide/svelte';
@@ -32,17 +33,6 @@
   let loading = $state(false);
   let creating = $state(false);
   let editDirty = $state(false);
-
-  /** Display date limiting the precision to minutes. */
-  function displayDate(date: Date): string {
-    return date.toLocaleString(undefined, {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-    });
-  }
 </script>
 
 <Modal
@@ -110,14 +100,12 @@
     class:last={index === pasts.length - 1 && pasts.length > 1}
     class:middle={index && index > 0 && index < pasts.length - 1}
     class:active
-    // <!-- href={resolve(`/preferences/${collection.id}`)} -->
-    href={resolve('/preferences')}
+    href={resolve(`/preferences/${collection.id}`)}
   >
     <span class="numeric">{collection.year}</span>
     <div class="column">
-      <span>{m.preferences_from()} <span class="value">{displayDate(collection.startTime)}</span> {
-          m.preferences_to()
-        } <span class="value">{displayDate(collection.endTime)}</span>.</span>
+      <span>{m.preferences_from()} <span class="value">{dateTimeMedium(collection.startTime)}</span>
+        {m.preferences_to()} <span class="value">{dateTimeMedium(collection.endTime)}</span>.</span>
       <span><span class="value">{collection.durationMonths}</span> {
           m.preferences_month({ count: collection.durationMonths })
         }, <span class="value">{collection.numberOfPreferences}</span> {

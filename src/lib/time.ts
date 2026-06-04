@@ -20,15 +20,31 @@ export function duration(date1: Date, date2: Date = new Date(), countdownStyle: 
     if (days > 0) format += ', ';
     format += m.hours({ count: hours });
   }
-  if (hours < 3) {
+  if (hours < 3 && days === 0) {
     if (hours > 0) format += ', ';
     format += m.minutes({ count: minutes });
   }
-  if (hours === 0) {
+  if (hours === 0 && days === 0) {
     format += ', ' + m.seconds({ count: seconds });
     if (countdownStyle === 'danger') {
       format += '</strong>';
     }
   }
   return format;
+}
+
+/** Displays date and time limiting the precision to minutes. */
+export function dateTimeMedium(date: Date): string {
+  return date.toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  });
+}
+
+/** Displays year, month, day. */
+export function fullDate(date: Date): string {
+  return date.toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
 }
