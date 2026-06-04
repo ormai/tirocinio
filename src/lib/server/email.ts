@@ -14,6 +14,7 @@ import { getAppName, getSetting } from './settings';
 // This configuration might need to be changed.
 // Gmail: https://nodemailer.com/guides/using-gmail
 let transporter: Transporter | null = await getTransport();
+let from: string | null = await getFrom();
 
 async function getTransport(): Promise<Transporter | null> {
   if (building) return null;
@@ -31,9 +32,14 @@ async function getTransport(): Promise<Transporter | null> {
 
   return nodemailer.createTransport({ host, port, secure: false, auth: { user, pass: decrypt(pass) } });
 }
+async function getFrom(): Promise<string | null> {
+  if (building) return null;
+  return `"${await getAppName()}" <${await getSetting('submitterEmail')}>`;
+}
 
 export async function updateTransporter() {
   transporter = await getTransport();
+  from = await getFrom();
 }
 
 export async function verifyTransporter(): Promise<string | true> {
@@ -45,11 +51,13 @@ export async function verifyTransporter(): Promise<string | true> {
   }
 }
 
-const from = building ? '' : `"${await getAppName()}" <${await getSetting('submitterEmail')}>`;
-
 export async function sendOtpEmail(email: string, otp: number, otpDurationMs: number) {
   if (!transporter) {
     console.trace('Transporter is null');
+    return;
+  }
+  if (!from) {
+    console.trace('From is null');
     return;
   }
   await transporter.sendMail(
@@ -65,6 +73,10 @@ export async function sendOtpEmail(email: string, otp: number, otpDurationMs: nu
 export async function sendVerificationEmail(email: string, url: string) {
   if (!transporter) {
     console.trace('Transporter is null');
+    return;
+  }
+  if (!from) {
+    console.trace('From is null');
     return;
   }
   await transporter.sendMail(
