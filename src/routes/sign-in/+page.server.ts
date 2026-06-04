@@ -91,18 +91,18 @@ export const actions = {
     if (!otpRaw) return fail(400, { email, otpMissing: true });
     const otp = Number.parseInt(otpRaw.toString());
 
-    const [{ userId, role, storedOtp, expires }] = await db.select({
-      userId: users.id,
+    const [user] = await db.select({
+      id: users.id,
       role: users.role,
       storedOtp: users.outstandingOtp,
       expires: users.outstandingOtpExpiresAt,
     }).from(users).where(eq(users.email, email)).limit(1);
 
-    if (role !== 'student' || !expires || new Date() > expires || storedOtp !== otp) {
+    if (!user || user.role !== 'student' || !user.expires || new Date() > user.expires || user.storedOtp !== otp) {
       return fail(401, { email, otpInvalid: true });
     }
 
-    const { id, expiresAt } = await createSession(userId, role);
+    const { id, expiresAt } = await createSession(user.id, user.role);
     cookies.set(SESSION_COOKIE, id, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', expires: expiresAt });
     redirect(303, url.searchParams.get('redirectTo') ?? '/');
   },
