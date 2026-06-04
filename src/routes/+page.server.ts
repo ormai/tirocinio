@@ -1,4 +1,4 @@
-import { requireAcceptedStudent, requireAuth } from '$lib/server/api-security';
+import { requireAcceptedStudent, requireAdmin, requireAuth } from '$lib/server/api-security';
 import { db } from '$lib/server/db';
 import {
   capacities,
@@ -104,11 +104,14 @@ export const actions: Actions = {
     const collectionId = Number(form.get('collectionId'));
     if (isNaN(collectionId)) return fail(400, '`collectionId` is required and must be a valid number');
 
+    const studentId = Number(form.get('studentId'));
+    if (isNaN(studentId)) return fail(400, '`studentId` is required and must be a valid number');
+
     // Weights and months start from zero.
     const rows = prefs.flatMap((month, i) =>
       month.map((siteId, j) => {
         return {
-          studentId: locals.user.id,
+          studentId: studentId,
           collectionId,
           siteId,
           month: i,
@@ -122,11 +125,28 @@ export const actions: Actions = {
     await db.transaction(async (tx) => {
       if (editing) {
         await tx.delete(preferences)
-          .where(and(eq(preferences.studentId, locals.user.id), eq(preferences.collectionId, collectionId)));
+          .where(and(eq(preferences.studentId, studentId), eq(preferences.collectionId, collectionId)));
       }
       await tx.insert(preferences).values(rows);
     });
     console.debug('Create preferences', rows);
+    return true;
+  },
+
+  /** Deletes all preferences for a certain student in a certain collection */
+  deletePreferences: async ({ locals, request }) => {
+    requireAdmin(locals);
+
+    const form = await request.formData();
+    const collectionId = Number(form.get('collectionId'));
+    if (isNaN(collectionId)) return fail(400, '`collectionId` is required and must be a valid number');
+
+    const studentId = Number(form.get('studentId'));
+    if (isNaN(studentId)) return fail(400, '`studentId` is required and must be a valid number');
+
+    await db.delete(preferences)
+      .where(and(eq(preferences.collectionId, collectionId), eq(preferences.studentId, studentId)));
+
     return true;
   },
 };

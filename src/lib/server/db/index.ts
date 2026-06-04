@@ -17,6 +17,7 @@ if (!building && !env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
 export const db = drizzle(postgres(env.DATABASE_URL), { schema });
 
 if (!building) {
+  console.info('Migrating database schema...');
   await migrate(db, { migrationsFolder: './drizzle' });
   await ensureDefaultAdminExists();
 }

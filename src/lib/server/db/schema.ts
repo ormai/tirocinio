@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import {
   boolean,
   integer,
@@ -103,6 +103,15 @@ export const preferences = pgTable(
     primaryKey({ columns: [preferences.studentId, preferences.collectionId, preferences.siteId, preferences.month] }),
   ],
 );
+
+// https://orm.drizzle.team/docs/rqb
+export const usersRelations = relations(users, ({ many }) => ({
+  preferences: many(preferences),
+}));
+
+export const preferencesRelations = relations(preferences, ({ one }) => ({
+  student: one(users, { fields: [preferences.studentId], references: [users.id] }),
+}));
 
 export const assignments = pgTable(
   'assignments',

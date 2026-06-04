@@ -78,7 +78,7 @@
   "signin_student": "Student",
   "signin_submit": "Sign In",
   "signin_title": "Sign In",
-  "signin_verify_otp": "Provide the six digit code that was sent to your email",
+  "signin_verify_otp": "Provide the six digit code that was sent to your inbox",
   "signout": "Sign out",
   "signout_confirm": "Do you want to terminate the current session?",
   "signout_success": "Bye!",
@@ -392,5 +392,12 @@
   "admin_home_collection_1": ". A total of <span class=\"admin-home-interpolated\">{count}</span> preferences have been expressed",
   "admin_home_collection_2": ". Some of the most chosen sites are:",
   "structure_name_taken": "A structure with this name already exists",
-  "structure_name_missing": "Please provide the name of the structure"
+  "structure_name_missing": "Please provide the name of the structure",
+  "collection_title": "Collection",
+  "preferences_edit_title": "{student}'s preferences",
+  "preferences_delete_title": "Confirm preferences deletion",
+  "preferences_updated_successfully": "{student}'s preferences updated successfully",
+  "preferences_delete_successfully": "{student}'s preferences deleted successfully",
+  "preferences_deletion_desc": "Confirm that you intend to permanently delete all of {student}'s preferences in this collection. <strong class=\"danger\">This action is irreversible</strong>.",
+  "preferences_empty": "There are no preferences in this collection yet"
 }

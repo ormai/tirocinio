@@ -12,7 +12,7 @@ export function duration(date1: Date, date2: Date = new Date(), countdownStyle: 
   const minutes = Math.floor(interval / 60_000);
   interval -= minutes * 60_000;
   const seconds = Math.floor(interval / 1_000);
-  let format = hours === 0 && countdownStyle === 'danger' ? '<strong class="danger">' : '';
+  let format = hours === 0 && days === 0 && countdownStyle === 'danger' ? '<strong class="danger">' : '';
   if (days > 0) {
     format += m.days({ count: days });
   }

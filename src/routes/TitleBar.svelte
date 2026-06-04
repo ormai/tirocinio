@@ -1,6 +1,8 @@
 <!-- @component title bar at the top of the page. Integrates with the {@link SideBar}. -->
 
 <script lang="ts">
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import type { RouteId } from '$app/types';
@@ -18,7 +20,6 @@
   {#if backLocation != null}
     <a
       // https://github.com/sveltejs/kit/issues/15536
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       href={resolve(backLocation as any)}
       class="button"
       {@attach tooltip({ content: m.nav_back(), placement: 'right' })}

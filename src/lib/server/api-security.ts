@@ -36,7 +36,7 @@ export function requireAcceptedStudent(
   locals: App.Locals,
 ): asserts locals is App.Locals & { user: User & { role: 'student'; accepted: true } } {
   requireAuth(locals);
-  if (locals.user.role !== 'student' || !locals.user.accepted) {
+  if (locals.user.role !== 'admin' && !locals.user.accepted) {
     error(403, 'Only accepted students can access this resource');
   }
 }

@@ -90,6 +90,14 @@
     }
   }
 
+  let currentPath = $derived(deLocalizeHref(page.url.pathname));
+
+  function routeIs(path: string): boolean {
+    const slash = currentPath.indexOf('/', 1);
+    const slug = slash === -1 ? currentPath : currentPath.slice(0, slash);
+    return path === slug;
+  }
+
   function onTouchMove(e: TouchEvent) {
     const [dx, dy] = [e.touches[0].clientX - start.x, e.touches[0].clientY - start.y];
     if ((Math.abs(dx) > 6 || Math.abs(dy) > 6) && (Math.abs(dx / dy) < 1.2)) {
@@ -162,7 +170,7 @@
         <a
           href={resolve(path)}
           class="row"
-          class:active={deLocalizeHref(page.url.pathname).endsWith(path)}
+          class:active={routeIs(path)}
           {onclick}
           {@attach sideBar.collapsed && tooltip({ content: label, placement: 'right' })}
         >
@@ -207,7 +215,7 @@
         href={resolve('/profile')}
         class="row"
         {onclick}
-        class:active={deLocalizeHref(page.url.pathname).endsWith('profile')}
+        class:active={routeIs('/profile')}
         {@attach sideBar.collapsed && tooltip({ content: m.sidebar_profile(), placement: 'right' })}
       >
         <CircleUserRound />

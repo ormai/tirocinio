@@ -28,6 +28,8 @@ export async function ensureDefaultAdminExists() {
       role: 'admin',
     });
     console.info('Default admin user not found, so it was created.');
+  } else {
+    console.debug('Default admin user exists. Nothing to do.');
   }
 }
 

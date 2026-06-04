@@ -51,10 +51,6 @@
     ArrowUp01,
     ArrowUpAZ,
     BrushCleaning,
-    ChevronFirst,
-    ChevronLast,
-    ChevronLeft,
-    ChevronRight,
     Download,
     Funnel,
     Pencil,
@@ -68,6 +64,7 @@
   import { SvelteSet } from 'svelte/reactivity';
   import { fade } from 'svelte/transition';
   import '$lib/assets/table.css';
+  import Pagination from './Pagination.svelte';
 
   type Key = keyof T;
 
@@ -125,10 +122,11 @@
   /* eslint-enable no-useless-assignment */
 
   function filterAndSort(data: ReadonlyArray<T>): Array<T> {
+    const searchCaseInsensitive = search ? search.toLowerCase() : '';
     let rows = data.filter((row) =>
       (!search
         || columns.filter((col) => col.searchable).map((col) => row[col.key]).some((val) =>
-          String(val ?? '').toLowerCase().includes(search.toLowerCase())
+          String(val ?? '').toLowerCase().includes(searchCaseInsensitive)
         )) && filters.every((filter) => filter.isSatisfied(row))
     );
 
@@ -228,7 +226,6 @@
     }
   });
   const pageSize = 19;
-  let pageCount = $derived(Math.ceil(filtered.length / pageSize));
   let paginated = $derived(filtered.slice(page * pageSize, (page + 1) * pageSize));
 </script>
 
@@ -419,43 +416,7 @@
   </table>
 </div>
 
-{#if pageCount > 1}
-  <div class="pagination row" style="margin-top: 1rem">
-    <button
-      class="secondary icon-host"
-      disabled={page === 0}
-      onclick={() => page = 0}
-      {@attach tooltip(m.table_page_first())}
-    >
-      <ChevronFirst />
-    </button>
-    <button
-      class="secondary icon-host"
-      disabled={page === 0}
-      onclick={() => page--}
-      {@attach tooltip(m.table_page_prev())}
-    >
-      <ChevronLeft />
-    </button>
-    <span class="numeric">{page + 1} / {pageCount}</span>
-    <button
-      class="secondary icon-host"
-      disabled={page === pageCount - 1}
-      onclick={() => page++}
-      {@attach tooltip(m.table_page_next())}
-    >
-      <ChevronRight />
-    </button>
-    <button
-      class="secondary icon-host"
-      disabled={page === pageCount - 1}
-      onclick={() => page = pageCount - 1}
-      {@attach tooltip(m.table_page_last())}
-    >
-      <ChevronLast />
-    </button>
-  </div>
-{/if}
+<Pagination itemsLength={filtered.length} bind:page {pageSize} />
 
 <style>
   @media (max-width: 800px) {

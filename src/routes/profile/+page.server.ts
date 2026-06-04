@@ -67,7 +67,10 @@ export const actions = {
 
     // NOTE: `undefined` is ignored by drizzle, `null` is the same as in SQL.
     // See: https://orm.drizzle.team/docs/update
-    if (newPassword || name !== locals.user.name || surname !== locals.user.name || number !== locals.user.number || newEmail || mfaSecret || enrollmentYear) {
+    if (
+      newPassword || name !== locals.user.name || surname !== locals.user.name || number !== locals.user.number
+      || newEmail || mfaSecret || enrollmentYear
+    ) {
       await db.transaction(async (tx) => {
         await tx.update(users).set({
           encodedPassword: newPassword ? await bcrypt.hash(newPassword, BCRYPT_ROUNDS) : undefined,

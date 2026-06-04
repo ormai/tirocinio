@@ -71,11 +71,11 @@ html {
   /* Main color: hyperlinks, focus style, active states of components and forms */
   --primary: light-dark(Plum, DarkOrchid);
   --on-primary: var(--body);
-  --primary-bg: hsl(from var(--primary) h s l / 0.15);
+  --primary-bg: hsl(from var(--primary) h s l / 0.1);
   --primary-border: hsl(from var(--primary) h s calc(l - 10) / 0.5);
   --primary-text: light-dark(
     hsl(from var(--primary) h s calc(l - 20)),
-    hsl(from var(--primary) h s calc(l + 20))
+    hsl(from var(--primary) h s calc(l + 25))
   );
 
   /* Positive or successful actions and information */
@@ -86,7 +86,7 @@ html {
 
   /* Errors and dangerous actions */
   --danger: #dc3545;
-  --danger-bg: light-dark(#ea868f, #640009);
+  --danger-bg: light-dark(#da666f, #842009);
   --danger-border: #842029;
   --danger-text: light-dark(#842029, #ea868f);
 
@@ -260,7 +260,7 @@ label:has(> input[type="file"]) {
   }
 }
 
-button.tertiary, select {
+button.tertiary, select, a.button {
   background: transparent !important;
   padding: var(--spacing);
   color: var(--body) !important;
@@ -272,6 +272,11 @@ button.tertiary, select {
   &:active {
     background: hsl(from var(--body-light-bg) h s calc(l + 6)) !important;
   }
+}
+
+a.button {
+  text-decoration: none;
+  color: currentColor;
 }
 
 .icon svg {

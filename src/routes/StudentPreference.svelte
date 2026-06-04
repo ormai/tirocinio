@@ -80,6 +80,7 @@
       preferences: JSON.stringify(preferences.map((month) => month.filter((pref) => pref != null))),
       collectionId: String(collection?.id),
       editing: String(existingPrefs != null && editMode),
+      studentId: String(page.data.user.id),
     })
       .then(() => {
         success(m.preferences_save_successful());

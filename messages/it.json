@@ -77,7 +77,7 @@
   "signin_student": "Studente",
   "signin_submit": "Accedi",
   "signin_title": "Accedi",
-  "signin_verify_otp": "Inserisci il codice a sei cifre che abbiamo inviato alla tue email",
+  "signin_verify_otp": "Inserisci il codice a sei cifre che è stato inviato al tuo indirizzo email",
   "signout": "Esci",
   "signout_confirm": "Vuoi terminare la sessione?",
   "signout_success": "Ciao!",
@@ -392,5 +392,12 @@
   "admin_home_collection_1": ". Sono state espresse complessivamente <span class=\"admin-home-interpolated\">{count}</span> preferenze",
   "admin_home_collection_2": ". Alcuni dei luoghi più scelti sono:",
   "structure_name_taken": "Esiste già una struttura con questo nome",
-  "structure_name_missing": "Il nome della struttura è obbligatorio"
+  "structure_name_missing": "Il nome della struttura è obbligatorio",
+  "collection_title": "Raccolta",
+  "preferences_edit_title": "Preferenze di {student}",
+  "preferences_delete_title": "Conferma l'eliminazione delle preferenze",
+  "preferences_updated_successfully": "Preferenze di {student} aggiornate correttamente",
+  "preferences_delete_successfully": "Preferenze di {student} eliminate correttamente",
+  "preferences_deletion_desc": "Conferma di volere eliminare permanentemente tutte le preferenze di {student} in questa raccolta. <strong class=\"danger\">Questa azione è irreversibile</strong>.",
+  "preferences_empty": "Non ci sono ancora preferenze in questa raccolta"
 }
