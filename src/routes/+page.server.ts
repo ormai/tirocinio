@@ -107,6 +107,10 @@ export const actions: Actions = {
     const studentId = Number(form.get('studentId'));
     if (isNaN(studentId)) return fail(400, '`studentId` is required and must be a valid number');
 
+    if (studentId !== locals.user.id && locals.user.role !== 'admin') {
+      error(403, 'Students can only save preferences for themselves');
+    }
+
     // Weights and months start from zero.
     const rows = prefs.flatMap((month, i) =>
       month.map((siteId, j) => {
