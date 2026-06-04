@@ -51,6 +51,9 @@
 
     /** @prop Called right after the button was internally dismissed */
     onDismiss?: () => void;
+
+    /** @prop Maximum width the dialog is allowed to grow **/
+    maxWidth?: number;
   }
 
   /**
@@ -65,6 +68,7 @@
     dismissible = true,
     children,
     onDismiss = () => {},
+    maxWidth = 480,
   }: Props = $props();
 
   const mobile = new MediaQuery('(max-width: 480px)');
@@ -121,6 +125,7 @@
     }}
     onintrostart={() => dialog?.showModal()}
     aria-labelledby="modal-title"
+    style:max-width="{maxWidth}px"
     transition:dialogTransition
     class:shaking
   >
@@ -179,7 +184,6 @@
     border-radius: var(--radius);
     padding: 0;
     width: 100%;
-    max-width: 480px;
     max-height: 90dvh;
     display: flex;
     flex-direction: column;
