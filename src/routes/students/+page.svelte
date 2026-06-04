@@ -290,7 +290,7 @@
     bind:exportModalOpen
     bind:importModalOpen
     bind:settingsModalOpen
-    getRowInfo={(row: StudentView) => `${row.name} ${row.surname}`}
+    getRowInfo={(row: StudentView) => [row.name, row.surname].filter(Boolean).join('  ')}
     label={m.students}
     uniqKey="stu-tab-int"
   />

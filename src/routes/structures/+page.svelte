@@ -142,7 +142,8 @@
     bind:filtersModalOpen
     bind:importModalOpen
     bind:settingsModalOpen
-    getRowInfo={(row: StructureView) => row.name ?? `${row.area}-${row.site}-${row.kind}`}
+    getRowInfo={(row: StructureView) => row.name}
+    // name is notNull in the schema
     label={m.structures}
     allFilteredOutMessage={m.structures_all_filtered_out()}
     uniqKey="str-tab-int"
