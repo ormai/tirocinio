@@ -56,7 +56,7 @@ export const actions = {
     redirect(303, url.searchParams.get('redirectTo') ?? '/');
   },
 
-  /** Student sign in with only the email. An OTP is sent to their email address. */
+  /** Student sign-in with only the email. An OTP is sent to their email address. */
   student: async ({ request }) => {
     const data = await request.formData();
     const email = data.get('email')?.toString().toLowerCase().trim();

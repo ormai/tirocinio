@@ -2,7 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import type { User } from './user';
 
 /**
- * Asserts the the user making the request is **authenticated**, i.e. there exists a valid session
+ * Asserts that the user making the request is **authenticated**, i.e. there exists a valid session
  * that references the user.
  *
  * @throws {import('@sveltejs/kit').Redirect} If proper **authentication** is not present, redirects to sign-in route.

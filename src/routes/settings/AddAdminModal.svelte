@@ -66,7 +66,7 @@
     use:enhance={({ cancel }) =>
     onSubmit(cancel, [], () => loading = true, async (result) => {
       if (result.type === 'success') {
-        success(m.settings_admin_added_succesfully());
+        success(m.settings_admin_added_successfully());
         open = false;
       } else if (result.type === 'failure' && result.data?.emailTaken === true) {
         emailTaken = true;
@@ -127,7 +127,7 @@
     <PasswordField
       name={undefined}
       field={passwordConfirm}
-      label={m.settings_admin_password_confifrm()}
+      label={m.settings_admin_password_confirm()}
     />
   </form>
 </Modal>
