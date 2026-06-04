@@ -13,6 +13,7 @@
   import TitleBar from '../TitleBar.svelte';
   import type { PageProps } from './$types';
   import AddEditCollection from './AddEditCollection.svelte';
+  import '$lib/assets/styles/boxed-list.css';
 
   let { data }: PageProps = $props();
 
@@ -95,7 +96,7 @@
   index?: number,
 )}
   <a
-    class="collection row-spaced link-button"
+    class="boxed-list row-spaced link-button"
     class:first={index === 0 && pasts.length > 1}
     class:last={index === pasts.length - 1 && pasts.length > 1}
     class:middle={index && index > 0 && index < pasts.length - 1}
@@ -183,79 +184,6 @@
 </section>
 
 <style>
-  .collection {
-    background: var(--body-light-bg);
-    padding: 0.8rem 1.2rem;
-    border: var(--border-thickness) solid var(--border);
-    justify-content: start;
-    gap: 1.2rem;
-    border-radius: var(--radius);
-
-    .column {
-      gap: 0;
-      font-size: 0.9rem;
-      flex-grow: 1;
-    }
-
-    &.first {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-
-    &.middle, &.last {
-      border-top: none;
-    }
-
-    &.last {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-    }
-
-    &.middle {
-      border-radius: 0;
-    }
-
-    span {
-      color: var(--body-light);
-
-      &.value {
-        font-variant-numeric: tabular-nums slashed-zero;
-        font-weight: 700;
-        color: var(--body);
-      }
-    }
-
-    &.active {
-      border-color: var(--primary-border);
-      span {
-        color: hsl(from var(--on-primary) h s l / 0.8);
-
-        &.value {
-          color: var(--on-primary);
-        }
-      }
-
-      & button.tertiary:hover {
-        background: var(--primary) !important;
-      }
-
-      .icon-host :global(svg) {
-        color: var(--on-primary);
-      }
-    }
-
-    .trailing {
-      display: flex;
-      gap: 0.3rem;
-    }
-  }
-
-  @media (max-width: 600px) {
-    .trailing {
-      flex-direction: column-reverse;
-    }
-  }
-
   .create {
     width: 100%;
     height: 3rem;

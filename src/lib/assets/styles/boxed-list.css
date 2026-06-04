@@ -1,0 +1,93 @@
+/* Style for a boxed list:
+ * https://gnome.pages.gitlab.gnome.org/libadwaita/doc/1-latest/widget-gallery.html#boxed-lists
+ *
+ * Example structure:
+ * 
+ * <a href="..." class="boxed-list row-spaced {first|last|middle}"> // div, button
+ *   <p>Something</span> // trailing
+ *   <div class="column">
+ *     <p>Info about data</p>
+ *     <p>Other info</p>
+ *   </div>
+ *   </div class="trailing">
+ *     <button>Action 1</button>
+ *     <button>Action 2</button>
+ *   </div>
+ * </a> 
+ */
+
+.boxed-list {
+  background: var(--body-light-bg);
+  padding: 0.8rem 1.2rem;
+  border: var(--border-thickness) solid var(--border);
+  justify-content: start;
+  gap: 1.2rem;
+  border-radius: var(--radius);
+  width: 100%;
+
+  .column {
+    gap: 0;
+    font-size: 0.9rem;
+    flex-grow: 1;
+  }
+
+  &.first {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &.middle, &.last {
+    border-top: none;
+  }
+
+  &.last {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  &.middle {
+    border-radius: 0;
+  }
+
+  span {
+    color: var(--body-light);
+
+    &.value {
+      font-variant-numeric: tabular-nums slashed-zero;
+      font-weight: 700;
+      color: var(--body);
+    }
+  }
+
+  &.active {
+    border-color: var(--primary-border);
+    color: var(--op-primary);
+
+    span {
+      color: hsl(from var(--on-primary) h s l / 0.8);
+
+      &.value {
+        color: var(--on-primary) !important;
+      }
+    }
+
+    & button.tertiary:hover {
+      background: var(--primary) !important;
+    }
+
+    .icon-host svg {
+      color: var(--on-primary);
+    }
+  }
+
+  .trailing {
+    display: flex;
+    gap: 0.3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .trailing {
+    flex-direction: column-reverse;
+  }
+}
