@@ -5,17 +5,16 @@
   import { page } from '$app/state';
   import Banner from '$lib/Banner.svelte';
   import Clock from '$lib/Clock.svelte';
-  import { duration } from '$lib/duration';
   import { sendForm } from '$lib/form/submit';
   import LoadingButton from '$lib/LoadingButton.svelte';
   import { m } from '$lib/paraglide/messages';
   import type { Collection } from '$lib/server/preference';
-  import { type Site } from '$lib/server/structure';
+  import { duration } from '$lib/time';
   import { error, success } from '$lib/toast/Toaster.svelte';
   import { Pencil, Save } from '@lucide/svelte';
   import { onMount } from 'svelte';
-  import { sineIn } from 'svelte/easing';
-  import { fly, slide } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
+  import PreferencesGrid from './PreferencesGrid.svelte';
 
   let loading = $state(false);
   let editMode = $state(false);
@@ -45,16 +44,6 @@
         month.some((pref, j) => pref !== (existingPrefs![i][j] ?? null))
       ),
   );
-
-  $effect(() => {
-    for (const month of preferences) {
-      let clear = false;
-      for (let i = 0; i < month.length; i++) {
-        if (clear) month[i] = null;
-        if (month[i] == null) clear = true;
-      }
-    }
-  });
 
   onMount(() => {
     if (collection == null || existingPrefs != null) return;
@@ -100,13 +89,6 @@
       .catch(() => error(m.error()))
       .finally(() => loading = false);
   }
-
-  let lastNonEmptyRow = $derived.by(() => {
-    const index = preferences[0].findIndex((_, j) =>
-      preferences.every((month) => month[j] == null)
-    );
-    return index === -2 ? prefNum : index;
-  });
 </script>
 
 <div class="column preference-host">
@@ -127,43 +109,15 @@
       {@html countDown}
     </p>
 
-    <!-- TODO: number rows -->
-    <div
-      class="preferences"
-      tabindex="-1"
-      style:grid-template-columns="repeat({preferences.length}, max-content)"
-    >
-      {#each preferences as month, i (i)}
-        <span style:grid-column={i + 2} style:grid-row={1}>
-          {m.preferences_month_head({ n: i + 1 })}
-        </span>
-        {#each month as pref, j (j)}
-          {#if i === 0 && j < (editMode ? lastNonEmptyRow + 1 : lastNonEmptyRow)}
-            <span
-              class="row-num numeric"
-              transition:fly={{ y: -10, duration: 120 }}
-              style="grid-area: {j + 2} / 1"
-            >{j + 1}</span>
-          {/if}
-          {#if (existingPrefs != null && !editMode) ? (pref != null) : (j === 0 || month[j - 1] != null)}
-            <select
-              transition:slide={{ easing: sineIn, duration: 100 }}
-              style:grid-area="{j + 2} / {i + 2}"
-              bind:value={month[j]}
-              class:missing={j === 0 && pref == null}
-              class:present={pref != null}
-              disabled={page.data.user.accepted !== true || (existingPrefs != null && !editMode)}
-              style:--priority={j + 1}
-            >
-              <option value={null}>{m.filter_choose()}</option>
-              {#each page.data.sites.filter(({ id }: Site) => id === pref || !month.includes(id)) as { id, name } (id)}
-                <option value={id}>{name}</option>
-              {/each}
-            </select>
-          {/if}
-        {/each}
-      {/each}
-    </div>
+    <PreferencesGrid
+      bind:preferences
+      {existingPrefs}
+      numberOfPreferences={prefNum}
+      durationMonths={collection?.durationMonths ?? 0}
+      sites={page.data.sites}
+      userAccepted={page.data.user.accepted === true}
+      {editMode}
+    />
 
     {#if existingPrefs != null && !editMode}
       <div class="still" in:fly={{ y: 20 }}>
@@ -213,18 +167,6 @@
 </div>
 
 <style>
-  .preferences {
-    display: grid;
-    text-align: center;
-    align-items: center;
-    overflow-x: auto;
-    gap: 0.5rem;
-    padding: 0.7rem;
-    max-width: min-content;
-    width: 100%;
-    margin-inline: auto;
-  }
-
   .preference-host {
     width: 100%;
     background: hsl(from var(--primary-bg) h s l / 0.06);
@@ -235,45 +177,5 @@
     .still {
       padding: 0 0.7rem;
     }
-  }
-
-  :global(strong.danger) {
-    color: var(--danger-text);
-  }
-
-  select:not(:disabled).missing {
-    transition: background 1600ms cubic-bezier(0.075, 0.82, 0.165, 1);
-    border: var(--border-thickness) solid var(--danger-border);
-    background: hsl(from var(--danger-bg) h s l / 0.4) !important;
-
-    &:hover {
-      background: hsl(from var(--danger-bg) h s calc(l + 5) / 0.6) !important;
-    }
-
-    &:focus-visible {
-      box-shadow: 0 0 0 3px rgb(from var(--danger) r g b / 0.5);
-    }
-  }
-
-  select:not(:disabled).present {
-    transition: background 1600ms cubic-bezier(0.075, 0.82, 0.165, 1);
-    border: var(--border-thickness) solid var(--success-border);
-    background: hsl(from var(--success-bg) h s l / calc(1 / var(--priority))) !important;
-
-    &:hover {
-      background: hsl(from var(--success-bg) h s calc(l + 5)) !important;
-    }
-
-    &:focus-visible {
-      box-shadow: 0 0 0 3px rgb(from var(--success) r g b / 0.5);
-    }
-  }
-
-  select:disabled {
-    pointer-events: none;
-  }
-
-  .row-num {
-    text-align: end;
   }
 </style>

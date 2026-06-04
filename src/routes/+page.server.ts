@@ -8,6 +8,7 @@ import {
   structures,
   users,
 } from '$lib/server/db/schema';
+import { rearrange } from '$lib/server/preference';
 import { getYear } from '$lib/server/structure';
 import { error, fail } from '@sveltejs/kit';
 import { and, count, desc, eq, gt, lt, sum } from 'drizzle-orm';
@@ -75,19 +76,11 @@ export const load: PageServerLoad = async ({ locals }) => {
         .from(preferences)
         .where(and(eq(preferences.studentId, locals.user.id), eq(preferences.collectionId, activeCollection.id)))
       : [];
-    const existingPrefs: number[][] = [];
-    for (const pref of prefs) {
-      if (pref.siteId) {
-        if (!existingPrefs[pref.month]) {
-          existingPrefs[pref.month] = [];
-        }
-        existingPrefs[pref.month][pref.weight] = pref.siteId;
-      }
-    }
-    for (const month of existingPrefs) {
-      month.reverse();
-    }
-    return { activeCollection, existingPrefs, sites: await db.select().from(sites).orderBy(sites.name) };
+    return {
+      activeCollection,
+      existingPrefs: rearrange(prefs),
+      sites: await db.select().from(sites).orderBy(sites.name),
+    };
   }
 
   error(403);

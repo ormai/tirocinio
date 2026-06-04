@@ -7,8 +7,8 @@
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import Clock from '$lib/Clock.svelte';
-  import { duration } from '$lib/time';
   import { m } from '$lib/paraglide/messages';
+  import { duration } from '$lib/time';
 
   let collectionCountDown = $state(
     page.data.activeCollection ? duration(page.data.activeCollection.endTime) : null,
