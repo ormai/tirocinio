@@ -2,7 +2,7 @@ import { building } from '$app/environment';
 import { env } from '$env/dynamic/private';
 import { ensureDefaultAdminExists } from '$lib/server/user';
 import type { ExtractTablesWithRelations } from 'drizzle-orm';
-import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
 import { drizzle, type PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';

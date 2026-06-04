@@ -38,7 +38,7 @@ export const users = pgTable(
   (users) => [
     uniqueIndex('email_index').on(users.email),
     uniqueIndex('number_index').on(users.number),
-    uniqueIndex('mfa_secret').on(users.number),
+    uniqueIndex('mfa_secret').on(users.mfaSecret),
   ],
 );
 

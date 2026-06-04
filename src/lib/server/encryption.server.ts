@@ -1,3 +1,5 @@
+// Encryption at rest
+
 import { building } from '$app/environment';
 import { env } from '$env/dynamic/private';
 import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
