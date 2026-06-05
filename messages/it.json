@@ -399,5 +399,7 @@
   "preferences_updated_successfully": "Preferenze di {student} aggiornate correttamente",
   "preferences_delete_successfully": "Preferenze di {student} eliminate correttamente",
   "preferences_deletion_desc": "Conferma di volere eliminare permanentemente tutte le preferenze di {student} in questa raccolta. <strong class=\"danger\">Questa azione è irreversibile</strong>.",
-  "preferences_empty": "Non ci sono ancora preferenze in questa raccolta"
+  "preferences_empty": "Non ci sono ancora preferenze in questa raccolta",
+  "preferences_collection_update_successfully": "Dettagli della raccolta aggiornati correttamente",
+  "preferences_collection_delete_successfully": "Raccolta eliminata correttamente"
 }

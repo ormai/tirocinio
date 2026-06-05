@@ -400,5 +400,7 @@
   "preferences_updated_successfully": "{student}'s preferences updated successfully",
   "preferences_delete_successfully": "{student}'s preferences deleted successfully",
   "preferences_deletion_desc": "Confirm that you intend to permanently delete all of {student}'s preferences in this collection. <strong class=\"danger\">This action is irreversible</strong>.",
-  "preferences_empty": "There are no preferences in this collection yet"
+  "preferences_empty": "There are no preferences in this collection yet",
+  "preferences_collection_update_successfully": "Collection details updated successfully",
+  "preferences_collection_delete_successfully": "Collection deleted successfully"
 }

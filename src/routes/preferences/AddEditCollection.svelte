@@ -11,7 +11,7 @@
   import LoadingButton from '$lib/LoadingButton.svelte';
   import { m } from '$lib/paraglide/messages';
   import type { Collection } from '$lib/server/preference';
-  import { error } from '$lib/toast/Toaster.svelte';
+  import { error, success } from '$lib/toast/Toaster.svelte';
   import { fade } from 'svelte/transition';
 
   interface Props {
@@ -98,6 +98,7 @@
     async (result) => {
       if (result.type === 'success') {
         await invalidateAll();
+        success(m.preferences_collection_update_successfully());
         creating = false;
         selected = null;
         editModalOpen = false;

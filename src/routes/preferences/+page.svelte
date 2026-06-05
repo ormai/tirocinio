@@ -5,7 +5,7 @@
   import { m } from '$lib/paraglide/messages';
   import { type Collection } from '$lib/server/preference';
   import { dateTimeMedium } from '$lib/time';
-  import { error } from '$lib/toast/Toaster.svelte';
+  import { error, success } from '$lib/toast/Toaster.svelte';
   import { tooltip } from '$lib/tooltip.svelte';
   import { CirclePlus, Pencil, Save, Trash } from '@lucide/svelte';
   import { cubicInOut } from 'svelte/easing';
@@ -78,6 +78,7 @@
           .then(() => {
             collections = collections.filter((c) => c.id !== selected?.id);
             deleteModalOpen = false;
+            success(m.preferences_collection_delete_successfully());
           })
           .catch(() => error(m.error()))
           .finally(() => loading = false);
