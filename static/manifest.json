@@ -1,15 +1,22 @@
 {
-  "background_color": "#ffffff",
-  "theme_color": "#5cb85c",
-  "name": "Internship Planner",
-  "short_name": "RealWorld",
-  "display": "minimal-ui",
+  "short_name": "Tirocinio",
   "start_url": "/",
+  "display": "minimal-ui",
   "icons": [
     {
-      "src": "logo-256.png",
-      "sizes": "256x256",
-      "type": "image/png"
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    },
+    {
+      "src": "/icon192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon512.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ]
 }

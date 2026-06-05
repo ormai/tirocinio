@@ -402,5 +402,6 @@
   "preferences_deletion_desc": "Confirm that you intend to permanently delete all of {student}'s preferences in this collection. <strong class=\"danger\">This action is irreversible</strong>.",
   "preferences_empty": "There are no preferences in this collection yet",
   "preferences_collection_update_successfully": "Collection details updated successfully",
-  "preferences_collection_delete_successfully": "Collection deleted successfully"
+  "preferences_collection_delete_successfully": "Collection deleted successfully",
+  "app_icon_attribution": "The app icon is {name}, by {author}"
 }

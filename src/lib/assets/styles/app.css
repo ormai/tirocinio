@@ -69,13 +69,13 @@ html {
   --border: light-dark(#ccc, #444);
 
   /* Main color: hyperlinks, focus style, active states of components and forms */
-  --primary: light-dark(Plum, DarkOrchid);
-  --on-primary: var(--body);
+  --primary: #b71918;
+  --on-primary: OldLace;
   --primary-bg: hsl(from var(--primary) h s l / 0.1);
   --primary-border: hsl(from var(--primary) h s calc(l - 10) / 0.5);
   --primary-text: light-dark(
     hsl(from var(--primary) h s calc(l - 20)),
-    hsl(from var(--primary) h s calc(l + 25))
+    hsl(from var(--primary) h s calc(l + 32))
   );
 
   /* Positive or successful actions and information */

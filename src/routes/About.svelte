@@ -26,6 +26,14 @@
 
     <!-- eslint-disable-next-line svelte/no-at-html-tags -->
     <p class="desc">{@html m.about_license()}</p>
+
+    <p class="desc">
+      <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+      {@html m.app_icon_attribution({
+        name: '<a href="https://thenounproject.com/icon/pharmacy-7771367/">Pharmacy</a>',
+        author: 'Salman Azzumardi',
+      })} (CC BY 3.0)
+    </p>
   </div>
 </Modal>
 
