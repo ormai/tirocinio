@@ -1,8 +1,7 @@
-# TODO: rebrand
-
 services:
   db:
     image: postgres
+    container_name: tirocinio-db
     restart: always
     env_file:
       - .env
@@ -15,11 +14,10 @@ services:
       - app-data:/var/lib/postgresql
     networks:
       - postgres
-    ports:
-      - 5432:5432
 
   app:
-    build: .
+    image: ghcr.io/ormai/tirocinio:main
+    container_name: tirocinio
     restart: unless-stopped
     env_file:
       - .env
