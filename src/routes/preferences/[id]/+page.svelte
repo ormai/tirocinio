@@ -10,6 +10,8 @@
   import { sendForm } from '$lib/form/submit';
   import Pagination from '$lib/table/Pagination.svelte';
   import { error, success } from '$lib/toast/Toaster.svelte';
+  import { flip } from 'svelte/animate';
+  import { cubicOut } from 'svelte/easing';
 
   type Student = typeof data.students[number];
 
@@ -166,7 +168,7 @@
     title="{m.collection_title()} {begin === end ? begin : `${begin}–${end}`}"
   />
 
-  {#if paginated.length > 0}
+  {#if students.length > 0}
     <div class="input-icon">
       <div class="icon-box icon-host"><Search /></div>
       <input type="search" placeholder={m.table_search_placeholder()} bind:value={search} />
@@ -180,6 +182,7 @@
       class:first={paginated.length > 1 && i === 0}
       class:last={paginated.length > 1 && i === paginated.length - 1}
       class:middle={paginated.length > 1 && i > 0 && i < paginated.length - 1}
+      animate:flip={{ duration: 400, easing: cubicOut }}
     >
       {#if student.number != null}<span class="numeric">{student.number}</span>{/if}
       <div>

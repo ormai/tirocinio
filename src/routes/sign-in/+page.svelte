@@ -11,7 +11,19 @@
   import { tooltip } from '$lib/tooltip.svelte.js';
   import { ArrowLeft } from '@lucide/svelte';
   import { untrack } from 'svelte';
-  import { fade, fly } from 'svelte/transition';
+  import {
+    circIn,
+    circOut,
+    cubicInOut,
+    elasticIn,
+    elasticInOut,
+    elasticOut,
+    quintIn,
+    sineIn,
+    sineInOut,
+    sineOut,
+  } from 'svelte/easing';
+  import { fade, fly, slide } from 'svelte/transition';
   import type { PageProps } from './$types';
 
   let { form }: PageProps = $props();
@@ -171,14 +183,26 @@
       </div>
 
       {#if signInType === 'admin'}
-        <div transition:fly={{ x: -800, duration: 250 }}>
-          <PasswordField field={password} />
+        <div
+          in:fly={{ x: -400, duration: 280, delay: 160, easing: circOut }}
+          out:fly={{ x: -400, duration: 260, easing: sineOut }}
+        >
+          <div
+            in:slide={{ easing: circOut, duration: 160 }}
+            out:slide={{ easing: sineIn, duration: 220, delay: 150 }}
+          >
+            <PasswordField field={password} />
+          </div>
         </div>
       {/if}
 
       <div class="button-row">
         <LoadingButton {loading}>
-          {signInType === 'admin' ? m.signin_submit() : m.signin_send_code()}
+          {#if signInType === 'admin'}
+            <div in:fly={{y: -20, duration: 350}}>{m.signin_submit()}</div>
+          {:else}
+            <div in:fly={{y: 8, duration: 230, easing: sineInOut}}>{m.signin_send_code()}</div>
+          {/if}
         </LoadingButton>
       </div>
     </form>
