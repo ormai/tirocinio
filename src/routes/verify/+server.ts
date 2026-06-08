@@ -15,6 +15,7 @@ export const GET: RequestHandler = async ({ url }) => {
         await db.update(users)
           .set({ email: user.newEmail, newEmail: null, mfaSecret: null })
           .where(eq(users.id, user.id));
+        console.debug(`Multi-factor email verification successful for user ${user.id}`);
         redirect(307, `/profile?verification=success`);
       }
     }

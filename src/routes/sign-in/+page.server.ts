@@ -53,6 +53,7 @@ export const actions = {
       sameSite: 'lax',
       expires: expiresAt,
     });
+    console.debug(`Administrator sign-in, id: ${user.id}`);
     redirect(303, url.searchParams.get('redirectTo') ?? '/');
   },
 
@@ -74,8 +75,10 @@ export const actions = {
     };
     if (user) {
       await db.update(users).set(otp).where(eq(users.id, user.id));
+      console.debug(`Issue new sign-in OTP to existing student ${user.id}`);
     } else {
       await db.insert(users).values({ email, role: 'student', ...otp, accepted: await shouldBeAccepted(email) });
+      console.debug(`New student registration`);
     }
     await sendOtpEmail(email, otp.outstandingOtp, OTP_DURATION_MS);
     return { verifyOtp: true, email };
@@ -99,11 +102,13 @@ export const actions = {
     }).from(users).where(eq(users.email, email)).limit(1);
 
     if (!user || user.role !== 'student' || !user.expires || new Date() > user.expires || user.storedOtp !== otp) {
+      console.debug(`Rejecting OTP verification request for student ${user.id}`);
       return fail(401, { email, otpInvalid: true });
     }
 
     const { id, expiresAt } = await createSession(user.id, user.role);
     cookies.set(SESSION_COOKIE, id, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', expires: expiresAt });
+    console.debug(`Create new session for student ${user.id}`);
     redirect(303, url.searchParams.get('redirectTo') ?? '/');
   },
 
@@ -112,6 +117,7 @@ export const actions = {
     if (locals.session) {
       await deleteSession(locals.session.id);
     }
+    console.debug(`Delete session ${locals.session.id} for user ${locals.user?.id}`);
     locals.user = null;
     locals.session = null;
     cookies.delete(SESSION_COOKIE, { path: '/' });
