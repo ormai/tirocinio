@@ -1,1 +1,0 @@
-ALTER TABLE "users" ALTER COLUMN "encoded_password" DROP NOT NULL;

@@ -1,2 +1,0 @@
-ALTER TABLE "preferences" DROP CONSTRAINT "preferences_student_id_collection_id_site_id_pk";--> statement-breakpoint
-ALTER TABLE "preferences" ADD CONSTRAINT "preferences_student_id_collection_id_site_id_month_pk" PRIMARY KEY("student_id","collection_id","site_id","month");

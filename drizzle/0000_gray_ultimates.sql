@@ -1,9 +1,10 @@
 CREATE TABLE "assignments" (
 	"student_id" integer,
 	"structure_id" integer,
+	"collection_id" integer,
 	"year" smallint NOT NULL,
 	"month" smallint NOT NULL,
-	CONSTRAINT "assignments_student_id_structure_id_pk" PRIMARY KEY("student_id","structure_id")
+	CONSTRAINT "assignments_student_id_structure_id_collection_id_month_pk" PRIMARY KEY("student_id","structure_id","collection_id","month")
 );
 --> statement-breakpoint
 CREATE TABLE "capacities" (
@@ -29,7 +30,7 @@ CREATE TABLE "preferences" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"month" smallint NOT NULL,
 	"weight" smallint NOT NULL,
-	CONSTRAINT "preferences_student_id_collection_id_site_id_pk" PRIMARY KEY("student_id","collection_id","site_id")
+	CONSTRAINT "preferences_student_id_collection_id_site_id_month_pk" PRIMARY KEY("student_id","collection_id","site_id","month")
 );
 --> statement-breakpoint
 CREATE TABLE "sessions" (
@@ -73,16 +74,19 @@ CREATE TABLE "users" (
 	"outstanding_otp_expires_at" timestamp,
 	"new_email" varchar,
 	"mfa_secret" uuid,
+	"accepted" boolean DEFAULT false,
+	"registered_at" timestamp DEFAULT now() NOT NULL,
 	"role" text DEFAULT 'student' NOT NULL,
 	CONSTRAINT "users_number_unique" UNIQUE("number"),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-ALTER TABLE "assignments" ADD CONSTRAINT "assignments_student_id_users_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "assignments" ADD CONSTRAINT "assignments_structure_id_structures_id_fk" FOREIGN KEY ("structure_id") REFERENCES "public"."structures"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "assignments" ADD CONSTRAINT "assignments_student_id_users_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "assignments" ADD CONSTRAINT "assignments_structure_id_structures_id_fk" FOREIGN KEY ("structure_id") REFERENCES "public"."structures"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "assignments" ADD CONSTRAINT "assignments_collection_id_preference_collection_intervals_id_fk" FOREIGN KEY ("collection_id") REFERENCES "public"."preference_collection_intervals"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "capacities" ADD CONSTRAINT "capacities_structure_id_structures_id_fk" FOREIGN KEY ("structure_id") REFERENCES "public"."structures"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "preferences" ADD CONSTRAINT "preferences_student_id_users_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "preferences" ADD CONSTRAINT "preferences_collection_id_preference_collection_intervals_id_fk" FOREIGN KEY ("collection_id") REFERENCES "public"."preference_collection_intervals"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "preferences" ADD CONSTRAINT "preferences_student_id_users_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "preferences" ADD CONSTRAINT "preferences_collection_id_preference_collection_intervals_id_fk" FOREIGN KEY ("collection_id") REFERENCES "public"."preference_collection_intervals"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "preferences" ADD CONSTRAINT "preferences_site_id_sites_id_fk" FOREIGN KEY ("site_id") REFERENCES "public"."sites"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "structures" ADD CONSTRAINT "structures_site_id_sites_id_fk" FOREIGN KEY ("site_id") REFERENCES "public"."sites"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -90,4 +94,4 @@ CREATE UNIQUE INDEX "site_name" ON "sites" USING btree ("name");--> statement-br
 CREATE UNIQUE INDEX "structure_name" ON "structures" USING btree ("name");--> statement-breakpoint
 CREATE UNIQUE INDEX "email_index" ON "users" USING btree ("email");--> statement-breakpoint
 CREATE UNIQUE INDEX "number_index" ON "users" USING btree ("number");--> statement-breakpoint
-CREATE UNIQUE INDEX "mfa_secret" ON "users" USING btree ("number");
+CREATE UNIQUE INDEX "mfa_secret" ON "users" USING btree ("mfa_secret");

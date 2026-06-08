@@ -116,13 +116,16 @@ export const preferencesRelations = relations(preferences, ({ one }) => ({
 export const assignments = pgTable(
   'assignments',
   {
-    studentId: integer('student_id').references(() => users.id),
-    structureId: integer('structure_id').references(() => structures.id),
+    studentId: integer('student_id').references(() => users.id, { onDelete: 'cascade' }),
+    structureId: integer('structure_id').references(() => structures.id, { onDelete: 'cascade' }),
+    collectionId: integer('collection_id').references(() => preferenceCollectionIntervals.id, { onDelete: 'cascade' }),
     year: smallint().notNull(),
     month: smallint().notNull(),
   },
   (assignments) => [
-    primaryKey({ columns: [assignments.studentId, assignments.structureId] }),
+    primaryKey({
+      columns: [assignments.studentId, assignments.structureId, assignments.collectionId, assignments.month],
+    }),
   ],
 );
 

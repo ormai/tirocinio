@@ -1,5 +1,5 @@
 {
-  "id": "69c47a72-192f-42b6-9793-bc2571725f0c",
+  "id": "7f5778fa-9509-4bd0-9edc-d88655763162",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -16,6 +16,12 @@
         },
         "structure_id": {
           "name": "structure_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "collection_id": {
+          "name": "collection_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -45,7 +51,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "assignments_structure_id_structures_id_fk": {
@@ -58,16 +64,31 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "assignments_collection_id_preference_collection_intervals_id_fk": {
+          "name": "assignments_collection_id_preference_collection_intervals_id_fk",
+          "tableFrom": "assignments",
+          "tableTo": "preference_collection_intervals",
+          "columnsFrom": [
+            "collection_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
-        "assignments_student_id_structure_id_pk": {
-          "name": "assignments_student_id_structure_id_pk",
+        "assignments_student_id_structure_id_collection_id_month_pk": {
+          "name": "assignments_student_id_structure_id_collection_id_month_pk",
           "columns": [
             "student_id",
-            "structure_id"
+            "structure_id",
+            "collection_id",
+            "month"
           ]
         }
       },
@@ -232,7 +253,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "preferences_collection_id_preference_collection_intervals_id_fk": {
@@ -245,7 +266,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "preferences_site_id_sites_id_fk": {
@@ -263,12 +284,13 @@
         }
       },
       "compositePrimaryKeys": {
-        "preferences_student_id_collection_id_site_id_pk": {
-          "name": "preferences_student_id_collection_id_site_id_pk",
+        "preferences_student_id_collection_id_site_id_month_pk": {
+          "name": "preferences_student_id_collection_id_site_id_month_pk",
           "columns": [
             "student_id",
             "collection_id",
-            "site_id"
+            "site_id",
+            "month"
           ]
         }
       },
@@ -569,6 +591,20 @@
           "primaryKey": false,
           "notNull": false
         },
+        "accepted": {
+          "name": "accepted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "registered_at": {
+          "name": "registered_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
         "role": {
           "name": "role",
           "type": "text",
@@ -612,7 +648,7 @@
           "name": "mfa_secret",
           "columns": [
             {
-              "expression": "number",
+              "expression": "mfa_secret",
               "isExpression": false,
               "asc": true,
               "nulls": "last"

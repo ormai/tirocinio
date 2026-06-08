@@ -1,1 +1,0 @@
-ALTER TABLE "users" ALTER COLUMN "outstanding_otp" SET DATA TYPE integer;
