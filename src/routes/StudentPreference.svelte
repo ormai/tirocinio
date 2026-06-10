@@ -125,7 +125,11 @@
         <Banner kind="ok">
           <div class="row-spaced">
             {m.preferences_registered_hint()}
-            <button class="secondary" onclick={() => editMode = true}>
+            <button
+              class="secondary"
+              onclick={() => editMode = true}
+              disabled={page.data.user.accepted !== true}
+            >
               <Pencil size={16} />{m.preferences_edit()}
             </button>
           </div>
