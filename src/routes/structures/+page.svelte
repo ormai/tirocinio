@@ -18,6 +18,7 @@
 
   let { data, form }: PageProps = $props();
 
+  // TODO: campo che vincola l'anno per gli studenti
   const columns = [
     { key: 'name', label: m.structures_name(), numeric: false, sortable: true, searchable: true },
     { key: 'ward', label: m.structures_ward(), numeric: false, sortable: true, searchable: true },

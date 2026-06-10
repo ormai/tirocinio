@@ -218,7 +218,7 @@
   "structures_imported": "{count} strutture importate con successo",
   "errors_column": "Errori",
   "year_capacities_rationale": "Le <strong>capienze</strong> usate nell'intera applicazione sono relative all'anno indicato qui sotto. <strong>Strutture aggiunte, modificate o importate avranno una capienza, se presente, implicitamente associata a questo anno.</strong>",
-  "year_capacities_semantics": "Se impostato esplicitamente, l'anno non si aggiorna automaticamente. Altrimenti, verrà sempre usato l'anno corrente.",
+  "year_capacities_semantics": "Se impostato esplicitamente, il valore verrà sempre rispettato e non si aggiornerà automaticamente. Altrimenti, verrà sempre usato l'anno corrente.",
   "year_capacities_remove": "Rimuovi",
   "year_capacities_download_template": "Scarica modello delle capienze per l'anno {year} (.xlsx)",
   "year_capacities_import": "Importa capienze per l'anno {year}",
@@ -402,5 +402,14 @@
   "preferences_empty": "Non ci sono ancora preferenze in questa raccolta",
   "preferences_collection_update_successfully": "Dettagli della raccolta aggiornati correttamente",
   "preferences_collection_delete_successfully": "Raccolta eliminata correttamente",
-  "app_icon_attribution": "L'icona dell'app è {name}, di {author}"
+  "app_icon_attribution": "L'icona dell'app è {name}, di {author}",
+  "plan_ongoing_collection_warn": "Questa raccolta è ancora in corso",
+  "plan_confirm": "Conferma assegnamenti",
+  "plan_check": "Controlla e modifica gli assegnamenti",
+  "plan_generate": "Genera assegnamenti",
+  "plan_cancel_warn": "Conferma di volere cestinare gli assegnamenti generati",
+  "plan_empty_assignment": "— nessuna —",
+  "plan_send_emails": "Invia una notifica email a ogni studente coinvolto",
+  "plan_solver_timeout": "Interrompi il solver dopo (secondi)",
+  "plan_save_confirm": "Assegnamenti salvati correttamente"
 }

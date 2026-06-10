@@ -111,6 +111,8 @@ export const actions: Actions = {
       error(403, 'Students can only save preferences for themselves');
     }
 
+    // TODO: Check if the collection is ongoing before inserting.
+
     // Weights and months start from zero.
     const rows = prefs.flatMap((month, i) =>
       month.map((siteId, j) => {

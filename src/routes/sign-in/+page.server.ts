@@ -113,7 +113,7 @@ export const actions = {
   },
 
   /** Terminates a session */
-  signout: async ({ cookies, locals }) => {
+  signOut: async ({ cookies, locals }) => {
     if (locals.session) {
       await deleteSession(locals.session.id);
     }

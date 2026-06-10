@@ -11,18 +11,7 @@
   import { tooltip } from '$lib/tooltip.svelte.js';
   import { ArrowLeft } from '@lucide/svelte';
   import { untrack } from 'svelte';
-  import {
-    circIn,
-    circOut,
-    cubicInOut,
-    elasticIn,
-    elasticInOut,
-    elasticOut,
-    quintIn,
-    sineIn,
-    sineInOut,
-    sineOut,
-  } from 'svelte/easing';
+  import { circOut, sineIn, sineInOut, sineOut } from 'svelte/easing';
   import { fade, fly, slide } from 'svelte/transition';
   import type { PageProps } from './$types';
 
@@ -199,9 +188,9 @@
       <div class="button-row">
         <LoadingButton {loading}>
           {#if signInType === 'admin'}
-            <div in:fly={{y: -20, duration: 350}}>{m.signin_submit()}</div>
+            <div in:fly={{ y: -20, duration: 350 }}>{m.signin_submit()}</div>
           {:else}
-            <div in:fly={{y: 8, duration: 230, easing: sineInOut}}>{m.signin_send_code()}</div>
+            <div in:fly={{ y: 8, duration: 230, easing: sineInOut }}>{m.signin_send_code()}</div>
           {/if}
         </LoadingButton>
       </div>

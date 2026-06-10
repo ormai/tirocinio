@@ -265,11 +265,11 @@ button.tertiary, select, a.button {
   padding: var(--spacing);
   color: var(--body) !important;
 
-  &:hover {
+  &:not(:disabled):hover {
     background: hsl(from var(--body-light-bg) h s calc(l + 3)) !important;
   }
 
-  &:active {
+  &:not(:disabled):active {
     background: hsl(from var(--body-light-bg) h s calc(l + 6)) !important;
   }
 }
@@ -308,6 +308,10 @@ select {
   height: calc(1.5em + var(--spacing) * 2 + var(--border-thickness));
   cursor: pointer;
   appearance: none;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 }
 
 div.select-host {

@@ -15,6 +15,8 @@
   import AddEditCollection from './AddEditCollection.svelte';
   import '$lib/assets/styles/boxed-list.css';
 
+  // FIXME: visione di un'altra preferenza
+
   let { data }: PageProps = $props();
 
   let collections = $derived(data.collections);

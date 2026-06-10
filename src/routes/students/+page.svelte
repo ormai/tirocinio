@@ -28,6 +28,8 @@
   import AddEditStudentModal from './AddEditStudentModal.svelte';
   import Settings from './Settings.svelte';
 
+  // TODO: accept all button for filtered
+
   onMount(() => {
     const saved = window.localStorage.getItem('students-filters');
     if (saved) {

@@ -23,6 +23,11 @@
   let addAccountModalOpen = $state(false);
   onMount(() => hydrated = true);
 
+  // todo: quanti mesi per ogni hanno
+  // primo anno: 3 mesi
+  // secondo: 4 mesi
+  // secondo: 5 mesi
+
   const appName = new Field([
     (i) => i.validity.valueMissing && m.settings_app_name_missing(),
   ]);

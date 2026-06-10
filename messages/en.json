@@ -220,7 +220,7 @@
   "structures_imported": "Successfully imported {count} structures",
   "errors_column": "Errors",
   "year_capacities_rationale": "All <strong>capacities</strong> used across the application are relative to the year below. <strong>Structures added, updated, or imported will have a capacity, if present, automatically associated with this year.</strong>",
-  "year_capacities_semantics": "If explicitly set, the year will not be automatically updated. Otherwise, the current year will be always used.",
+  "year_capacities_semantics": "If explicitly set, the value will be always respected and will not be automatically updated. Otherwise, the current year will be always used.",
   "year_capacities_remove": "Remove",
   "year_capacities_download_template": "Download capacities template for year {year} (.xlsx)",
   "year_capacities_import": "Import capacities for year {year}",
@@ -403,5 +403,14 @@
   "preferences_empty": "There are no preferences in this collection yet",
   "preferences_collection_update_successfully": "Collection details updated successfully",
   "preferences_collection_delete_successfully": "Collection deleted successfully",
-  "app_icon_attribution": "The app icon is {name}, by {author}"
+  "app_icon_attribution": "The app icon is {name}, by {author}",
+  "plan_ongoing_collection_warn": "This collection is still ongoing",
+  "plan_confirm": "Confirm assignment",
+  "plan_check": "Review and edit assignments",
+  "plan_generate": "Generate assignments",
+  "plan_cancel_warn": "Confirm that you want to discard the generated assignments",
+  "plan_empty_assignment": "— none —",
+  "plan_send_emails": "Send email notification to each student involved",
+  "plan_solver_timeout": "Stop the solver after (seconds)",
+  "plan_save_confirm": "Assignments saved correctly"
 }

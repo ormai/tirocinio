@@ -64,8 +64,8 @@
   import { SvelteSet } from 'svelte/reactivity';
   import { fade } from 'svelte/transition';
   import '$lib/assets/table.css';
+  import { flip } from 'svelte/animate';
   import Pagination from './Pagination.svelte';
-    import { flip } from 'svelte/animate';
 
   type Key = keyof T;
 
@@ -377,7 +377,7 @@
     <tbody>
       {#each paginated as row (row.id)}
         {@const rowInfo = getRowInfo(row)}
-        <tr animate:flip={{duration: 600}}>
+        <tr animate:flip={{ duration: 600 }}>
           <td class="action">
             <div style="padding: 0 calc(var(--spacing))">
               <input

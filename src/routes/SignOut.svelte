@@ -29,7 +29,7 @@
 <form
   id="signout-form"
   method="POST"
-  action="/sign-in?/signout"
+  action="/sign-in?/signOut"
   use:enhance={() => {
     loading = true;
     return async ({ result }) => {

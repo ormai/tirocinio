@@ -49,7 +49,7 @@
   style:grid-template-columns="repeat({preferences.length}, max-content)"
 >
   {#each preferences as month, i (i)}
-    <span style:grid-column={i + 2} style:grid-row={1}>
+    <span style:grid-column={i + 2} style:grid-row={1} class="numeric">
       {m.preferences_month_head({ n: i + 1 })}
     </span>
     {#each month as pref, j (j)}
