@@ -1,4 +1,3 @@
-import { yearFromString } from '$lib/form/academic-year';
 import { requireAdmin } from '$lib/server/api-security';
 import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
@@ -45,9 +44,8 @@ function isValidationFailure(e: unknown): e is ActionFailure<string> {
 async function validateStudent(
   data: FormData,
 ): Promise<Partial<StudentView> | ActionFailure<string>> {
-  const idRaw = data.get('id')?.toString();
-  const id = idRaw ? Number.parseInt(idRaw) : undefined;
-  if (id && !Number.isFinite(id)) return fail(400, 'Student ID is not valid');
+  const id = Number(String(data.get('id')));
+  if (!Number.isFinite(id)) return fail(400, 'Student ID is not valid');
 
   const email = data.get('email')?.toString().trim().toLowerCase();
   if (!email) return fail(400, 'Student email is required');
@@ -55,13 +53,15 @@ async function validateStudent(
   const name = data.get('name')?.toString();
   const surname = data.get('surname')?.toString();
 
-  const year = yearFromString(data.get('enrollment-year')?.toString());
-  if (year && (year < 0 || year > 32767)) {
+  const yearData = data.get('enrollment-year');
+  const year = yearData ? Number(yearData) : null;
+  if (year != null && (year < 0 || year > 32767)) {
     return fail(400, 'Enrollment year must be in range [0, 32767]');
   }
 
-  const number = yearFromString(data.get('student-number')?.toString());
-  if (number && (number < 0 || number > 2147483647)) {
+  const numberData = data.get('student-number');
+  const number = numberData ? Number(numberData) : null;
+  if (number != null && (number < 0 || number > 2147483647)) {
     return fail(400, 'Number must be in range [0, 2147483647]');
   }
   return { id, number, name, surname, email, enrollmentYear: year };

@@ -1,5 +1,4 @@
 import { emailRegExp } from '$lib/email';
-import { yearFromString } from '$lib/form/academic-year';
 import { passwordRegExp } from '$lib/form/field.svelte';
 import { requireAuth } from '$lib/server/api-security';
 import { db } from '$lib/server/db';
@@ -28,16 +27,18 @@ export const actions = {
     const name = data.get('name')?.toString();
     const surname = data.get('surname')?.toString();
 
-    const enrollmentYear = yearFromString(data.get('enrollment-year')?.toString());
-    if (enrollmentYear && (enrollmentYear < 0 || enrollmentYear > 32767)) {
+    const yearStr = data.get('enrollment-year');
+    const enrollmentYear = yearStr ? Number(yearStr) : null;
+    if (enrollmentYear != null && (enrollmentYear < 0 || enrollmentYear > 32767)) {
       return fail(400, 'Enrollment year must be in range [0, 32767]');
     }
 
-    const number = Number(data.get('student-number'));
-    if (number < 0 || number > 2147483647) {
+    const numberStr = data.get('student-number');
+    const number = numberStr ? Number(numberStr) : null;
+    if (number != null && (number < 0 || number > 2147483647)) {
       return fail(400, 'Number must be in range [0, 2147483647]');
     }
-    if (number && await db.$count(users, and(eq(users.number, number), ne(users.id, locals.user.id))) > 0) {
+    if (number != null && await db.$count(users, and(eq(users.number, number), ne(users.id, locals.user.id))) > 0) {
       return fail(409, { numberTaken: true });
     }
 
@@ -69,14 +70,14 @@ export const actions = {
     // See: https://orm.drizzle.team/docs/update
     if (
       newPassword || name !== locals.user.name || surname !== locals.user.name || number !== locals.user.number
-      || newEmail || mfaSecret || enrollmentYear
+      || newEmail || mfaSecret || enrollmentYear !== locals.user.enrollmentYear
     ) {
       await db.transaction(async (tx) => {
         await tx.update(users).set({
           encodedPassword: newPassword ? await bcrypt.hash(newPassword, BCRYPT_ROUNDS) : undefined,
           name: name !== locals.user.name ? name : undefined,
           surname: surname !== locals.user.surname ? surname : undefined,
-          number: number === 0 ? null : number,
+          number,
           newEmail,
           mfaSecret,
           enrollmentYear,
@@ -85,6 +86,7 @@ export const actions = {
           await tx.delete(sessions).where(and(eq(sessions.userId, locals.user.id), ne(sessions.id, locals.session.id)));
         }
       });
+      console.debug(`Update user details for ${locals.user.id}`);
     }
 
     let emailVerificationSent = false;

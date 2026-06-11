@@ -11,7 +11,7 @@ import {
   updateCapacity,
 } from '$lib/server/structure';
 import { type ActionFailure, fail, isActionFailure } from '@sveltejs/kit';
-import { and, desc, eq, inArray } from 'drizzle-orm';
+import { and, desc, eq, inArray, ne } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -99,7 +99,9 @@ export const actions: Actions = {
     if (!structure.id) return fail(400, 'Structure ID is required');
 
     return await db.transaction(async (tx) => {
-      if (await db.$count(structures, eq(structures.name, structure.name!)) > 0) {
+      if (
+        await db.$count(structures, and(eq(structures.name, structure.name!), ne(structures.id, structure.id!))) > 0
+      ) {
         return fail(400, { nameTaken: true });
       }
       await tx.update(structures).set({

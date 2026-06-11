@@ -17,7 +17,6 @@
   import { m } from '$lib/paraglide/messages';
   import type { HTMLInputAttributes } from 'svelte/elements';
   import { fade } from 'svelte/transition';
-  import { nextFromStart } from './academic-year';
   import { Field, type Validator } from './field.svelte';
 
   interface Props extends HTMLInputAttributes {
@@ -47,7 +46,7 @@
       {@attach field.attach}
       {...props}
     >
-    <input class="numeric" value={nextFromStart(field.value)} disabled>
+    <input class="numeric" value={field.value ? `/ ${Number(field.value) + 1}` : `/ 0000`} disabled>
   </div>
   {#if field.dirty && field.error}
     <span transition:fade class="error">{field.error}</span>

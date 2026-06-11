@@ -151,6 +151,7 @@
     },
   ]}
 >
+  <!-- FIXME: Preferences from other collections are visible in new collections for the same student -->
   <PreferencesGrid
     {preferences}
     {existingPrefs}
