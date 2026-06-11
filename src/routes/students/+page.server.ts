@@ -193,11 +193,23 @@ export const actions: Actions = {
     if (!rows) return fail(400, 'An array of students to import is required');
     const data = JSON.parse(rows as string) as StudentView[];
 
-    await db.insert(users).values(data.map((student) => {
-      return { role: 'student' as const, ...student };
-    }));
+    await db.insert(users).values(data.map((student) => ({ role: 'student' as const, ...student })));
 
     console.debug(`Import ${data.length} students`);
     return { inserted: data.length };
+  },
+
+  acceptSelection: async ({ locals, request }) => {
+    requireAdmin(locals);
+
+    const form = await request.formData();
+    const ids = JSON.parse(String(form.get('ids'))) as number[];
+    if (ids.length === 0 || ids.some(isNaN)) {
+      return fail(400, '`ids` must be an array of existing student ids to accept');
+    }
+
+    await db.update(users).set({ accepted: true }).where(inArray(users.id, ids));
+    console.debug(`${ids.length} students set to accepted`, ids);
+    return { updated: ids.length };
   },
 };

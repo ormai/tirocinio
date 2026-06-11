@@ -70,10 +70,15 @@
   type Key = keyof T;
 
   interface Column {
+    /** An internal key. Usually the name of each property of T */
     key: Key;
+    /** A representation of the property to be shown in the UI */
     label: LocalizedString;
+    /** Whether this column contains numeric data*/
     numeric: boolean;
+    /** Whether or not it makes sens to make this column sortable */
     sortable: boolean;
+    /** Whether or not searching considers the content of the cells of this column */
     searchable: boolean;
   }
 
@@ -84,10 +89,20 @@
 
   interface Props {
     data: ReadonlyArray<T>;
+
+    /** Schema specification of the columns of the table */
     columns: ReadonlyArray<Column>;
+
+    /* A set of the selected rows of the table, bindable from above */
     selected: SvelteSet<Row['id']>;
+
+    /** The current row being edited, if any*/
     editing: T | null;
+
+    /** Custom filters to apply to the table data*/
     filters: ReadonlyArray<Filter<T>>;
+
+    /** Structure of each row of the `<tbody>` containing the actual cells in the form of `<td>` */
     body: Snippet<[T]>;
     filtersModalOpen: boolean;
     exportModalOpen: boolean;
@@ -95,10 +110,21 @@
     addModalOpen: boolean;
     importModalOpen?: boolean;
     settingsModalOpen?: boolean;
+
+    /** Creates a string that represents each row */
     getRowInfo: (row: T) => string;
+
+    /** Name of the entity managed by the table. Supports singular and plural */
     label: ({ count }: { count: number }) => LocalizedString;
+
+    /** Message shown when search or filters produce zero results */
     allFilteredOutMessage?: LocalizedString;
+
+    /** An identifier for the instance of the table, used to store data in the `localStorage` */
     uniqKey: string;
+
+    /** More Optional actions on selected rows */
+    actionsOnSelected?: Snippet;
   }
 
   /* eslint-disable no-useless-assignment */
@@ -119,9 +145,14 @@
     label,
     allFilteredOutMessage = m.table_all_filtered_out({ entity: label({ count: 1 }) }),
     uniqKey,
+    actionsOnSelected,
   }: Props = $props();
   /* eslint-enable no-useless-assignment */
 
+  /**
+   * Firstly, applies the custom filters and the search query; then, the remaining
+   * rows are sorted with the {@link Sort} specification.
+   */
   function filterAndSort(data: ReadonlyArray<T>): Array<T> {
     const searchCaseInsensitive = search ? search.toLowerCase() : '';
     let rows = data.filter((row) =>
@@ -143,9 +174,7 @@
 
   let search = $state('');
   let sort: Sort = $state({ key: undefined, direction: 1 });
-  let filtered = $derived(filterAndSort(data.map((row, i) => {
-    return { idx: i, ...row };
-  })));
+  let filtered = $derived(filterAndSort(data.map((row, i) => ({ idx: i, ...row }))));
 
   // The 'select all' checkbox won't be updated just by reactive properties
   let selectAllCheckbox = $state<HTMLInputElement>();
@@ -164,6 +193,7 @@
     }
   }
 
+  /** Resets the table state: searching, sorting, filtering, selection */
   function clear() {
     sort.key = undefined;
     search = '';
@@ -217,6 +247,7 @@
   });
 
   let page = $state(0);
+  /** On page load the page should not be reset to 0 */
   let skipInit = $state(false);
   $effect(() => {
     void filtered;
@@ -250,6 +281,10 @@
     <div id="selection-controls" class="row">
       {#if selected.size > 0}
         <div transition:fade class="row">
+          {#if actionsOnSelected}
+            {@render actionsOnSelected()}
+          {/if}
+
           <button
             class="secondary icon-host"
             onclick={() => (exportModalOpen = true)}
@@ -446,12 +481,7 @@
     }
 
     span.clip-short {
-      max-width: 4ch;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      font-size: 0.8rem;
-      letter-spacing: -0.6px;
-      line-height: 1rem;
+      display: none;
     }
   }
 

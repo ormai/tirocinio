@@ -12,6 +12,8 @@
   import { sideBar } from './SideBar.svelte';
 
   let { title, backLocation }: { title: string; backLocation?: RouteId } = $props();
+
+  $inspect(sideBar, page.data.user.role);
 </script>
 
 <svelte:head><title>{title} - {page.data.appName}</title></svelte:head>

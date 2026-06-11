@@ -3,6 +3,7 @@
   import AcademicYearField from '$lib/form/AcademicYear.svelte';
   import { MAX_INT, MAX_SMALLINT } from '$lib/form/Numeric.svelte';
   import { sendForm } from '$lib/form/submit';
+  import LoadingButton from '$lib/LoadingButton.svelte';
   import Modal from '$lib/Modal.svelte';
   import { type LocalizedString, m } from '$lib/paraglide/messages';
   import type { StudentView } from '$lib/server/user.js';
@@ -27,8 +28,6 @@
   import type { PageProps } from './$types';
   import AddEditStudentModal from './AddEditStudentModal.svelte';
   import Settings from './Settings.svelte';
-
-  // TODO: accept all button for filtered
 
   onMount(() => {
     const saved = window.localStorage.getItem('students-filters');
@@ -118,6 +117,8 @@
   const acceptedFilter = new AcceptedFilter(
     () => [m.students_filters_accepted_true(), m.students_filters_accepted_false()],
   );
+
+  let acceptSelectedLoading = $state(false);
 </script>
 
 <Settings {data} bind:open={settingsModalOpen} />
@@ -246,6 +247,25 @@
   />
 </Modal>
 
+{#snippet actionsOnSelected()}
+  <LoadingButton
+    class="secondary"
+    loading={acceptSelectedLoading}
+    grow={false}
+    onclick={async () => {
+      acceptSelectedLoading = true;
+      await sendForm('?/acceptSelection', { ids: JSON.stringify([...selected]) })
+        .then(async (data) => {
+          selected.clear();
+          await invalidateAll();
+          success(m.students_accept_selected_success({ count: data.updated as number }));
+        })
+        .catch(() => error(m.error()))
+        .finally(() => acceptSelectedLoading = false);
+    }}
+  >{m.students_accept_selected()}</LoadingButton>
+{/snippet}
+
 {#snippet body(row: StudentView & { idx?: number })}
   <td class="numeric">{row.number}</td>
   <td class="truncate20">{row.name}</td>
@@ -295,5 +315,6 @@
     getRowInfo={(row: StudentView) => [row.name, row.surname].filter(Boolean).join('  ')}
     label={m.students}
     uniqKey="stu-tab-int"
+    {actionsOnSelected}
   />
 </section>

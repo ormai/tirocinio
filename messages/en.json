@@ -413,5 +413,7 @@
   "plan_empty_assignment": "— none —",
   "plan_send_emails": "Send email notification to each student involved",
   "plan_solver_timeout": "Stop the solver after (seconds)",
-  "plan_save_confirm": "Assignments saved correctly"
+  "plan_save_confirm": "Assignments saved correctly",
+  "students_accept_selected_success": "{count} students marked as accepted successfully",
+  "students_accept_selected": "Accept"
 }
