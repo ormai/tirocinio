@@ -36,6 +36,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
           weight: true,
           siteId: true,
         },
+        where: (preference, { eq }) => eq(preference.collectionId, collection.id),
       },
     },
     orderBy: [desc(users.id)],

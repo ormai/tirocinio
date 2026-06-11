@@ -401,6 +401,7 @@
   "preferences_deletion_desc": "Conferma di volere eliminare permanentemente tutte le preferenze di {student} in questa raccolta. <strong class=\"danger\">Questa azione è irreversibile</strong>.",
   "preferences_empty": "Non ci sono ancora preferenze in questa raccolta",
   "preferences_collection_update_successfully": "Dettagli della raccolta aggiornati correttamente",
+  "preferences_collection_created_successfully": "Raccolta creata correttamente",
   "preferences_collection_delete_successfully": "Raccolta eliminata correttamente",
   "app_icon_attribution": "L'icona dell'app è {name}, di {author}",
   "plan_ongoing_collection_warn": "Questa raccolta è ancora in corso",

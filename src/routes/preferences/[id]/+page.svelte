@@ -74,9 +74,7 @@
       .finally(() => loading = false);
   }
   let processedStudents = $derived.by(() => {
-    const numbered = students.map((pref, i) => {
-      return { index: i, ...pref };
-    });
+    const numbered = students.map((pref, i) => ({ index: i, ...pref }));
 
     const searchCaseInsensitive = search ? search.toLowerCase() : '';
     return numbered.filter((student) =>
@@ -151,7 +149,6 @@
     },
   ]}
 >
-  <!-- FIXME: Preferences from other collections are visible in new collections for the same student -->
   <PreferencesGrid
     {preferences}
     {existingPrefs}

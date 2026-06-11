@@ -98,7 +98,11 @@
     async (result) => {
       if (result.type === 'success') {
         await invalidateAll();
-        success(m.preferences_collection_update_successfully());
+        if (creating) {
+          success(m.preferences_collection_created_successfully());
+        } else {
+          success(m.preferences_collection_update_successfully());
+        }
         creating = false;
         selected = null;
         editModalOpen = false;
