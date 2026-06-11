@@ -101,8 +101,26 @@ export const actions: Actions = {
         'An array of months each containing an array of siteIds is required. At least one siteId per month must be provided.',
       );
     }
+
+    const editing = String(form.get('editing')) === 'true';
+
     const collectionId = Number(form.get('collectionId'));
     if (isNaN(collectionId)) return fail(400, '`collectionId` is required and must be a valid number');
+
+    const [collection] = await db.select({
+      startTime: preferenceCollectionIntervals.startTime,
+      endTime: preferenceCollectionIntervals.endTime,
+    })
+      .from(preferenceCollectionIntervals)
+      .where(eq(preferenceCollectionIntervals.id, collectionId));
+    if (!collection) return fail(404, 'Collection not found');
+
+    if (locals.user.role !== 'admin') { // only for students saving their preferences
+      const now = new Date();
+      if (now < collection.startTime || collection.endTime < now) {
+        return fail(403, { collectionNotActive: true });
+      }
+    }
 
     const studentId = Number(form.get('studentId'));
     if (isNaN(studentId)) return fail(400, '`studentId` is required and must be a valid number');
@@ -110,8 +128,6 @@ export const actions: Actions = {
     if (studentId !== locals.user.id && locals.user.role !== 'admin') {
       error(403, 'Students can only save preferences for themselves');
     }
-
-    // TODO: Check if the collection is ongoing before inserting.
 
     // Weights and months start from zero.
     const rows = prefs.flatMap((month, i) =>
@@ -125,8 +141,6 @@ export const actions: Actions = {
         };
       })
     );
-
-    const editing = String(form.get('editing')) === 'true';
 
     await db.transaction(async (tx) => {
       if (editing) {

@@ -414,5 +414,6 @@
   "plan_solver_timeout": "Interrompi il solver dopo (secondi)",
   "plan_save_confirm": "Assegnamenti salvati correttamente",
   "students_accept_selected_success": "{count} studenti accettati correttamente",
-  "students_accept_selected": "Accetta"
+  "students_accept_selected": "Accetta",
+  "preferences_collection_not_ongoing_error": "La raccolta non è in corso"
 }

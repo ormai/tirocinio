@@ -415,5 +415,6 @@
   "plan_solver_timeout": "Stop the solver after (seconds)",
   "plan_save_confirm": "Assignments saved correctly",
   "students_accept_selected_success": "{count} students marked as accepted successfully",
-  "students_accept_selected": "Accept"
+  "students_accept_selected": "Accept",
+  "preferences_collection_not_ongoing_error": "The collection is not ongoing"
 }

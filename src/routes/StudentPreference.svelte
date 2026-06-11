@@ -87,7 +87,14 @@
         editMode = false;
         existingPrefs = JSON.parse(JSON.stringify(preferences));
       })
-      .catch(() => error(m.error()))
+      .catch(async (err) => {
+        if (err.data.collectionNotActive === true) {
+          error(m.preferences_collection_not_ongoing_error());
+          await invalidateAll();
+        } else {
+          error(m.error());
+        }
+      })
       .finally(() => loading = false);
   }
 </script>

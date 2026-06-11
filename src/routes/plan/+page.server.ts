@@ -75,6 +75,7 @@ export const actions: Actions = {
       .leftJoin(structures, eq(assignments.structureId, structures.id))
       .where(inArray(assignments.studentId, studentIds));
 
+    // TODO: handle timeout separately in the UI
     const generated = await generateAssignment(prefs, structs, pastAssignments, timeout);
     if (generated == null) {
       return fail(404, { modelNotFound: true });
