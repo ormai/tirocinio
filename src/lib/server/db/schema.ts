@@ -82,7 +82,6 @@ export const preferenceCollectionIntervals = pgTable('preference_collection_inte
   id: serial().primaryKey(),
   startTime: timestamp('start_time').notNull(),
   endTime: timestamp('end_time').notNull(),
-  durationMonths: smallint('duration_months').notNull(),
   numberOfPreferences: smallint('number_of_preferences').notNull(),
   year: smallint().notNull(),
 });

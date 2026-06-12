@@ -23,7 +23,6 @@ export const load: PageServerLoad = async ({ locals }) => {
     endTime: preferenceCollectionIntervals.endTime,
     year: preferenceCollectionIntervals.year,
     numberOfPreferences: preferenceCollectionIntervals.numberOfPreferences,
-    durationMonths: preferenceCollectionIntervals.durationMonths,
     studentCount: countDistinct(preferences.studentId),
   })
     .from(preferenceCollectionIntervals)
@@ -44,7 +43,6 @@ export const actions: Actions = {
     if (isNaN(collectionId)) return fail(400, '`collectionId` is required and must be a valid number');
 
     const timeout = form.has('timeout') ? Number(form.get('timeout')) : null;
-    console.log('timeout', timeout);
 
     const prefs = await db.select({
       studentId: preferences.studentId,

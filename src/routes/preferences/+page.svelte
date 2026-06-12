@@ -108,9 +108,7 @@
     <div class="column">
       <span>{m.preferences_from()} <span class="value">{dateTimeMedium(collection.startTime)}</span>
         {m.preferences_to()} <span class="value">{dateTimeMedium(collection.endTime)}</span>.</span>
-      <span><span class="value">{collection.durationMonths}</span> {
-          m.preferences_month({ count: collection.durationMonths })
-        }, <span class="value">{collection.numberOfPreferences}</span> {
+      <span><span class="value">{collection.numberOfPreferences}</span> {
           m.preferences_per_month({ count: collection.numberOfPreferences })
         }</span>
     </div>

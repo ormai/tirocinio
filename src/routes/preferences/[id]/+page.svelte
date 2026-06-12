@@ -153,7 +153,6 @@
     {preferences}
     {existingPrefs}
     numberOfPreferences={data.collection.numberOfPreferences}
-    durationMonths={data.collection.durationMonths}
     editMode={true}
     userAccepted={true}
     sites={data.sites}

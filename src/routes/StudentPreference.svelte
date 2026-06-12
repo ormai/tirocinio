@@ -21,18 +21,25 @@
   let collection: Collection | null = $derived(page.data.activeCollection);
 
   let prefNum = $derived(collection?.numberOfPreferences ?? 0);
-  let existingPrefs: (number | null)[][] | null = $derived(
-    page.data.existingPrefs.length > 0
-      ? page.data.existingPrefs.map((month: (number | null)[]) => {
+
+  let existingPrefs: (number | null)[][] | null = $derived.by(() => {
+    if (page.data.existingPrefs?.length > 0) {
+      let existing = page.data.existingPrefs;
+      for (let i = existing.length; i < page.data.durationMonths; i++) {
+        existing.push(Array(prefNum).fill(null, 0, prefNum));
+      }
+      return existing.map((month: (number | null)[]) => {
         month.length = prefNum;
         return month.fill(null, month.length, prefNum);
-      })
-      : null,
-  );
+      });
+    }
+    return null;
+  });
+
   // svelte-ignore state_referenced_locally
   let preferences: (number | null)[][] = $state(
     existingPrefs ?? Array.from(
-      { length: collection?.durationMonths ?? 0 },
+      { length: page.data.durationMonths ?? 0 },
       () => Array.from({ length: prefNum }, () => null),
     ),
   );
@@ -51,7 +58,7 @@
     if (saved) {
       const data = JSON.parse(saved);
       if (
-        data.preferences && data.preferences.length === collection.durationMonths
+        data.preferences && data.preferences.length === page.data.durationMonths
         && data.preferences[0]?.length === collection.numberOfPreferences
       ) {
         preferences = data.preferences;
@@ -88,7 +95,7 @@
         existingPrefs = JSON.parse(JSON.stringify(preferences));
       })
       .catch(async (err) => {
-        if (err.data.collectionNotActive === true) {
+        if (err.data?.collectionNotActive === true) {
           error(m.preferences_collection_not_ongoing_error());
           await invalidateAll();
         } else {
@@ -107,7 +114,7 @@
       <!-- eslint-disable-next-line svelte/no-at-html-tags -->
       {@html m.preferences_cast_hint({
         number: collection.numberOfPreferences,
-        months: collection.durationMonths,
+        months: page.data.durationMonths,
       })}
     </p>
 
@@ -121,7 +128,6 @@
       bind:preferences
       {existingPrefs}
       numberOfPreferences={prefNum}
-      durationMonths={collection?.durationMonths ?? 0}
       sites={page.data.sites}
       userAccepted={page.data.user.accepted === true}
       {editMode}

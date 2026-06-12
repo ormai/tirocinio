@@ -5,12 +5,27 @@ import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
 import { updateTransporter, verifyTransporter } from '$lib/server/email';
 import { encrypt } from '$lib/server/encryption.server';
-import { getAppName, getSetting, setSetting } from '$lib/server/settings';
+import {
+  getAppName,
+  getDurationFirstYear,
+  getDurationSecondYear,
+  getDurationThirdYear,
+  getSetting,
+  setSetting,
+} from '$lib/server/settings';
 import { BCRYPT_ROUNDS } from '$lib/server/user';
-import { fail } from '@sveltejs/kit';
+import { type ActionFailure, fail, isActionFailure } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
+
+// should have used helper like this one across the server actions. too late
+function getRequiredNum(form: FormData, name: string): number | ActionFailure<string> {
+  const raw = form.get(name);
+  const num = Number(raw);
+  if (!raw || isNaN(num)) return fail(400, `${name} is required and must be a valid number`);
+  return num;
+}
 
 export const load: PageServerLoad = async ({ locals }) => {
   requireAdmin(locals);
@@ -21,6 +36,9 @@ export const load: PageServerLoad = async ({ locals }) => {
     smtpHost: await getSetting('smtpHost'),
     smtpPort: await getSetting('smtpPort'),
     smtpUsername: await getSetting('smtpUsername'),
+    firstYear: await getDurationFirstYear(),
+    secondYear: await getDurationSecondYear(),
+    thirdYear: await getDurationThirdYear(),
   };
 };
 
@@ -96,5 +114,20 @@ export const actions: Actions = {
         role: 'admin',
       });
     });
+  },
+
+  updateDurationSettings: async ({ locals, request }) => {
+    requireAdmin(locals);
+    const form = await request.formData();
+    const firstYear = getRequiredNum(form, 'first-year');
+    if (isActionFailure(firstYear)) return firstYear;
+    const secondYear = getRequiredNum(form, 'second-year');
+    if (isActionFailure(secondYear)) return secondYear;
+    const thirdYear = getRequiredNum(form, 'third-year');
+    if (isActionFailure(thirdYear)) return thirdYear;
+
+    await setSetting('firstYear', String(firstYear));
+    await setSetting('secondYear', String(secondYear));
+    await setSetting('thirdYear', String(thirdYear));
   },
 };

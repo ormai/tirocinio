@@ -34,10 +34,6 @@ function validateCollection(form: FormData): Partial<Collection> | ActionFailure
   if (isNaN(year) || year < 0 || year > 32767) {
     return fail(400, '`year` is required, and must be a valid number in [0, 32767]');
   }
-  const durationMonths = Number(form.get('months'));
-  if (isNaN(durationMonths) || durationMonths < 0 || durationMonths > 32767) {
-    return fail(400, '`months` is required, and must be a valid number in [0, 32767]');
-  }
   const numberOfPreferences = Number(form.get('number-of-prefs'));
   if (isNaN(numberOfPreferences) || numberOfPreferences < 0 || numberOfPreferences > 32767) {
     return fail(400, '`number-of-prefs` is required, and must be a valid number in [0, 32767]');
@@ -47,7 +43,6 @@ function validateCollection(form: FormData): Partial<Collection> | ActionFailure
   return {
     id: Number(form.get('id')),
     year,
-    durationMonths,
     numberOfPreferences,
     startTime: getUTCDate(String(start), timezoneOffset),
     endTime: getUTCDate(String(end), timezoneOffset),
@@ -86,7 +81,6 @@ export const actions: Actions = {
         startTime: collection.startTime!,
         endTime: collection.endTime!,
         year: collection.year!,
-        durationMonths: collection.durationMonths!,
         numberOfPreferences: collection.numberOfPreferences!,
       });
       return true;

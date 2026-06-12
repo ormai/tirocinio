@@ -46,14 +46,11 @@
     start.validate();
     end.validate();
   });
-  const months = new NumericField([
-    (i) => i.validity.valueMissing && m.preferences_months_missing(),
-  ]);
   const numberOfPreferences = new NumericField([
     (i) => i.validity.valueMissing && m.preferences_prefs_per_month_missing(),
   ]);
 
-  const fields = [year, start, end, months, numberOfPreferences];
+  const fields = [year, start, end, numberOfPreferences];
   const canSubmit = $derived(fields.every((f) => f.valid));
 
   let {
@@ -71,10 +68,7 @@
       && (year.hasChanged(selected?.year)
         || start.hasChanged(inputValueDateTime(selected?.startTime))
         || end.hasChanged(inputValueDateTime(selected?.endTime))
-        || months.hasChanged(selected?.durationMonths)
-        || numberOfPreferences.hasChanged(
-          selected?.numberOfPreferences,
-        ));
+        || numberOfPreferences.hasChanged(selected?.numberOfPreferences));
   });
 
   function inputValueDateTime(date = new Date()): string {
@@ -168,15 +162,6 @@
   />
 
   <div class="row-spaced">
-    <Numeric
-      field={months}
-      name="months"
-      label={m.preferences_months()}
-      required={true}
-      initialValue={selected?.durationMonths}
-      min={1}
-    />
-
     <Numeric
       field={numberOfPreferences}
       name="number-of-prefs"

@@ -10,7 +10,6 @@
     preferences: (number | null)[][];
     existingPrefs: ReadonlyArray<ReadonlyArray<number | null>> | null;
     numberOfPreferences: number;
-    durationMonths: number;
     editMode: boolean;
     sites: Site[];
     userAccepted: boolean;
@@ -49,9 +48,11 @@
   style:grid-template-columns="repeat({preferences.length}, max-content)"
 >
   {#each preferences as month, i (i)}
-    <span style:grid-column={i + 2} style:grid-row={1} class="numeric">
-      {m.preferences_month_head({ n: i + 1 })}
-    </span>
+    {#if editMode || month.some((pref) => pref != null)}
+      <span style:grid-column={i + 2} style:grid-row={1} class="numeric">
+        {m.preferences_month_head({ n: i + 1 })}
+      </span>
+    {/if}
     {#each month as pref, j (j)}
       {#if i === 0 && j < (editMode ? lastNonEmptyRow + 1 : lastNonEmptyRow)}
         <span

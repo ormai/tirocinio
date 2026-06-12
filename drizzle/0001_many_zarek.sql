@@ -1,0 +1,1 @@
+ALTER TABLE "preference_collection_intervals" DROP COLUMN "duration_months";

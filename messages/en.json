@@ -416,5 +416,10 @@
   "plan_save_confirm": "Assignments saved correctly",
   "students_accept_selected_success": "{count} students marked as accepted successfully",
   "students_accept_selected": "Accept",
-  "preferences_collection_not_ongoing_error": "The collection is not ongoing"
+  "preferences_collection_not_ongoing_error": "The collection is not ongoing",
+  "settings_durations_title": "Duration of the internships",
+  "field_required": "Field required",
+  "settings_duration_first": "Duration in months for students at the first year",
+  "settings_duration_second": "Duration in months for students at the second year",
+  "settings_duration_third": "Duration in months for students at the third year"
 }

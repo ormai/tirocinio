@@ -16,3 +16,18 @@ export async function setSetting(key: string, value: string | null, tx: Transact
 export async function getAppName(): Promise<string> {
   return await getSetting('appName') ?? 'Tirocinio';
 }
+
+export async function getDurationFirstYear(): Promise<number> {
+  const raw = await getSetting('firstYear');
+  return raw ? Number(raw) : 3;
+}
+
+export async function getDurationSecondYear(): Promise<number> {
+  const raw = await getSetting('secondYear');
+  return raw ? Number(raw) : 4;
+}
+
+export async function getDurationThirdYear(): Promise<number> {
+  const raw = await getSetting('thirdYear');
+  return raw ? Number(raw) : 5;
+}

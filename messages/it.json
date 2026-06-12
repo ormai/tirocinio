@@ -415,5 +415,10 @@
   "plan_save_confirm": "Assegnamenti salvati correttamente",
   "students_accept_selected_success": "{count} studenti accettati correttamente",
   "students_accept_selected": "Accetta",
-  "preferences_collection_not_ongoing_error": "La raccolta non è in corso"
+  "preferences_collection_not_ongoing_error": "La raccolta non è in corso",
+  "settings_durations_title": "Durata dei tirocini",
+  "field_required": "Campo obbligatorio",
+  "settings_duration_first": "Durata in mesi per studenti al primo anno",
+  "settings_duration_second": "Durata in mesi per studenti al secondo anno",
+  "settings_duration_third": "Durata in mesi per studenti al terzo anno"
 }

@@ -8,7 +8,7 @@ import {
   structures,
   users,
 } from '$lib/server/db/schema';
-import { rearrange } from '$lib/server/preference';
+import { getMonths, rearrange } from '$lib/server/preference';
 import { getYear } from '$lib/server/structure';
 import { error, fail } from '@sveltejs/kit';
 import { and, count, desc, eq, gt, lt, sum } from 'drizzle-orm';
@@ -80,6 +80,7 @@ export const load: PageServerLoad = async ({ locals }) => {
       activeCollection,
       existingPrefs: rearrange(prefs),
       sites: await db.select().from(sites).orderBy(sites.name),
+      durationMonths: await getMonths(locals.user.enrollmentYear),
     };
   }
 
@@ -87,6 +88,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
+  /**
+   * Saves or updates the preferences of a student, and allows the administrator to edit them.
+   */
   savePreferences: async ({ locals, request }) => {
     requireAcceptedStudent(locals);
 
@@ -100,6 +104,23 @@ export const actions: Actions = {
         400,
         'An array of months each containing an array of siteIds is required. At least one siteId per month must be provided.',
       );
+    }
+
+    const studentId = Number(form.get('studentId'));
+    if (isNaN(studentId)) return fail(400, '`studentId` is required and must be a valid number');
+
+    if (studentId !== locals.user.id && locals.user.role !== 'admin') {
+      error(403, 'Students can only save preferences for themselves');
+    }
+
+    const [student] = await db.select({ year: users.enrollmentYear })
+      .from(users)
+      .where(eq(users.id, studentId));
+    if (!student) return fail(404, 'Student not found');
+
+    const months = await getMonths(student.year);
+    if (prefs.length > months) {
+      return fail(400, `Number of months cant exceed ${months}, but it was ${prefs.length}`);
     }
 
     const editing = String(form.get('editing')) === 'true';
@@ -120,13 +141,6 @@ export const actions: Actions = {
       if (now < collection.startTime || collection.endTime < now) {
         return fail(403, { collectionNotActive: true });
       }
-    }
-
-    const studentId = Number(form.get('studentId'));
-    if (isNaN(studentId)) return fail(400, '`studentId` is required and must be a valid number');
-
-    if (studentId !== locals.user.id && locals.user.role !== 'admin') {
-      error(403, 'Students can only save preferences for themselves');
     }
 
     // Weights and months start from zero.

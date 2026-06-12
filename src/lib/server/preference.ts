@@ -1,5 +1,6 @@
 import type { InferSelectModel } from 'drizzle-orm';
 import type { preferenceCollectionIntervals, preferences } from './db/schema';
+import { getDurationFirstYear, getDurationSecondYear, getDurationThirdYear } from './settings';
 
 export type Collection = InferSelectModel<typeof preferenceCollectionIntervals>;
 
@@ -23,4 +24,18 @@ export function rearrange(prefs: Pick<Preference, 'siteId' | 'month' | 'weight'>
     month.reverse();
   }
   return matrix;
+}
+
+/**
+ * The duration in months of the internship is determined by the student's current year of course.
+ */
+export async function getMonths(enrollmentYear: number | null): Promise<number> {
+  // Here we could use the year of the active collection instead of the current
+  const yearOfCourse = new Date().getFullYear() - (enrollmentYear ?? 0);
+  if (yearOfCourse === 1) {
+    return await getDurationFirstYear();
+  } else if (yearOfCourse === 2) {
+    return await getDurationSecondYear();
+  }
+  return await getDurationThirdYear();
 }

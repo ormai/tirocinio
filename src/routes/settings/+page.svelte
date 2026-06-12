@@ -23,11 +23,6 @@
   let addAccountModalOpen = $state(false);
   onMount(() => hydrated = true);
 
-  // todo: quanti mesi per ogni hanno
-  // primo anno: 3 mesi
-  // secondo: 4 mesi
-  // secondo: 5 mesi
-
   const appName = new Field([
     (i) => i.validity.valueMissing && m.settings_app_name_missing(),
   ]);
@@ -75,6 +70,10 @@
       .catch(() => error(m.error()))
       .finally(() => loading = false);
   }
+
+  const firstYear = new NumericField([(i) => i.validity.valueMissing && m.field_required()]);
+  const secondYear = new NumericField([(i) => i.validity.valueMissing && m.field_required()]);
+  const thirdYear = new NumericField([(i) => i.validity.valueMissing && m.field_required()]);
 </script>
 
 <AddAdminModal bind:open={addAccountModalOpen} />
@@ -117,6 +116,76 @@
           {m.modal_cancel()}
         </button>
         <LoadingButton {loading} enabled={appName.valid}><div style="display: flex; gap: 0.8rem">
+            <Save /> {m.save_changes()}
+          </div></LoadingButton>
+      </div>
+    {/if}
+  </form>
+
+  <h2>{m.settings_durations_title()}</h2>
+
+  <form
+    method="POST"
+    action="?/updateDurationSettings"
+    novalidate
+    class="column"
+    use:enhance={({ cancel }) =>
+    onSubmit(cancel, [firstYear, secondYear, thirdYear], () => loading = true, async (result) => {
+      if (result.type === 'success') {
+        await invalidateAll();
+        firstYear.resetTo(data.firstYear);
+        secondYear.resetTo(data.secondYear);
+        thirdYear.resetTo(data.thirdYear);
+      } else {
+        error(m.error());
+      }
+      loading = false;
+    })}
+  >
+    <Numeric
+      name="first-year"
+      label={m.settings_duration_first()}
+      field={firstYear}
+      initialValue={data.firstYear}
+      required={true}
+    />
+    <Numeric
+      name="second-year"
+      label={m.settings_duration_second()}
+      field={secondYear}
+      initialValue={data.secondYear}
+      required={true}
+    />
+    <Numeric
+      name="third-year"
+      label={m.settings_duration_third()}
+      field={thirdYear}
+      initialValue={data.thirdYear}
+      required={true}
+    />
+
+    {#if hydrated && (firstYear.hasChanged(data.firstYear) || secondYear.hasChanged(data.secondYear)
+  || thirdYear.hasChanged(data.thirdYear))}
+      <div
+        class="row-spaced"
+        transition:slide={{ easing: sineIn, duration: 160 }}
+        style="margin-top: 0.5rem"
+      >
+        <button
+          class="secondary"
+          type="button"
+          onclick={() => {
+            firstYear.resetTo(data.firstYear);
+            secondYear.resetTo(data.secondYear);
+            thirdYear.resetTo(data.thirdYear);
+          }}
+        >
+          {m.modal_cancel()}
+        </button>
+        <LoadingButton
+          {loading}
+          enabled={firstYear.valid && secondYear.valid && thirdYear.valid}
+        ><div style="display: flex; gap: 0.6rem">
             <Save /> {m.save_changes()}
           </div></LoadingButton>
       </div>

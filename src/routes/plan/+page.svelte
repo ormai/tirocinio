@@ -84,6 +84,8 @@
   const pageSize = 11;
   let paginated = $derived(uncommittedAssignments.slice(page * pageSize, (page + 1) * pageSize));
   let cancelConfirmOpen = $state(false);
+
+  const months = $derived(Math.max(...paginated.map((a) => a.structureIds.length)));
 </script>
 
 <Modal
@@ -128,9 +130,7 @@
           {#each data.collections as coll (coll.id)}
             {@const [begin, end] = [fullDate(coll.startTime), fullDate(coll.endTime)]}
             <option value={coll}>
-              {coll.year}, {begin === end ? begin : `${begin}–${end}`}, {coll.durationMonths} {
-                m.preferences_month({ count: coll.durationMonths })
-              }, {coll.numberOfPreferences} {
+              {coll.year}, {begin === end ? begin : `${begin}–${end}`}, {coll.numberOfPreferences} {
                 m.preferences_per_month({ count: coll.numberOfPreferences })
               }, {coll.studentCount} {m.students({ count: coll.studentCount })}
             </option>
@@ -170,10 +170,10 @@
     <div style="padding: 0 1rem">
       <div
         class="assignments"
-        style:grid-template-columns="repeat({collection.durationMonths + 1}, max-content)"
+        style:grid-template-columns="repeat({months+1}, max-content)"
         transition:slide={{ duration: 1000, axis: 'x' }}
       >
-        {#each { length: collection.durationMonths }, c (c)}
+        {#each { length: months }, c (c)}
           <span class="numeric" style:grid-area="1 / {c + 2}">{
             m.preferences_month_head({ n: c + 1 })
           }</span>
