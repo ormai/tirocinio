@@ -64,6 +64,7 @@ export const structures = pgTable('structures', {
   area: varchar({ length: 255 }),
   kind: varchar({ length: 255 }),
   siteId: integer('site_id').references(() => sites.id),
+  yearOfCourse: smallint(),
 }, (structure) => [uniqueIndex('structure_name').on(structure.name)]);
 
 export const capacities = pgTable(

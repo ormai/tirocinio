@@ -18,7 +18,6 @@
 
   let { data, form }: PageProps = $props();
 
-  // TODO: campo che vincola l'anno per gli studenti
   const columns = [
     { key: 'name', label: m.structures_name(), numeric: false, sortable: true, searchable: true },
     { key: 'ward', label: m.structures_ward(), numeric: false, sortable: true, searchable: true },
@@ -31,6 +30,13 @@
       numeric: true,
       sortable: true,
       searchable: false,
+    },
+    {
+      key: 'yearOfCourse',
+      label: m.structures_year(),
+      numeric: false,
+      sortable: true,
+      searchable: true,
     },
   ] as const;
 
@@ -72,7 +78,7 @@
     ) => [key, {
       label,
       numeric,
-      required: key !== 'kind' && key !== 'capacity',
+      required: key !== 'kind' && key !== 'capacity' && key !== 'yearOfCourse',
     }]),
   ) as Record<
     keyof StructureView,
@@ -125,6 +131,7 @@
   <td class="truncate20">{row.kind}</td>
   <td class="truncate50">{row.site}</td>
   <td class="numeric">{row.capacity}</td>
+  <td class="numeric">{row.yearOfCourse}</td>
 {/snippet}
 
 <section class="container">
@@ -143,8 +150,8 @@
     bind:filtersModalOpen
     bind:importModalOpen
     bind:settingsModalOpen
-    getRowInfo={(row: StructureView) => row.name}
     // name is notNull in the schema
+    getRowInfo={(row: StructureView) => row.name}
     label={m.structures}
     allFilteredOutMessage={m.structures_all_filtered_out()}
     uniqKey="str-tab-int"

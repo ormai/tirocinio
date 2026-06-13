@@ -4,6 +4,7 @@
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Field } from '$lib/form/field.svelte';
+  import Numeric, { MAX_INT, NumericField } from '$lib/form/Numeric.svelte';
   import onSubmit from '$lib/form/submit';
   import Modal from '$lib/Modal.svelte';
   import { error, m } from '$lib/paraglide/messages';
@@ -38,21 +39,17 @@
   const area = new Field();
   const kind = new Field();
   const site = new Field();
-  const capacity = new Field(
-    [
-      (i) => i.validity.badInput && m.profile_enrollment_year_bad_input(),
-      (i) => i.validity.rangeUnderflow && m.number_underflow({ min: i.min }),
-      (i) => i.validity.rangeOverflow && m.number_overflow({ max: i.max }),
-    ],
-  );
+  const capacity = new NumericField();
+  const yearOfCourse = new NumericField();
 
-  const fields = [name, ward, area, kind, site, capacity];
+  const fields = [name, ward, area, kind, site, capacity, yearOfCourse];
 
   let formDirty: boolean = $derived.by(() =>
     editing !== null
       ? name.hasChanged(editing.name) || ward.hasChanged(editing.ward)
         || area.hasChanged(editing.area) || kind.hasChanged(editing.kind)
         || site.hasChanged(editing.site) || capacity.hasChanged(editing.capacity)
+        || yearOfCourse.hasChanged(editing.yearOfCourse)
       : fields.some((field) => field.dirty)
   );
   let canSubmit: boolean = $derived(formDirty && fields.every((field) => field.valid));
@@ -141,21 +138,20 @@
       <input id="site" name="site" value={editing?.site} {@attach site.attach} />
     </div>
 
-    <div class="input-host">
-      <label for="capacity">{m.structures_capacity()}</label>
-      <input
-        name="capacity"
-        id="capacity"
-        type="number"
-        min="0"
-        max="2147483647"
-        value={editing?.capacity}
-        {@attach capacity.attach}
-      />
-      {#if capacity.dirty && capacity.error}
-        <span transition:fade class="error">{capacity.error}</span>
-      {/if}
-    </div>
+    <Numeric
+      name="year-of-course"
+      label={m.structures_year_long()}
+      initialValue={editing?.yearOfCourse}
+      field={yearOfCourse}
+    />
+
+    <Numeric
+      name="capacity"
+      max={MAX_INT}
+      label={m.structures_capacity()}
+      initialValue={editing?.capacity}
+      field={capacity}
+    />
   </form>
 </Modal>
 

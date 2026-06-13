@@ -284,7 +284,7 @@
   "preferences_edit_collection": "Edit Collection",
   "preferences_delete_warning": "Confirm the deletion of this collection. As a result of this operation, all preferences contained in this collection will be deleted. <strong class=\"danger\">This action is irreversible</strong>.",
   "about": "About",
-  "about_desc": "A web application for planning internships at the Pharmacy Course at UNICAL.",
+  "about_desc": "A web application for planning internships at the Nursing Course at UNICAL.",
   "about_license": "This application comes with absolutely no warranty. See the <a href=\"https://interoperable-europe.ec.europa.eu/licence/mit-license\">MIT License</a> for more details. The source code is free of restrictions and <a href=\"https://github.com/ormai/tirocinio\">available in the public domain</a>.",
   "profile_password_info": "Changing your password will terminate all sessions, except the current one.",
   "student_not_accepted_notice": "Your registration has not been confirmed by an administrator yet.",
@@ -421,5 +421,7 @@
   "field_required": "Field required",
   "settings_duration_first": "Duration in months for students at the first year",
   "settings_duration_second": "Duration in months for students at the second year",
-  "settings_duration_third": "Duration in months for students at the third year"
+  "settings_duration_third": "Duration in months for students at the third year",
+  "structures_year": "Year of course",
+  "structures_year_long": "Only students of this year can be assigned to this structure"
 }

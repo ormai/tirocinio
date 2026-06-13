@@ -1,0 +1,1 @@
+ALTER TABLE "structures" ADD COLUMN "yearOfCourse" smallint;

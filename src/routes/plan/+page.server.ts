@@ -9,9 +9,10 @@ import {
   structures,
   users,
 } from '$lib/server/db/schema';
+import { getDurationFirstYear, getDurationSecondYear, getDurationThirdYear } from '$lib/server/settings';
 import { getYear } from '$lib/server/structure';
 import { fail } from '@sveltejs/kit';
-import { and, countDistinct, desc, eq, inArray } from 'drizzle-orm';
+import { and, countDistinct, desc, eq, inArray, sql } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -50,11 +51,25 @@ export const actions: Actions = {
       month: preferences.month,
       weight: preferences.weight,
       createdAt: preferences.createdAt,
+      yearOfCourse:
+        sql`EXTRACT(YEAR FROM CURRENT_DATE) - COALESCE(${users.enrollmentYear}, EXTRACT(YEAR FROM CURRENT_DATE))`
+          .mapWith((v) => Math.min(Number(v), 3)),
     })
       .from(preferences)
+      .leftJoin(users, eq(users.id, preferences.studentId))
       .where(eq(preferences.collectionId, collectionId));
 
-    const studentIds = [...new Set(prefs.filter((pref) => pref.studentId != null).map(({ studentId }) => studentId!))];
+    const studentsInfo = await Promise.all([...new Set(prefs.filter((pref) => pref.studentId != null))].map(async (
+      { studentId, yearOfCourse },
+    ) => ({
+      id: studentId!,
+      yearOfCourse,
+      months: await (yearOfCourse === 1
+        ? getDurationFirstYear()
+        : yearOfCourse === 2
+        ? getDurationSecondYear()
+        : getDurationThirdYear()),
+    })));
 
     const year = await getYear();
     const structs = await db.select({
@@ -63,6 +78,7 @@ export const actions: Actions = {
       area: structures.area,
       siteId: structures.siteId,
       capacity: capacities.capacity,
+      yearOfCourse: structures.yearOfCourse,
     })
       .from(structures)
       .leftJoin(capacities, and(eq(structures.id, capacities.structureId), eq(capacities.year, year)))
@@ -71,13 +87,17 @@ export const actions: Actions = {
     const pastAssignments = await db.select({ studentId: assignments.studentId, area: structures.area })
       .from(assignments)
       .leftJoin(structures, eq(assignments.structureId, structures.id))
-      .where(inArray(assignments.studentId, studentIds));
+      .where(inArray(assignments.studentId, studentsInfo.map((student) => student.id)));
 
     // TODO: handle timeout separately in the UI
-    const generated = await generateAssignment(prefs, structs, pastAssignments, timeout);
+    const generated = await generateAssignment(studentsInfo, prefs, structs, pastAssignments, timeout);
     if (generated == null) {
       return fail(404, { modelNotFound: true });
     }
+    if (generated === 'timeout') {
+      return fail(408, { timeout: true });
+    }
+    console.log(generated);
     // TODO: return dummy empty assignment when failure to generate
 
     const studentsArr = await db.select({
@@ -87,7 +107,7 @@ export const actions: Actions = {
       surname: users.surname,
       email: users.email,
       year: users.enrollmentYear,
-    }).from(users).where(inArray(users.id, studentIds));
+    }).from(users).where(inArray(users.id, studentsInfo.map((student) => student.id)));
 
     const students = new Map(
       studentsArr.map((

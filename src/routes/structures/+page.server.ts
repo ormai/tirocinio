@@ -28,6 +28,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     kind: structures.kind,
     site: sites.name,
     capacity: capacities.capacity,
+    yearOfCourse: structures.yearOfCourse,
   }).from(structures)
     .leftJoin(capacities, and(eq(structures.id, capacities.structureId), eq(capacities.year, year)))
     .leftJoin(sites, eq(structures.siteId, sites.id))
@@ -52,6 +53,8 @@ function validateStructure(data: FormData): Partial<StructureView> | ActionFailu
   const name = data.get('name')?.toString();
   if (!name) return fail(400, '`name` is required');
 
+  const yearOfCourseRaw = String(data.get('year-of-course'));
+
   return {
     id: Number.isFinite(id) ? id : undefined,
     name: data.get('name')?.toString(),
@@ -60,6 +63,7 @@ function validateStructure(data: FormData): Partial<StructureView> | ActionFailu
     kind: data.get('kind')?.toString(),
     site: data.get('site')?.toString(),
     capacity,
+    yearOfCourse: yearOfCourseRaw ? Number(yearOfCourseRaw) : null,
   };
 }
 
@@ -82,6 +86,7 @@ export const actions: Actions = {
         area: structure.area,
         kind: structure.kind,
         siteId: structure.site ? await getSite(structure.site, tx) : undefined,
+        yearOfCourse: structure.yearOfCourse,
       }).returning({ id: structures.id });
       if (structure.capacity != null) {
         const year = await getYear(tx);
@@ -98,6 +103,8 @@ export const actions: Actions = {
     if (isValidationFailure(structure)) return structure;
     if (!structure.id) return fail(400, 'Structure ID is required');
 
+    console.log(structure.yearOfCourse);
+
     return await db.transaction(async (tx) => {
       if (
         await db.$count(structures, and(eq(structures.name, structure.name!), ne(structures.id, structure.id!))) > 0
@@ -110,6 +117,7 @@ export const actions: Actions = {
         area: structure.area,
         kind: structure.kind,
         siteId: structure.site ? await getSite(structure.site) : undefined,
+        yearOfCourse: structure.yearOfCourse,
       }).where(eq(structures.id, structure.id!));
       if (structure.capacity != null) {
         const year = await getYear(tx);
