@@ -64,6 +64,7 @@
   import { SvelteSet } from 'svelte/reactivity';
   import { fade } from 'svelte/transition';
   import '$lib/assets/table.css';
+  import SearchBox from '$lib/SearchBox.svelte';
   import { flip } from 'svelte/animate';
   import Pagination from './Pagination.svelte';
 
@@ -263,10 +264,7 @@
 
 <div class="toolbar">
   <div class="row">
-    <div class="input-icon">
-      <div class="icon-box icon-host"><Search /></div>
-      <input type="search" placeholder={m.table_search_placeholder()} bind:value={search} />
-    </div>
+    <SearchBox bind:value={search} maxWidth={200} />
     <button
       class="icon-host"
       class:secondary={filters.every((f) => !f.isActive)}
@@ -469,7 +467,7 @@
 
       > div:first-child {
         flex: 1 1 100%;
-        .input-icon {
+        :global(.input-icon) {
           flex: 1;
           input {
             flex: 1;
@@ -502,23 +500,6 @@
     align-items: center;
     margin-bottom: 1rem;
     gap: 0.5rem;
-
-    .input-icon {
-      display: flex;
-      .icon-box {
-        display: flex;
-        align-items: center;
-        border: 1px solid var(--border);
-        border-right: none;
-        border-top-left-radius: var(--radius);
-        border-bottom-left-radius: var(--radius);
-      }
-      input {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        max-width: 200px;
-      }
-    }
   }
 
   .notice {

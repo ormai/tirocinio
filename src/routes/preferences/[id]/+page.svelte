@@ -2,12 +2,13 @@
   import Modal from '$lib/Modal.svelte';
   import { m } from '$lib/paraglide/messages';
   import { fullDate } from '$lib/time';
-  import { Save, Search, Trash } from '@lucide/svelte';
+  import { Save, Trash } from '@lucide/svelte';
   import PreferencesGrid from '../../PreferencesGrid.svelte';
   import TitleBar from '../../TitleBar.svelte';
   import type { PageProps } from './$types';
   import '$lib/assets/styles/boxed-list.css';
   import { sendForm } from '$lib/form/submit';
+  import SearchBox from '$lib/SearchBox.svelte';
   import Pagination from '$lib/table/Pagination.svelte';
   import { error, success } from '$lib/toast/Toaster.svelte';
   import { flip } from 'svelte/animate';
@@ -166,10 +167,7 @@
   />
 
   {#if students.length > 0}
-    <div class="input-icon">
-      <div class="icon-box icon-host"><Search /></div>
-      <input type="search" placeholder={m.table_search_placeholder()} bind:value={search} />
-    </div>
+    <SearchBox bind:value={search} style="margin-bottom: 1rem" />
   {/if}
 
   {#each paginated as student, i (student.id)}
@@ -207,24 +205,5 @@
     overflow: hidden;
     overflow: ellipsis;
     text-align: start;
-  }
-
-  .input-icon {
-    margin-bottom: 1rem;
-
-    display: flex;
-    .icon-box {
-      display: flex;
-      align-items: center;
-      border: var(--border-thickness) solid var(--border);
-      border-right: none;
-      border-top-left-radius: var(--radius);
-      border-bottom-left-radius: var(--radius);
-    }
-    input {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      flex: 1;
-    }
   }
 </style>
