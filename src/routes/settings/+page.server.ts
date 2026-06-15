@@ -74,7 +74,7 @@ export const actions: Actions = {
       await setSetting('smtpPort', String(smtpPort), tx);
       await setSetting('smtpUsername', smtpUsername, tx);
       if (smtpPassword) {
-        await setSetting('smtpPassword', encrypt(smtpPassword));
+        await setSetting('smtpPassword', encrypt(smtpPassword), tx);
       }
     });
     await updateTransporter();
@@ -98,9 +98,9 @@ export const actions: Actions = {
       );
     }
     const adminName = String(form.get('admin-name'));
-    if (!adminName) return fail(400, '`admin-name` must be a valid email address');
+    if (!adminName) return fail(400, '`admin-name` is required');
     const adminSurname = String(form.get('admin-surname'));
-    if (!adminSurname) return fail(400, '`admin-surname` must be a valid email address');
+    if (!adminSurname) return fail(400, '`admin-surname` is required');
 
     return await db.transaction(async (tx) => {
       if ((await tx.$count(users, eq(users.email, adminEmail))) > 0) {

@@ -69,6 +69,7 @@ interface Student {
  * subtracting the enrollment year to the current year (this might be imprecise, and there might
  * be exceptions, which are not handled at the moment).
  */
+// TODO: this is a placeholder encoding. Replace this with the actual assignment logic.
 const encoding = `
 #show assign/3.
 
@@ -139,6 +140,6 @@ function parseAssignments(atoms: string[]): Assignment[] {
 
 /** Helper to retrieve the duration of the internship in months given the year of course */
 export function getDurationInMonths(yearOfCourse: number, durationMonths: number[]): number {
-  if (yearOfCourse >= 0 && yearOfCourse <= 3) return durationMonths[yearOfCourse - 1];
+  if (yearOfCourse > 0 && yearOfCourse <= 3) return durationMonths[yearOfCourse - 1];
   return durationMonths[2];
 }

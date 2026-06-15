@@ -423,7 +423,7 @@
   "settings_duration_third": "Durata in mesi per studenti al terzo anno",
   "structures_year": "Anno di corso",
   "structures_year_long": "Possono essere assegnati a questa struttura solo studenti all'anno",
-  "plan_timeout": "Non è stato possible generare gli assegnamenti in {seconds} secondi",
+  "plan_timeout": "Non è stato possibile generare gli assegnamenti in {seconds} secondi",
   "plan_empty": "Non ci sono assegnamenti",
   "plan_filtered_out": "Nessuno degli assegnamenti soddisfa i filtri",
   "plan_sort_by_year": "Ordina per anno",

@@ -69,7 +69,7 @@ export const actions = {
     // NOTE: `undefined` is ignored by drizzle, `null` is the same as in SQL.
     // See: https://orm.drizzle.team/docs/update
     if (
-      newPassword || name !== locals.user.name || surname !== locals.user.name || number !== locals.user.number
+      newPassword || name !== locals.user.name || surname !== locals.user.surname || number !== locals.user.number
       || newEmail || mfaSecret || enrollmentYear !== locals.user.enrollmentYear
     ) {
       await db.transaction(async (tx) => {

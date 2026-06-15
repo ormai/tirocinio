@@ -102,9 +102,10 @@ export const actions = {
     }).from(users).where(eq(users.email, email)).limit(1);
 
     if (!user || user.role !== 'student' || !user.expires || new Date() > user.expires || user.storedOtp !== otp) {
-      console.debug(`Rejecting OTP verification request for student ${user.id}`);
+      console.debug(`Rejecting OTP verification request for student ${user?.id}`);
       return fail(401, { email, otpInvalid: true });
     }
+    await db.update(users).set({ outstandingOtp: null, outstandingOtpExpiresAt: null }).where(eq(users.id, user.id));
 
     const { id, expiresAt } = await createSession(user.id, user.role);
     cookies.set(SESSION_COOKIE, id, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', expires: expiresAt });

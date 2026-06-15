@@ -45,11 +45,13 @@ export const load: PageServerLoad = async ({ locals }) => {
         .from(preferences)
         .where(eq(preferences.collectionId, activeCollection.id))
       : [{ count: 0 }];
-    const [notAccepted, accepted] = await db.select({ count: count() })
-      .from(users)
-      .where(eq(users.role, 'student'))
-      .groupBy(users.accepted)
-      .orderBy(users.accepted); // false -> 0 first, true -> 1 last
+
+    const [notAccepted] = await db.select({ count: count() }).from(users).where(
+      and(eq(users.role, 'student'), eq(users.accepted, false)),
+    );
+    const [accepted] = await db.select({ count: count() }).from(users).where(
+      and(eq(users.role, 'student'), eq(users.accepted, true)),
+    );
 
     const popularSites = activeCollection
       ? await db.select({ name: sites.name })

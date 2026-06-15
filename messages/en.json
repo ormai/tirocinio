@@ -424,7 +424,7 @@
   "settings_duration_third": "Duration in months for students at the third year",
   "structures_year": "Year of course",
   "structures_year_long": "Only students of this year can be assigned to this structure",
-  "plan_timeout": "Faild to generate the assignments in {seconds} seconds",
+  "plan_timeout": "Failed to generate the assignments in {seconds} seconds",
   "plan_empty": "There are no assignments",
   "plan_filtered_out": "Non of the assignments satisfy the filters",
   "plan_sort_by_year": "Sort by year",

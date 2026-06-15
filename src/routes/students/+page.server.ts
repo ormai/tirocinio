@@ -45,7 +45,6 @@ async function validateStudent(
   data: FormData,
 ): Promise<Partial<StudentView> | ActionFailure<string>> {
   const id = Number(String(data.get('id')));
-  if (!Number.isFinite(id)) return fail(400, 'Student ID is not valid');
 
   const email = data.get('email')?.toString().trim().toLowerCase();
   if (!email) return fail(400, 'Student email is required');
@@ -106,6 +105,7 @@ export const actions: Actions = {
 
     const student = await validateStudent(await request.formData());
     if (isValidationFailure(student)) return student;
+    if (!student.id || isNaN(student.id)) return fail(400, 'Student ID is not valid');
     if (student.number && await db.$count(users, eq(users.number, student.number)) > 0) {
       return fail(409, { numberTaken: true });
     }
