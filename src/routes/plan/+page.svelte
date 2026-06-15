@@ -216,7 +216,7 @@
             <option value={coll}>
               {coll.year}, {begin === end ? begin : `${begin}–${end}`}, {coll.numberOfPreferences} {
                 m.preferences_per_month({ count: coll.numberOfPreferences })
-              }, {coll.studentCount} {m.students({ count: coll.studentCount })}
+              }, {coll?.studentCount ?? 0} {m.students({ count: coll.studentCount })}
             </option>
           {/each}
         </select>
@@ -238,7 +238,7 @@
 
       <LoadingButton
         {loading}
-        enabled={collection.studentCount > 0 && solverTimeout.valid}
+        enabled={(collection?.studentCount ?? 0) > 0 && solverTimeout.valid}
         onclick={onGenerateAssignment}
       >{m.plan_generate()}</LoadingButton>
     </div>
