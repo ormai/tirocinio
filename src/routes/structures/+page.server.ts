@@ -116,7 +116,7 @@ export const actions: Actions = {
         ward: structure.ward,
         area: structure.area,
         kind: structure.kind,
-        siteId: structure.site ? await getSite(structure.site) : undefined,
+        siteId: structure.site ? await getSite(structure.site, tx) : undefined,
         yearOfCourse: structure.yearOfCourse,
       }).where(eq(structures.id, structure.id!));
       if (structure.capacity != null) {
@@ -144,15 +144,13 @@ export const actions: Actions = {
     if (!names) return fail(400, 'Array of structures to check is required');
     const data = JSON.parse(names as string) as string[];
 
-    const existence: Record<string, unknown> = {};
-    for (const name of data) {
-      const [structure] = await db.select({ id: structures.id })
-        .from(structures)
-        .where(eq(structures.name, name));
-      existence[name] = structure != null;
-    }
-    console.debug(`Check existence for ${data.length} structures`);
-    return existence;
+    if (data.length === 0) return {};
+    const existing = await db.select({ name: structures.name })
+      .from(structures)
+      .where(inArray(structures.name, data));
+    const exists = new Set(existing.map(({ name }) => name));
+    console.debug('Check existence for', data.length, 'structures');
+    return Object.fromEntries(data.map((name) => [name, exists.has(name)]));
   },
 
   import: async ({ locals, request }) => {

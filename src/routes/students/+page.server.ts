@@ -105,7 +105,6 @@ export const actions: Actions = {
 
     const student = await validateStudent(await request.formData());
     if (isValidationFailure(student)) return student;
-    if (!student.id || isNaN(student.id)) return fail(400, 'Student ID is not valid');
     if (student.number && await db.$count(users, eq(users.number, student.number)) > 0) {
       return fail(409, { numberTaken: true });
     }
@@ -129,7 +128,7 @@ export const actions: Actions = {
 
     const student = await validateStudent(await request.formData());
     if (isValidationFailure(student)) return student;
-    if (!student.id) return fail(400, 'Student ID is required');
+    if (student.id == null || isNaN(student.id)) return fail(400, 'Student ID is required');
     if (student.number && await db.$count(users, and(eq(users.number, student.number), ne(users.id, student.id))) > 0) {
       console.debug(`Students with duplicate number during edit, id: ${student.id}, number: ${student.number}`);
       return fail(409, { numberTaken: true });
@@ -154,6 +153,7 @@ export const actions: Actions = {
     return { count: ids.length };
   },
 
+  /** Checks whether a set of students is exists both by email and by student number, separately. */
   studentsExist: async ({ locals, request }) => {
     requireAdmin(locals);
 
@@ -161,28 +161,28 @@ export const actions: Actions = {
     const studentsField = form.get('students');
     if (!studentsField) return fail(400, 'Array of students to check is required');
     const data = JSON.parse(studentsField as string) as Pick<StudentView, 'email' | 'number'>[];
-
-    const existsByEmail: Record<string, boolean> = {};
-    const existsByNumber: Record<number, boolean> = {};
-
+    if (data.length === 0) return {};
     for (const { email, number } of data) {
       if (number == null || isNaN(number) || number < 0 || number > 2147483647) {
         return fail(400, '`number` must be a valid number in range [0, 2147483647]');
       }
-      if (!email) return fail(400, 'Student `email` is required');
-
-      const [byNumber] = await db.select({ id: users.id })
-        .from(users)
-        .where(eq(users.number, number));
-      existsByNumber[number] = byNumber != null;
-
-      const [byEmail] = await db.select({ id: users.id })
-        .from(users)
-        .where(eq(users.email, email));
-      existsByEmail[email] = byEmail != null;
+      if (!email) {
+        return fail(400, 'Student `email` is required');
+      }
     }
 
-    return { existsByEmail, existsByNumber };
+    const [existsByNumber, existsByEmail] = await Promise.all([
+      db.select({ number: users.number })
+        .from(users)
+        .where(inArray(users.number, data.map((d) => d.number).filter((n) => n != null))),
+      db.select({ email: users.email }).from(users).where(inArray(users.email, data.map((d) => d.email))),
+    ]);
+    const byNumber = new Set(existsByNumber.map(({ number }) => number));
+    const byEmail = new Set(existsByEmail.map(({ email }) => email));
+    return {
+      existsByEmail: Object.fromEntries(data.map(({ email }) => [email, byEmail.has(email)])),
+      existsByNumber: Object.fromEntries(data.map(({ number }) => [number, byNumber.has(number)])),
+    };
   },
 
   import: async ({ locals, request }) => {
