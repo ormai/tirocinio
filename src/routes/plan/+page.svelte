@@ -257,7 +257,7 @@
       <p>{m.plan_check()}</p>
     </section>
 
-    <div style="padding: 0 1rem">
+    <div transition:slide={{ duration: 1000, axis: 'x' }}>
       <AssignmentGrid bind:assignments={uncommittedAssignments} {structures} bind:loading />
     </div>
 

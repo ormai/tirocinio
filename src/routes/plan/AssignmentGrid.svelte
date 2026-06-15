@@ -4,16 +4,17 @@
   import Pagination from '$lib/table/Pagination.svelte';
   import { tooltip } from '$lib/tooltip.svelte';
   import { ArrowDown01, ArrowDownUp, ArrowUp01 } from '@lucide/svelte';
-  import { slide } from 'svelte/transition';
   import type { Assignment } from './+page.svelte';
 
   interface Props {
     structures: { id: number; name: string }[];
     loading?: boolean;
     assignments: Assignment[];
+    viewOnly?: boolean;
   }
 
-  let { structures, loading = $bindable(false), assignments = $bindable() }: Props = $props();
+  let { structures, loading = $bindable(false), assignments = $bindable(), viewOnly = false }:
+    Props = $props();
 
   let search = $state('');
   let sortByYear: -1 | 0 | 1 = $state(0);
@@ -48,6 +49,8 @@
     }
   }
 
+  let structuresMap = $derived(new Map(structures.map(({ id, name }) => [id, name])));
+
   let page = $state(0);
   const pageSize = 11;
   let paginated = $derived(processed.slice(page * pageSize, (page + 1) * pageSize));
@@ -79,48 +82,55 @@
   </section>
 {/if}
 
-<div
-  class="assignments"
-  style:grid-template-columns="repeat({months+1}, max-content)"
-  transition:slide={{ duration: 1000, axis: 'x' }}
->
-  {#each { length: months }, c (c)}
-    <span class="numeric" style:grid-area="1 / {c + 2}">{
-      m.preferences_month_head({ n: c + 1 })
-    }</span>
-  {/each}
-  {#each paginated as { id, email, number, name, surname, structureIds, year }, r (id)}
-    <span style="grid-area: {r + 2} / 1">
-      {#if number != null}<span class="numeric" style="margin-right: 0.7rem">{
-          number
-        }</span>{/if}<span class="truncate20">{name} {
-          surname
-        }</span>{#if [number, name, surname].filter(Boolean).length < 2}<span class="truncate30">{
-          email
-        }</span>{/if}{#if year != null}<span
-          style="margin-left: 0.7rem"
-          class="numeric"
-        >{year}/{year + 1}</span>{/if}
-    </span>
-    {#each { length: structureIds.length }, c (c)}
-      <select
-        bind:value={structureIds[c]}
-        style="grid-area: {r + 2} / {c + 2}"
-        disabled={loading}
-      >
-        <option value={null}>{m.plan_empty_assignment()}</option>
-        {#each structures as { id, name } (id)}
-          <option value={id}>{name}</option>
-        {/each}
-      </select>
+<div style="padding: 0 1rem">
+  <div
+    class="assignments"
+    style:grid-template-columns="repeat({months+1}, max-content)"
+  >
+    {#each { length: months }, c (c)}
+      <span class="numeric" style:grid-area="1 / {c + 2}">{
+        m.preferences_month_head({ n: c + 1 })
+      }</span>
     {/each}
-  {:else}
-    <span class="notice">{#if assignments.length === 0}
-        {m.plan_empty()}
-      {:else}
-        {m.plan_filtered_out()}
-      {/if}</span>
-  {/each}
+    {#each paginated as { id, email, number, name, surname, structureIds, year }, r (id)}
+      <span style="grid-area: {r + 2} / 1">
+        {#if number != null}<span class="numeric" style="margin-right: 0.7rem">{
+            number
+          }</span>{/if}<span class="truncate20">{name} {
+            surname
+          }</span>{#if [number, name, surname].filter(Boolean).length < 2}<span class="truncate30">{
+            email
+          }</span>{/if}{#if year != null}<span
+            style="margin-left: 0.7rem"
+            class="numeric"
+          >{year}/{year + 1}</span>{/if}
+      </span>
+      {#each { length: structureIds.length }, c (c)}
+        <select
+          bind:value={structureIds[c]}
+          style="grid-area: {r + 2} / {c + 2}"
+          disabled={loading || viewOnly}
+        >
+          <option value={null}>{m.plan_empty_assignment()}</option>
+          {#if viewOnly}
+            {#if structureIds[c] != null}
+              <option value={structureIds[c]}>{structuresMap.get(structureIds[c])}</option>
+            {/if}
+          {:else}
+            {#each structures as { id, name } (id)}
+              <option value={id}>{name}</option>
+            {/each}
+          {/if}
+        </select>
+      {/each}
+    {:else}
+      <span class="notice">{#if assignments.length === 0}
+          {m.plan_empty()}
+        {:else}
+          {m.plan_filtered_out()}
+        {/if}</span>
+    {/each}
+  </div>
 </div>
 
 <section class="container" style="padding-top: 0">

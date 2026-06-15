@@ -444,5 +444,6 @@
   "plan_delete_tooltip": "Elimina assegnamenti",
   "plan_delete_desc": "Conferma di volere eliminare i {count} assegnamenti in questa raccolta. <strong class=\"danger\">Questa operazione è irreversibile</strong>.",
   "plan_delete_successful": "{count} assegnamenti eliminati correttamente",
-  "plan_assignment_conflict": "Alcuni studenti in questa raccolta hanno già ricevuto degli assegnamenti. Eliminali e riprova."
+  "plan_assignment_conflict": "Alcuni studenti in questa raccolta hanno già ricevuto degli assegnamenti. Eliminali e riprova.",
+  "plan_assignment_details": "Dettagli sugli assegnamenti"
 }

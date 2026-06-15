@@ -445,5 +445,6 @@
   "plan_delete_tooltip": "Delete assignments",
   "plan_delete_desc": "Confirm the deletion of {count} assignments in this collection. <strong class=\"danger\">This action is irreversible</strong>.",
   "plan_delete_successful": "{count} assignments deleted successfully",
-  "plan_assignment_conflict": "Some students in this collectio have already been assigned. Delete the assignments and retry."
+  "plan_assignment_conflict": "Some students in this collectio have already been assigned. Delete the assignments and retry.",
+  "plan_assignment_details": "Assignment details"
 }

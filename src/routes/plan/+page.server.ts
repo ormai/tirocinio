@@ -1,6 +1,6 @@
 import { m } from '$lib/paraglide/messages';
 import { requireAdmin } from '$lib/server/api-security';
-import { generateAssignment } from '$lib/server/assignment.server';
+import { generateAssignment, getDurationInMonths } from '$lib/server/assignment.server';
 import { db } from '$lib/server/db';
 import {
   assignments,
@@ -49,11 +49,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 
   return { collections, previousAssignments };
 };
-
-function getDurationInMonths(yearOfCourse: number, durationMonths: number[]): number {
-  if (yearOfCourse >= 0 && yearOfCourse <= 3) return durationMonths[yearOfCourse - 1];
-  return durationMonths[2];
-}
 
 export const actions: Actions = {
   generateAssignments: async ({ locals, request }) => {
@@ -186,20 +181,20 @@ export const actions: Actions = {
     ) return fail(409, { assignmentsExists: true });
 
     const assignmentRows = students.flatMap(({ id: studentId, structureIds }) =>
-      structureIds.filter((id) => id != null).map((structureId, month) => ({
+      structureIds.map((structureId, month) => ({
         studentId,
         structureId,
         collectionId,
         month,
         year: collection.year,
-      }))
+      })).filter((a) => a.structureId != null) // filter after map is important, otherwise month indexes are not assigned correctly
     );
 
     await db.insert(assignments).values(assignmentRows);
     console.debug('Insert', assignmentRows.length, 'new assignments');
 
     // This might cause the sender to be blacklisted by providers like Gmail, resulting in the emails ending up in spam.
-    if (false && String(form.get('sendEmails')) === 'true') {
+    if (String(form.get('sendEmails')) === 'true') {
       const structs = [...new Set(students.flatMap(({ structureIds }) => structureIds))].filter((s) => s != null);
       const assignedStructs = new Map(
         (await db.select({ id: structures.id, name: structures.name, area: structures.area, site: sites.name })

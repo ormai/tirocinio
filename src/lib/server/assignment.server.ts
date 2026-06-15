@@ -136,3 +136,9 @@ function parseAssignments(atoms: string[]): Assignment[] {
       return { studentId: Number(student), structureId: Number(structure), month: Number(month) };
     });
 }
+
+/** Helper to retrieve the duration of the internship in months given the year of course */
+export function getDurationInMonths(yearOfCourse: number, durationMonths: number[]): number {
+  if (yearOfCourse >= 0 && yearOfCourse <= 3) return durationMonths[yearOfCourse - 1];
+  return durationMonths[2];
+}
