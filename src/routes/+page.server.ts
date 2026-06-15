@@ -1,6 +1,7 @@
 import { requireAcceptedStudent, requireAdmin, requireAuth } from '$lib/server/api-security';
 import { db } from '$lib/server/db';
 import {
+  assignments,
   capacities,
   preferenceCollectionIntervals,
   preferences,
@@ -11,7 +12,7 @@ import {
 import { getMonths, rearrange } from '$lib/server/preference';
 import { getYear } from '$lib/server/structure';
 import { error, fail } from '@sveltejs/kit';
-import { and, count, desc, eq, gt, lt, sum } from 'drizzle-orm';
+import { and, count, desc, eq, exists, gt, inArray, lt, sum } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -76,11 +77,57 @@ export const load: PageServerLoad = async ({ locals }) => {
         .from(preferences)
         .where(and(eq(preferences.studentId, locals.user.id), eq(preferences.collectionId, activeCollection.id)))
       : [];
+
+    const collections = await db.select({
+      id: preferenceCollectionIntervals.id,
+      year: preferenceCollectionIntervals.year,
+    })
+      .from(preferenceCollectionIntervals)
+      .where(
+        and(
+          lt(preferenceCollectionIntervals.endTime, now),
+          exists(
+            db.select().from(preferences).where(
+              and(
+                eq(preferences.collectionId, preferenceCollectionIntervals.id),
+                eq(preferences.studentId, locals.user.id),
+              ),
+            ),
+          ),
+        ),
+      );
+
+    const pastAssignments = new Map(collections.map(({ id, year }) => [id, { year, structures: [] as string[] }]));
+    const assignmentsRow = await db.select({
+      collectionId: assignments.collectionId,
+      structure: structures.name,
+      month: assignments.month,
+    })
+      .from(assignments)
+      .leftJoin(structures, eq(assignments.structureId, structures.id))
+      .where(
+        and(
+          eq(assignments.studentId, locals.user.id),
+          inArray(assignments.collectionId, [...new Set(collections.map((c) => c.id))]),
+        ),
+      );
+
+    console.log(assignmentsRow);
+    for (const { collectionId, structure, month } of assignmentsRow) {
+      if (collectionId) {
+        const collection = pastAssignments.get(collectionId);
+        if (collection != null && month != null && structure != null) {
+          collection.structures[month] = structure;
+        }
+      }
+    }
+
     return {
       activeCollection,
       existingPrefs: rearrange(prefs),
       sites: await db.select().from(sites).orderBy(sites.name),
       durationMonths: await getMonths(locals.user.enrollmentYear),
+      pastAssignments: [...pastAssignments.entries().map(([id, rest]) => ({ id, ...rest }))],
     };
   }
 

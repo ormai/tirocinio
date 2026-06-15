@@ -15,6 +15,7 @@
   import { onMount } from 'svelte';
   import { fly } from 'svelte/transition';
   import PreferencesGrid from './PreferencesGrid.svelte';
+  import '$lib/assets/styles/boxed-list.css';
 
   let loading = $state(false);
   let editMode = $state(false);
@@ -183,6 +184,27 @@
     <div class="small" style="text-align: center">{m.preferences_no_active_collection()}</div>
   {/if}
 </div>
+
+{#if page.data.pastAssignments.length > 0}
+  <h2 style="margin-top: 2rem">{m.plan_previous_assignments()}</h2>
+
+  {#each page.data.pastAssignments as { id, year, structures }, i (id)}
+    <div
+      class="boxed-list row-spaced text-small"
+      style="gap: 1.5rem; opacity: 0.7"
+      class:first={i === 0 && page.data.pastAssignments.length > 1}
+      class:last={i === page.data.pastAssignments.length - 1 && page.data.pastAssignments.length > 1}
+      class:middle={i > 0 && i < page.data.pastAssignments.length - 1}
+    >
+      <span class="numeric">{year}</span>
+      <div class="column">
+        {#each structures as structure, month (month)}
+          <span>{m.preferences_month_head({ n: month + 1 })}: {structure}</span>
+        {/each}
+      </div>
+    </div>
+  {/each}
+{/if}
 
 <style>
   .preference-host {
