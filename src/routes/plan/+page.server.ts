@@ -148,7 +148,7 @@ export const actions: Actions = {
 
     return {
       assignments: [...students.entries()].map(([id, value]) => ({ id, ...value })),
-      structures: structs.map(({ id, name }) => ({ id, name })),
+      structures: structs.map(({ id, name, capacity }) => ({ id, name, capacity })),
     };
   },
 

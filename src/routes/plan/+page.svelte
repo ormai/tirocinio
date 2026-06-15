@@ -46,16 +46,45 @@
     }
   });
 
-  // TODO: system to detect if the capacities are exceeded.
-  // Is a capacity valid for a collection or for a single month? MONTH
-  // TODO: factor out component to view/edit assignments.
-  //  <!-- TODO: capacity for collection -->
-
   let { data }: PageProps = $props();
   let collection = $derived(data.collections[0]);
   let loading = $state(false);
   let uncommittedAssignments: Assignment[] = $state([]);
-  let structures: { id: number; name: string }[] = $state([]);
+  let structures: { id: number; name: string; capacity: number }[] = $state([]);
+
+  let structureMap = $derived(
+    new Map(structures.map(({ id, name, capacity }) => [id, { name, capacity }])),
+  );
+
+  /** Maps each month to the set of structures that exceed the capacity for that specific month */
+  const structuresExceedingCapacity = $derived.by(() => {
+    // We check that the capacities are not exceeded in any given month
+    const frequencies = new Map<number, number[]>();
+    for (const ids of uncommittedAssignments.map((a) => a.structureIds)) {
+      for (const [month, id] of ids.entries()) {
+        if (id != null) {
+          const frequenciesByMonth = frequencies.getOrInsert(id, []);
+          if (frequenciesByMonth[month]) {
+            frequenciesByMonth[month] += 1;
+          } else {
+            frequenciesByMonth[month] = 1;
+          }
+        }
+      }
+    }
+    const memory = new Map<number, Set<number>>();
+    for (const [id, monthFrequencies] of frequencies) {
+      const struct = structureMap.get(id);
+      if (struct) {
+        for (const [month, monthFrequency] of monthFrequencies.entries()) {
+          if (monthFrequency != undefined && monthFrequency > struct.capacity) {
+            memory.getOrInsert(month, new Set()).add(id);
+          }
+        }
+      }
+    }
+    return memory;
+  });
 
   const solverTimeout = new NumericField();
 
@@ -75,7 +104,7 @@
         uncommittedAssignments = (data.assignments as Assignment[]).map((a) => (
           { ...a, structureIds: [...Array(a.months).keys()].map((i) => a.structureIds[i] ?? null) }
         ));
-        structures = data.structures as { id: number; name: string }[];
+        structures = data.structures as { id: number; name: string; capacity: number }[];
       })
       .catch((err) => {
         if (err.timeout === true) {
@@ -255,10 +284,21 @@
   <div transition:slide={{ duration: 600 }}>
     <section class="container" style="padding-top: 0; padding-bottom: 0">
       <p>{m.plan_check()}</p>
+
+      {#if structuresExceedingCapacity.size > 0}
+        <div style="margin-top: 1rem" transition:slide>
+          <Banner kind="warn">{m.plan_capacity_exceeded()}</Banner>
+        </div>
+      {/if}
     </section>
 
     <div transition:slide={{ duration: 1000, axis: 'x' }}>
-      <AssignmentGrid bind:assignments={uncommittedAssignments} {structures} bind:loading />
+      <AssignmentGrid
+        bind:assignments={uncommittedAssignments}
+        {structures}
+        bind:loading
+        {structuresExceedingCapacity}
+      />
     </div>
 
     <section class="container column" style="padding-top: 0">

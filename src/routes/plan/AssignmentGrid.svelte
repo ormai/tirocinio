@@ -11,10 +11,19 @@
     loading?: boolean;
     assignments: Assignment[];
     viewOnly?: boolean;
+    /** Mapping of months to the ids of the structures that exceed their capacity in that month */
+    structuresExceedingCapacity?: Map<number, Set<number>>;
   }
 
-  let { structures, loading = $bindable(false), assignments = $bindable(), viewOnly = false }:
-    Props = $props();
+  let {
+    structures,
+    loading = $bindable(false),
+    assignments = $bindable(),
+    viewOnly = false,
+    structuresExceedingCapacity,
+  }: Props = $props();
+
+  $inspect(structuresExceedingCapacity);
 
   let search = $state('');
   let sortByYear: -1 | 0 | 1 = $state(0);
@@ -110,6 +119,7 @@
           bind:value={structureIds[c]}
           style="grid-area: {r + 2} / {c + 2}"
           disabled={loading || viewOnly}
+          class:warn={!viewOnly && structureIds[c] != null && structuresExceedingCapacity?.get(c)?.has(structureIds[c])}
         >
           <option value={null}>{m.plan_empty_assignment()}</option>
           {#if viewOnly}
@@ -172,5 +182,10 @@
   .sort {
     flex: 0 !important;
     min-width: fit-content;
+  }
+
+  select.warn {
+    border-color: var(--warning-border);
+    background: hsl(from var(--warning-bg) h s l / 0.3) !important;
   }
 </style>
