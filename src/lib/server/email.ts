@@ -88,3 +88,22 @@ export async function sendVerificationEmail(email: string, url: string) {
     },
   );
 }
+
+export async function sendAssignmentReceipt(to: string, assignments: string) {
+  if (!transporter) {
+    console.trace('Transporter is null');
+    return;
+  }
+  if (!from) {
+    console.trace('From is null');
+    return;
+  }
+  await transporter.sendMail(
+    {
+      from,
+      to,
+      subject: m.plan_email_subject(),
+      text: m.plan_email({ assignments }),
+    },
+  );
+}

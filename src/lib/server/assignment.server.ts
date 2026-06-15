@@ -8,8 +8,6 @@ const clingo = require('clingo-wasm') as {
   run: (program: string, models?: number, options?: string[]) => Promise<ClingoError | ClingoResult>;
 };
 
-await clingo.init();
-
 interface Structure {
   id: number;
   name: string;
@@ -110,7 +108,6 @@ export async function generateAssignment(
     ),
     pastAssignments.map(({ studentId, area }) => `pastAssignment(${studentId},"${area}").`),
   ].flat().join('');
-  console.log(facts);
 
   const options: string[] = [];
   if (timeoutSeconds != null && timeoutSeconds !== 0) {

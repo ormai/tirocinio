@@ -423,5 +423,12 @@
   "settings_duration_second": "Duration in months for students at the second year",
   "settings_duration_third": "Duration in months for students at the third year",
   "structures_year": "Year of course",
-  "structures_year_long": "Only students of this year can be assigned to this structure"
+  "structures_year_long": "Only students of this year can be assigned to this structure",
+  "plan_timeout": "Faild to generate the assignments in {seconds} seconds",
+  "plan_empty": "There are no assignments",
+  "plan_filtered_out": "Non of the assignments satisfy the filters",
+  "plan_sort_by_year": "Sort by year",
+  "plan_assignments": "Assignments",
+  "plan_email_subject": "Your assignments are ready",
+  "plan_email": "Here are your assignments\n\n{assignments}\n\nBye."
 }

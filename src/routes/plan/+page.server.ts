@@ -1,3 +1,4 @@
+import { m } from '$lib/paraglide/messages';
 import { requireAdmin } from '$lib/server/api-security';
 import { generateAssignment } from '$lib/server/assignment.server';
 import { db } from '$lib/server/db';
@@ -6,9 +7,11 @@ import {
   capacities,
   preferenceCollectionIntervals,
   preferences,
+  sites,
   structures,
   users,
 } from '$lib/server/db/schema';
+import { sendAssignmentReceipt } from '$lib/server/email';
 import { getDurationFirstYear, getDurationSecondYear, getDurationThirdYear } from '$lib/server/settings';
 import { getYear } from '$lib/server/structure';
 import { fail } from '@sveltejs/kit';
@@ -35,6 +38,11 @@ export const load: PageServerLoad = async ({ locals }) => {
   return { collections };
 };
 
+function getDurationInMonths(yearOfCourse: number, durationMonths: number[]): number {
+  if (yearOfCourse >= 0 && yearOfCourse <= 3) return durationMonths[yearOfCourse - 1];
+  return durationMonths[2];
+}
+
 export const actions: Actions = {
   generateAssignments: async ({ locals, request }) => {
     requireAdmin(locals);
@@ -59,17 +67,15 @@ export const actions: Actions = {
       .leftJoin(users, eq(users.id, preferences.studentId))
       .where(eq(preferences.collectionId, collectionId));
 
-    const studentsInfo = await Promise.all([...new Set(prefs.filter((pref) => pref.studentId != null))].map(async (
+    const durationMonths = [await getDurationFirstYear(), await getDurationSecondYear(), await getDurationThirdYear()];
+
+    const studentsInfo = [...new Set(prefs.filter((pref) => pref.studentId != null))].map((
       { studentId, yearOfCourse },
     ) => ({
       id: studentId!,
       yearOfCourse,
-      months: await (yearOfCourse === 1
-        ? getDurationFirstYear()
-        : yearOfCourse === 2
-        ? getDurationSecondYear()
-        : getDurationThirdYear()),
-    })));
+      months: getDurationInMonths(yearOfCourse, durationMonths),
+    }));
 
     const year = await getYear();
     const structs = await db.select({
@@ -89,17 +95,15 @@ export const actions: Actions = {
       .leftJoin(structures, eq(assignments.structureId, structures.id))
       .where(inArray(assignments.studentId, studentsInfo.map((student) => student.id)));
 
-    // TODO: handle timeout separately in the UI
     const generated = await generateAssignment(studentsInfo, prefs, structs, pastAssignments, timeout);
     if (generated == null) {
       return fail(404, { modelNotFound: true });
     }
     if (generated === 'timeout') {
-      return fail(408, { timeout: true });
+      return fail(408, { timeout: true, seconds: timeout });
     }
-    console.log(generated);
-    // TODO: return dummy empty assignment when failure to generate
 
+    // FIXME: calculating the "year of course" by subtracting the enrollment year from the current one assumes that the academic year starts in January and ends in December, which is incorrect.
     const studentsArr = await db.select({
       id: users.id,
       number: users.number,
@@ -107,12 +111,25 @@ export const actions: Actions = {
       surname: users.surname,
       email: users.email,
       year: users.enrollmentYear,
-    }).from(users).where(inArray(users.id, studentsInfo.map((student) => student.id)));
+      yearOfCourse:
+        sql`EXTRACT(YEAR FROM CURRENT_DATE) - COALESCE(${users.enrollmentYear}, EXTRACT(YEAR FROM CURRENT_DATE))`
+          .mapWith((v) => Math.min(Number(v), 3)),
+    })
+      .from(users)
+      .where(inArray(users.id, studentsInfo.map((student) => student.id)));
 
     const students = new Map(
       studentsArr.map((
-        { id, number, name, surname, email, year },
-      ) => [id, { number, name, surname, email, year, structureIds: [] as number[] }]),
+        { id, number, name, surname, email, year, yearOfCourse },
+      ) => [id, {
+        number,
+        name,
+        surname,
+        email,
+        year,
+        months: getDurationInMonths(yearOfCourse, durationMonths),
+        structureIds: [] as number[],
+      }]),
     );
 
     for (const assignment of generated) {
@@ -143,11 +160,14 @@ export const actions: Actions = {
       .where(eq(preferenceCollectionIntervals.id, collectionId));
     if (!collection) return fail(404, 'There exists no collection with the provided `collectionId`');
 
-    const students = JSON.parse(String(form.get('students'))) as { id: number; structureIds: number[] }[];
-    console.log(students);
+    const students = JSON.parse(String(form.get('students'))) as {
+      id: number;
+      structureIds: number[];
+      email?: string;
+    }[];
 
     const assignmentRows = students.flatMap(({ id: studentId, structureIds }) =>
-      structureIds.map((structureId, month) => ({
+      structureIds.filter((id) => id != null).map((structureId, month) => ({
         studentId,
         structureId,
         collectionId,
@@ -155,12 +175,33 @@ export const actions: Actions = {
         year: collection.year,
       }))
     );
-    console.log(assignmentRows);
 
-    const sendEmails = String(form.get('sendEmails')) === 'true';
-    console.log('send emails', sendEmails);
+    await db.insert(assignments).values(assignmentRows);
+    console.debug('Insert', assignmentRows.length, 'new assignments');
 
-    // await db.insert(assignments).values(assignmentRows)
+    // This might cause the sender to be blacklisted by providers like Gmail, resulting in the emails ending up in spam.
+    if (false && String(form.get('sendEmails')) === 'true') {
+      const structs = [...new Set(students.flatMap(({ structureIds }) => structureIds))].filter((s) => s != null);
+      const assignedStructs = new Map(
+        (await db.select({ id: structures.id, name: structures.name, area: structures.area, site: sites.name })
+          .from(structures)
+          .where(inArray(structures.id, structs))
+          .leftJoin(sites, eq(structures.siteId, sites.id)))
+          .map(({ id, name, area, site }) => [id, { name, area, site }]),
+      );
+
+      for (const { email, structureIds } of students) {
+        if (email) {
+          await sendAssignmentReceipt(
+            email!,
+            structureIds.filter((id) => id != null).map((id, i) => {
+              const struct = assignedStructs.get(id)!;
+              return `${m.preferences_month_head({ n: i + 1 })}: ${struct.name}, ${struct.area}, ${struct.site}`;
+            }).join('\n'),
+          );
+        }
+      }
+    }
 
     return true;
   },

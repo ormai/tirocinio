@@ -55,7 +55,6 @@
     Funnel,
     Pencil,
     Plus,
-    Search,
     Settings,
     Trash,
     Upload,
@@ -352,7 +351,7 @@
 </div>
 
 <div class="scroller" tabindex="-1">
-  <table bind:clientWidth={tableWidth} style:min-width={`${minTableWidth}px`}>
+  <table bind:clientWidth={tableWidth} style:min-width="{minTableWidth}px">
     <thead>
       <tr>
         <th class="action">
