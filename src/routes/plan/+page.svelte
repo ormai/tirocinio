@@ -22,15 +22,18 @@
   import SearchBox from '$lib/SearchBox.svelte';
   import Switch from '$lib/Switch.svelte';
   import Pagination from '$lib/table/Pagination.svelte';
-  import { fullDate } from '$lib/time';
+  import { dateTimeMedium, fullDate } from '$lib/time';
   import { error, success, warning } from '$lib/toast/Toaster.svelte';
   import { tooltip } from '$lib/tooltip.svelte';
-  import { ArrowDown01, ArrowDownUp, ArrowUp01 } from '@lucide/svelte';
+  import { ArrowDown01, ArrowDownUp, ArrowUp01, Trash } from '@lucide/svelte';
   import { cubicOut, sineIn } from 'svelte/easing';
   import { slide } from 'svelte/transition';
   import TitleBar from '../TitleBar.svelte';
   import type { PageProps } from './$types';
   import Histogram from './Histogram.svelte';
+  import '$lib/assets/styles/boxed-list.css';
+  import { resolve } from '$app/paths';
+  import { flip } from 'svelte/animate';
 
   let cancelConfirmOpen = $state(false);
   let navigateTo: URL | undefined = $state();
@@ -138,13 +141,52 @@
     })
       .then(async () => {
         await invalidateAll();
-        uncommittedAssignments = []
+        uncommittedAssignments = [];
         success(m.plan_save_confirm());
       })
-      .catch(() => error(m.error()))
+      .catch((err) => {
+        if (err.data?.assignmentsExists === true) {
+          warning(m.plan_assignment_conflict());
+        } else {
+          error(m.error());
+        }
+      })
       .finally(() => loading = false);
   }
+
+  let collectionIdToDelete: number | null = $state(null);
+  let deleteModalOpen = $state(false);
 </script>
+
+<Modal
+  bind:open={deleteModalOpen}
+  title={m.plan_delete_tooltip()}
+  actions={[
+    { label: m.modal_dismiss(), onClick: () => (deleteModalOpen = false), role: 'secondary' },
+    {
+      label: m.modal_delete(),
+      onClick: async () => {
+        loading = true;
+        await sendForm('?/deleteByCollection', { id: String(collectionIdToDelete) })
+          .then(async (data) => {
+            await invalidateAll();
+            success(m.plan_delete_successful({ count: String(data.deleted) }));
+            deleteModalOpen = false;
+          })
+          .catch(() => error(m.error()))
+          .finally(() => loading = false);
+      },
+      role: 'danger',
+      icon: Trash,
+      loading,
+    },
+  ]}
+>
+  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+  {@html m.plan_delete_desc({
+    count: data.previousAssignments.find((a) => a.id === collectionIdToDelete)?.assignmentCount ?? -1,
+  })}
+</Modal>
 
 <Modal
   bind:open={cancelConfirmOpen}
@@ -205,10 +247,49 @@
         initialValue="500"
       />
 
-      <LoadingButton {loading} enabled={solverTimeout.valid} onclick={onGenerateAssignment}>{
-        m.plan_generate()
-      }</LoadingButton>
+      <LoadingButton
+        {loading}
+        enabled={collection.studentCount > 0 && solverTimeout.valid}
+        onclick={onGenerateAssignment}
+      >{m.plan_generate()}</LoadingButton>
     </div>
+
+    {#if data.previousAssignments.length > 0}
+      <h2 style="margin-top: 2rem; margin-bottom: 1rem">{m.plan_previous_assignments()}</h2>
+
+      {#each data.previousAssignments as { id, year, startTime, endTime, assignmentCount }, i (id)}
+        <a
+          animate:flip
+          href={resolve(`/plan/${id}`)}
+          class="boxed-list row-spaced link-button"
+          class:first={data.previousAssignments.length > 1 && i === 0}
+          class:last={data.previousAssignments.length > 1 && i === data.previousAssignments.length - 1}
+          class:middle={data.previousAssignments.length > 1 && i > 0 && i < data.previousAssignments.length - 1}
+        >
+          <span class="numeric" style="margin-right: 1rem">{year}</span>
+          <span class="column"><span>{m.preferences_from()} <span class="value">{
+                dateTimeMedium(startTime)
+              }</span> {m.preferences_to()} <span class="value">{
+                dateTimeMedium(endTime)
+              }</span>.</span>
+            <span>{m.plan_assignments_label({ count: assignmentCount })}</span>
+          </span>
+          <div class="trailing">
+            <button
+              class="tertiary icon-host"
+              {@attach tooltip(m.plan_delete_tooltip())}
+              onclick={(e: Event) => {
+                e.preventDefault();
+                collectionIdToDelete = id;
+                deleteModalOpen = true;
+              }}
+            >
+              <Trash />
+            </button>
+          </div>
+        </a>
+      {/each}
+    {/if}
   </section>
 {:else}
   <div transition:slide={{ duration: 600 }}>
@@ -296,7 +377,7 @@
         label={m.plan_send_emails()}
       />
 
-      <div class="row-spaced">
+      <div class="row-spaced button-row">
         <button disabled={loading} class="secondary" onclick={() => cancelConfirmOpen = true}>
           {m.modal_cancel()}
         </button>
@@ -337,7 +418,7 @@
 
       padding: var(--spacing);
     }
-    .row-spaced:not(:has(.sort)) {
+    .button-row {
       flex-direction: column-reverse !important;
 
       :global(button) {
@@ -357,5 +438,9 @@
   .sort {
     flex: 0 !important;
     min-width: fit-content;
+  }
+
+  :global(strong.danger) {
+    color: var(--danger-text);
   }
 </style>

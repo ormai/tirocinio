@@ -429,5 +429,20 @@
   "plan_sort_by_year": "Ordina per anno",
   "plan_assignments": "Assegnamenti",
   "plan_email_subject": "I tuo assegnamenti sono pronti",
-  "plan_email": "Ecco i tuoi assegnamenti\n\n{assignments}\n\nCiao."
+  "plan_email": "Ecco i tuoi assegnamenti\n\n{assignments}\n\nCiao.",
+  "plan_assignments_label": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} assegnamento",
+        "countPlural=other": "{count} assegnamenti"
+      }
+    }
+  ],
+  "plan_previous_assignments": "Assegnamenti precedenti",
+  "plan_delete_tooltip": "Elimina assegnamenti",
+  "plan_delete_desc": "Conferma di volere eliminare i {count} assegnamenti in questa raccolta. <strong class=\"danger\">Questa operazione è irreversibile</strong>.",
+  "plan_delete_successful": "{count} assegnamenti eliminati correttamente",
+  "plan_assignment_conflict": "Alcuni studenti in questa raccolta hanno già ricevuto degli assegnamenti. Eliminali e riprova."
 }

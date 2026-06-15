@@ -430,5 +430,20 @@
   "plan_sort_by_year": "Sort by year",
   "plan_assignments": "Assignments",
   "plan_email_subject": "Your assignments are ready",
-  "plan_email": "Here are your assignments\n\n{assignments}\n\nBye."
+  "plan_email": "Here are your assignments\n\n{assignments}\n\nBye.",
+  "plan_assignments_label": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} assignment",
+        "countPlural=other": "{count} assignments"
+      }
+    }
+  ],
+  "plan_previous_assignments": "Previous assignments",
+  "plan_delete_tooltip": "Delete assignments",
+  "plan_delete_desc": "Confirm the deletion of {count} assignments in this collection. <strong class=\"danger\">This action is irreversible</strong>.",
+  "plan_delete_successful": "{count} assignments deleted successfully",
+  "plan_assignment_conflict": "Some students in this collectio have already been assigned. Delete the assignments and retry."
 }

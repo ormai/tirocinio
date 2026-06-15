@@ -15,7 +15,7 @@ import { sendAssignmentReceipt } from '$lib/server/email';
 import { getDurationFirstYear, getDurationSecondYear, getDurationThirdYear } from '$lib/server/settings';
 import { getYear } from '$lib/server/structure';
 import { fail } from '@sveltejs/kit';
-import { and, countDistinct, desc, eq, inArray, sql } from 'drizzle-orm';
+import { and, count, countDistinct, desc, eq, gt, inArray, sql } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -35,7 +35,19 @@ export const load: PageServerLoad = async ({ locals }) => {
     .orderBy(desc(preferenceCollectionIntervals.endTime))
     .limit(100);
 
-  return { collections };
+  const previousAssignments = await db.select({
+    id: preferenceCollectionIntervals.id,
+    year: preferenceCollectionIntervals.year,
+    startTime: preferenceCollectionIntervals.startTime,
+    endTime: preferenceCollectionIntervals.endTime,
+    assignmentCount: count(assignments.collectionId),
+  })
+    .from(preferenceCollectionIntervals)
+    .leftJoin(assignments, eq(preferenceCollectionIntervals.id, assignments.collectionId))
+    .groupBy(preferenceCollectionIntervals.id)
+    .having(gt(count(assignments.collectionId), 0));
+
+  return { collections, previousAssignments };
 };
 
 function getDurationInMonths(yearOfCourse: number, durationMonths: number[]): number {
@@ -166,6 +178,13 @@ export const actions: Actions = {
       email?: string;
     }[];
 
+    if (
+      await db.$count(
+        assignments,
+        and(eq(assignments.collectionId, collectionId), inArray(assignments.studentId, students.map((s) => s.id))),
+      ) > 0
+    ) return fail(409, { assignmentsExists: true });
+
     const assignmentRows = students.flatMap(({ id: studentId, structureIds }) =>
       structureIds.filter((id) => id != null).map((structureId, month) => ({
         studentId,
@@ -204,5 +223,19 @@ export const actions: Actions = {
     }
 
     return true;
+  },
+
+  deleteByCollection: async ({ locals, request }) => {
+    requireAdmin(locals);
+    const form = await request.formData();
+    const idRaw = form.get('id');
+    const id = Number(idRaw);
+    if (!idRaw || isNaN(id)) return fail(400, '`id` must is required and must be a valid number');
+
+    const deleted = await db.delete(assignments)
+      .where(eq(assignments.collectionId, id))
+      .returning({ id: assignments.collectionId });
+    console.debug('Delete', deleted.length, 'assignments in collection', id);
+    return { deleted: deleted.length };
   },
 };
