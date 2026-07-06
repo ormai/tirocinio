@@ -114,7 +114,6 @@ export const load: PageServerLoad = async ({ locals }) => {
         ),
       );
 
-    console.log(assignmentsRow);
     for (const { collectionId, structure, month } of assignmentsRow) {
       if (collectionId) {
         const collection = pastAssignments.get(collectionId);

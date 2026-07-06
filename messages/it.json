@@ -446,5 +446,7 @@
   "plan_delete_successful": "{count} assegnamenti eliminati correttamente",
   "plan_assignment_conflict": "Alcuni studenti in questa raccolta hanno già ricevuto degli assegnamenti. Eliminali e riprova.",
   "plan_assignment_details": "Dettagli sugli assegnamenti",
-  "plan_capacity_exceeded": "La capacità di alcune strutture è stata sforata"
+  "plan_capacity_exceeded": "La capacità di alcune strutture è stata sforata",
+  "plan_export": "Esporta piano",
+  "plan_export_filename": "piano_esportato"
 }

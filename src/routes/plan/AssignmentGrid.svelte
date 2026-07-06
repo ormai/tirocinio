@@ -1,16 +1,16 @@
 <script lang="ts">
   import { m } from '$lib/paraglide/messages';
   import SearchBox from '$lib/SearchBox.svelte';
+  import ExportModal from '$lib/table/ExportModal.svelte';
   import Pagination from '$lib/table/Pagination.svelte';
   import { tooltip } from '$lib/tooltip.svelte';
-  import { ArrowDown01, ArrowDownUp, ArrowUp01 } from '@lucide/svelte';
+  import { ArrowDown01, ArrowDownUp, ArrowUp01, Download } from '@lucide/svelte';
   import type { Assignment } from './+page.svelte';
 
   interface Props {
     structures: { id: number; name: string }[];
     loading?: boolean;
     assignments: Assignment[];
-    viewOnly?: boolean;
     /** Mapping of months to the ids of the structures that exceed their capacity in that month */
     structuresExceedingCapacity?: Map<number, Set<number>>;
   }
@@ -19,11 +19,8 @@
     structures,
     loading = $bindable(false),
     assignments = $bindable(),
-    viewOnly = false,
     structuresExceedingCapacity,
   }: Props = $props();
-
-  $inspect(structuresExceedingCapacity);
 
   let search = $state('');
   let sortByYear: -1 | 0 | 1 = $state(0);
@@ -64,8 +61,40 @@
   const pageSize = 11;
   let paginated = $derived(processed.slice(page * pageSize, (page + 1) * pageSize));
 
-  const months = $derived(Math.max(...paginated.map((a) => a.structureIds.length)));
+  let months = $derived(Math.max(...paginated.map((a) => a.structureIds.length)));
+  let maxNumberOfMonths = $derived(Math.max(...assignments.map((a) => a.structureIds.length)));
+  let exportModalOpen = $state(false);
 </script>
+
+<ExportModal
+  title={m.plan_export()}
+  data={() =>
+  assignments.map((a) => ({
+    number: a.number,
+    name: a.name,
+    surname: a.surname,
+    email: a.email,
+    year: a.year,
+    ...Object.fromEntries(
+      a.structureIds.map((id, i) => [`month${i}`, id == null ? '' : (structuresMap.get(id) ?? '')]),
+    ),
+  }))}
+  bind:open={exportModalOpen}
+  headers={{
+    number: m.students_number(),
+    name: m.students_name(),
+    surname: m.students_surname(),
+    email: m.students_email(),
+    year: m.profile_enrollment_year(),
+    ...Object.fromEntries(
+      [...Array(maxNumberOfMonths)].map((
+        _,
+        i,
+      ) => [`month${i}`, m.preferences_month_head({ n: i + 1 })]),
+    ),
+  }}
+  filename={m.plan_export_filename()}
+/>
 
 {#if assignments.length > 0}
   <section class="container" style="padding-top: 0">
@@ -86,6 +115,14 @@
             <ArrowDown01 />
           {/if}
         </div><span>{m.plan_sort_by_year()}</span>
+      </button>
+
+      <button
+        class="secondary icon-host"
+        onclick={() => (exportModalOpen = true)}
+        {@attach tooltip(m.table_export())}
+      >
+        <Download />
       </button>
     </div>
   </section>
@@ -118,19 +155,13 @@
         <select
           bind:value={structureIds[c]}
           style="grid-area: {r + 2} / {c + 2}"
-          disabled={loading || viewOnly}
-          class:warn={!viewOnly && structureIds[c] != null && structuresExceedingCapacity?.get(c)?.has(structureIds[c])}
+          disabled={loading}
+          class:warn={structureIds[c] != null && structuresExceedingCapacity?.get(c)?.has(structureIds[c])}
         >
           <option value={null}>{m.plan_empty_assignment()}</option>
-          {#if viewOnly}
-            {#if structureIds[c] != null}
-              <option value={structureIds[c]}>{structuresMap.get(structureIds[c])}</option>
-            {/if}
-          {:else}
-            {#each structures as { id, name } (id)}
-              <option value={id}>{name}</option>
-            {/each}
-          {/if}
+          {#each structures as { id, name } (id)}
+            <option value={id}>{name}</option>
+          {/each}
         </select>
       {/each}
     {:else}

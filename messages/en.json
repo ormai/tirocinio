@@ -447,5 +447,7 @@
   "plan_delete_successful": "{count} assignments deleted successfully",
   "plan_assignment_conflict": "Some students in this collectio have already been assigned. Delete the assignments and retry.",
   "plan_assignment_details": "Assignment details",
-  "plan_capacity_exceeded": "The capacity of some structures has been exceeded"
+  "plan_capacity_exceeded": "The capacity of some structures has been exceeded",
+  "plan_export": "Export plan",
+  "plan_export_filename": "exported_plan"
 }
