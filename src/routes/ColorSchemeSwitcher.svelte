@@ -3,7 +3,7 @@
 <script module lang="ts">
   import { m } from '$lib/paraglide/messages';
 
-  export type ColorScheme = 'light dark' | 'only light' | 'only dark';
+  export type ColorScheme = 'light dark' | 'only light' | 'dark';
 </script>
 
 <script lang="ts">
@@ -17,7 +17,7 @@
   const options: Record<ColorScheme, { label: LocalizedString; icon: Component }> = {
     'light dark': { label: m.color_scheme_auto(), icon: SunMoon },
     'only light': { label: m.color_scheme_light(), icon: Sun },
-    'only dark': { label: m.color_scheme_dark(), icon: Moon },
+    'dark': { label: m.color_scheme_dark(), icon: Moon },
   } as const;
 
   let {
