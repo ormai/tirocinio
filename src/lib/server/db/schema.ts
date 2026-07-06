@@ -46,7 +46,7 @@ export const sessions = pgTable(
   'sessions',
   {
     id: uuid().defaultRandom().primaryKey(),
-    userId: integer().references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
     expiresAt: timestamp('expires_at').default(sql`CURRENT_TIMESTAMP + INTERVAL '2 hours'`).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
@@ -64,7 +64,7 @@ export const structures = pgTable('structures', {
   area: varchar({ length: 255 }),
   kind: varchar({ length: 255 }),
   siteId: integer('site_id').references(() => sites.id),
-  yearOfCourse: smallint(),
+  yearOfCourse: smallint('year_of_course'),
 }, (structure) => [uniqueIndex('structure_name').on(structure.name)]);
 
 export const capacities = pgTable(
