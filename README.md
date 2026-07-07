@@ -1,6 +1,8 @@
-# App
+# Tirocinio
 
-[Svelte](https://svelte.dev/).
+This is a web application written in [Svelte](https://svelte.dev/), in order to support planning internships for the Course of Nursing at [Unical](https://unical.it).
+
+![Screenshot of the planning page](./plan_screen.png)
 
 ## Building
 
