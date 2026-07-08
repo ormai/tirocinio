@@ -24,7 +24,6 @@
 
   let cancelConfirmOpen = $state(false);
   let navigateTo: URL | undefined = $state();
-
   beforeNavigate(({ cancel, to, willUnload }) => {
     if (uncommittedAssignments.length === 0) return;
     cancel();
@@ -77,7 +76,7 @@
   const solverTimeout = new NumericField();
 
   /** Whether all students participating in the assignment are notified via email */
-  let sendEmails = $state(true);
+  let sendEmails = $state(false); // Initially false because it might be expensive
 
   async function onGenerateAssignment() {
     solverTimeout.validate();
