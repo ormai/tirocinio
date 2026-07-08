@@ -59,3 +59,16 @@ export async function shouldBeAccepted(email: string): Promise<boolean> {
   }
   return email.endsWith(suffix);
 }
+
+/**
+ * Determines the current year of course for a student starting from their enrollment year.
+ *
+ * This function makes the assumption that the new academic year starts the first of October.
+ */
+export function getYearOfCourse(enrollmentYear: number): number {
+  const now = new Date();
+  const [year, month] = [now.getFullYear(), now.getMonth()];
+  // If the current month is October, November, or December, then
+  // the student is already in the next academic year.
+  return year - enrollmentYear + (month >= 10 ? 1 : 0);
+}
