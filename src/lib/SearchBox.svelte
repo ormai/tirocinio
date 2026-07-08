@@ -37,7 +37,8 @@
     input {
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
-      flex: 1;
+      flex: 1 1 200px;
+      width: calc(100% - calc(2 * var(--spacing)));
     }
   }
 </style>

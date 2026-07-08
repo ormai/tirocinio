@@ -448,5 +448,6 @@
   "plan_assignment_details": "Dettagli sugli assegnamenti",
   "plan_capacity_exceeded": "La capacità di alcune strutture è stata sforata",
   "plan_export": "Esporta piano",
-  "plan_export_filename": "piano_esportato"
+  "plan_export_filename": "piano_esportato",
+  "plan_edit_successful": "Assegnamenti modificati correttamente"
 }

@@ -1,16 +1,3 @@
-<script module lang="ts">
-  export interface Assignment {
-    id: number;
-    email: string;
-    number: number | null;
-    name: string | null;
-    surname: string | null;
-    year: number | null;
-    months: number;
-    structureIds: (number | null)[];
-  }
-</script>
-
 <script lang="ts">
   import { beforeNavigate, goto, invalidateAll } from '$app/navigation';
   import Banner from '$lib/Banner.svelte';
@@ -31,6 +18,7 @@
   import Histogram from './Histogram.svelte';
   import '$lib/assets/styles/boxed-list.css';
   import { resolve } from '$app/paths';
+  import type { Assignment } from '$lib/server/assignment.server';
   import { flip } from 'svelte/animate';
   import AssignmentGrid from './AssignmentGrid.svelte';
 
@@ -134,6 +122,7 @@
         success(m.plan_save_confirm());
       })
       .catch((err) => {
+        // TODO: This could be checked before generating the assignments to avoid wasting time
         if (err.data?.assignmentsExists === true) {
           warning(m.plan_assignment_conflict());
         } else {
@@ -235,6 +224,8 @@
         name="timeout"
         initialValue="500"
       />
+
+      <!-- TODO: Altro campo per l'anno di corso degli studenti -->
 
       <LoadingButton
         {loading}

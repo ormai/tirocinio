@@ -449,5 +449,6 @@
   "plan_assignment_details": "Assignment details",
   "plan_capacity_exceeded": "The capacity of some structures has been exceeded",
   "plan_export": "Export plan",
-  "plan_export_filename": "exported_plan"
+  "plan_export_filename": "exported_plan",
+  "plan_edit_successful": "Assignments updated successfully"
 }

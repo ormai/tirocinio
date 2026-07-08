@@ -1,11 +1,11 @@
 <script lang="ts">
   import { m } from '$lib/paraglide/messages';
   import SearchBox from '$lib/SearchBox.svelte';
+  import type { Assignment } from '$lib/server/assignment.server';
   import ExportModal from '$lib/table/ExportModal.svelte';
   import Pagination from '$lib/table/Pagination.svelte';
   import { tooltip } from '$lib/tooltip.svelte';
   import { ArrowDown01, ArrowDownUp, ArrowUp01, Download } from '@lucide/svelte';
-  import type { Assignment } from './+page.svelte';
 
   interface Props {
     structures: { id: number; name: string }[];
@@ -63,6 +63,7 @@
 
   let months = $derived(Math.max(...paginated.map((a) => a.structureIds.length)));
   let maxNumberOfMonths = $derived(Math.max(...assignments.map((a) => a.structureIds.length)));
+  $inspect(maxNumberOfMonths);
   let exportModalOpen = $state(false);
 </script>
 
@@ -87,7 +88,7 @@
     email: m.students_email(),
     year: m.profile_enrollment_year(),
     ...Object.fromEntries(
-      [...Array(maxNumberOfMonths)].map((
+      [...Array(maxNumberOfMonths ?? 0)].map((
         _,
         i,
       ) => [`month${i}`, m.preferences_month_head({ n: i + 1 })]),

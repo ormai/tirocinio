@@ -55,9 +55,10 @@
       <p>
         {m.preferences_collection_ends()}
         <Clock {onTick} style="display: inline; vertical-align: sub" size={18} /> <span class="admin-home-interpolated">{collectionCountDown}
-          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-        </span>{@html m.admin_home_collection_1({ count: page.data.totalPreferences })}{#if page.data.popularSites?.length > 0}{m.admin_home_collection_2()} {@html
-            page.data.popularSites.map((name: string) => `<span class="admin-home-interpolated">${name}</span>`).join(', ')
+        <!-- eslint-disable svelte/no-at-html-tags -->
+        </span>{@html m.admin_home_collection_1({ count: page.data.totalPreferences })}{#if page.data.totalPreferences > 0
+            && page.data.popularSites.length > 0}{m.admin_home_collection_2()} {@html
+            page.data.popularSites.filter(Boolean).map((name: string) => `<span class="admin-home-interpolated">${name}</span>`).join(', ')
           }{/if}.
       </p>
     {:else}

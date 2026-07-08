@@ -1,10 +1,11 @@
 import { requireAdmin } from '$lib/server/api-security';
-import { getDurationInMonths } from '$lib/server/assignment.server';
+import { type Assignment, getDurationInMonths } from '$lib/server/assignment.server';
 import { db } from '$lib/server/db';
-import { assignments, structures, users } from '$lib/server/db/schema';
+import { assignments, preferenceCollectionIntervals, structures, users } from '$lib/server/db/schema';
 import { getDurationFirstYear, getDurationSecondYear, getDurationThirdYear } from '$lib/server/settings';
+import { fail } from '@sveltejs/kit';
 import { eq, inArray, sql } from 'drizzle-orm';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
   requireAdmin(locals);
@@ -75,4 +76,47 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     assignments: [...students.entries()].map(([id, value]) => ({ id, ...value })),
     structures: structs,
   };
+};
+
+export const actions: Actions = {
+  /** Editing a plan by changing the structures assigned to students. */
+  edit: async ({ locals, request }) => {
+    requireAdmin(locals);
+    const data = await request.formData();
+    const assignmentRows = JSON.parse(String(data.get('assignments') ?? '[]')) as Pick<
+      Assignment,
+      'id' | 'structureIds'
+    >[];
+
+    const collectionId = Number(data.get('collectionId'));
+    if (!data.has('collectionId') || Number.isNaN(collectionId)) {
+      return fail(400, 'collectionId must be a valid number');
+    }
+
+    const [collection] = await db.select({
+      id: preferenceCollectionIntervals.id,
+      year: preferenceCollectionIntervals.year,
+    })
+      .from(preferenceCollectionIntervals)
+      .where(eq(preferenceCollectionIntervals.id, collectionId));
+    if (!collection) return fail(404, 'Collection not found');
+
+    const ids = assignmentRows.flatMap((a) => a.structureIds.filter((id) => id != null));
+    const updated = assignmentRows.flatMap(({ id, structureIds }) =>
+      structureIds.map((structures, month) => ({
+        studentId: id,
+        structureId: structures,
+        month,
+        collectionId: collection.id,
+        year: collection.year,
+      })).filter(({ structureId }) => structureId != null) // filter after map is important for `month`
+    );
+
+    await db.transaction(async (tx) => {
+      await tx.delete(assignments).where(inArray(assignments.structureId, ids));
+      await tx.insert(assignments).values(updated);
+    });
+    console.info('Delete and re-insert', ids.length, 'assignments');
+    return true;
+  },
 };

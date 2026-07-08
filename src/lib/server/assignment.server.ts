@@ -8,6 +8,17 @@ const clingo = require('clingo-wasm') as {
   run: (program: string, models?: number, options?: string[]) => Promise<ClingoError | ClingoResult>;
 };
 
+export interface Assignment {
+  id: number;
+  email: string;
+  number: number | null;
+  name: string | null;
+  surname: string | null;
+  year: number | null;
+  months: number;
+  structureIds: (number | null)[];
+}
+
 interface Structure {
   id: number;
   name: string;
@@ -17,7 +28,7 @@ interface Structure {
   yearOfCourse: number | null;
 }
 
-interface Assignment {
+interface AssignmentAtom {
   studentId: number;
   structureId: number;
   month: number;
@@ -98,7 +109,7 @@ export async function generateAssignment(
   structures: ReadonlyArray<Structure>,
   pastAssignments: ReadonlyArray<{ studentId: number | null; area: string | null }>,
   timeoutSeconds: number | null,
-): Promise<Assignment[] | null | 'timeout'> {
+): Promise<AssignmentAtom[] | null | 'timeout'> {
   const facts = [
     students.map(({ id, yearOfCourse, months }) => `student(${id},${yearOfCourse},${months}).`),
     preferences.map(({ studentId, siteId, month, weight, createdAt }) =>
@@ -129,7 +140,7 @@ export async function generateAssignment(
   return null;
 }
 
-function parseAssignments(atoms: string[]): Assignment[] {
+function parseAssignments(atoms: string[]): AssignmentAtom[] {
   return atoms.map((atom) => atom.match(/^assign\((.+)\)$/))
     .filter(Boolean)
     .map((matches) => {

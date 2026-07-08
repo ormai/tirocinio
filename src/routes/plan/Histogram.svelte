@@ -1,8 +1,8 @@
 <script lang="ts">
   import { m } from '$lib/paraglide/messages';
+  import type { Assignment } from '$lib/server/assignment.server';
   import { BarElement, CategoryScale, Chart, LinearScale, Tooltip } from 'chart.js';
   import { Bar } from 'svelte-chartjs';
-  import type { Assignment } from './+page.svelte';
 
   let { assignments, structures }: {
     assignments: Assignment[];
