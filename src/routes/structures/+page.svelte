@@ -93,7 +93,6 @@
   validators={{
     name: (name) => {
       if (!name) return m.import_validator_missing();
-      console.log(validationData);
       if (validationData && validationData[name as string] === true) {
         return m.import_structure_duplicate_name();
       }

@@ -450,5 +450,11 @@
   "plan_capacity_exceeded": "The capacity of some structures has been exceeded",
   "plan_export": "Export plan",
   "plan_export_filename": "exported_plan",
-  "plan_edit_successful": "Assignments updated successfully"
+  "plan_edit_successful": "Assignments updated successfully",
+  "plan_year_of_course": "Assign only students that are enrolled in the year of course",
+  "plan_year_of_course_all": "All years",
+  "plan_year_of_course_first": "First year",
+  "plan_year_of_course_second": "Second year",
+  "plan_year_of_course_third": "Third year",
+  "plan_no_students": "The selected filters leave no students to assign"
 }

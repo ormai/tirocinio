@@ -63,7 +63,6 @@
 
   let months = $derived(Math.max(...paginated.map((a) => a.structureIds.length)));
   let maxNumberOfMonths = $derived(Math.max(...assignments.map((a) => a.structureIds.length)));
-  $inspect(maxNumberOfMonths);
   let exportModalOpen = $state(false);
 </script>
 

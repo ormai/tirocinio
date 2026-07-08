@@ -103,8 +103,6 @@ export const actions: Actions = {
     if (isValidationFailure(structure)) return structure;
     if (!structure.id) return fail(400, 'Structure ID is required');
 
-    console.log(structure.yearOfCourse);
-
     return await db.transaction(async (tx) => {
       if (
         await db.$count(structures, and(eq(structures.name, structure.name!), ne(structures.id, structure.id!))) > 0

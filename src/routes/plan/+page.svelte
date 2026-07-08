@@ -8,7 +8,7 @@
   import { m } from '$lib/paraglide/messages';
   import Switch from '$lib/Switch.svelte';
   import { dateTimeMedium, fullDate } from '$lib/time';
-  import { error, success, warning } from '$lib/toast/Toaster.svelte';
+  import { error, info, success, warning } from '$lib/toast/Toaster.svelte';
   import { tooltip } from '$lib/tooltip.svelte';
   import { Trash } from '@lucide/svelte';
   import { cubicOut, sineIn } from 'svelte/easing';
@@ -77,6 +77,7 @@
 
   /** Whether all students participating in the assignment are notified via email */
   let sendEmails = $state(false); // Initially false because it might be expensive
+  let yearOfCourseConstraint: 0 | 1 | 2 | 3 = $state(0);
 
   async function onGenerateAssignment() {
     solverTimeout.validate();
@@ -86,6 +87,7 @@
     await sendForm('?/generateAssignments', {
       collectionId: String(collection.id),
       timeout: String(solverTimeout.value),
+      yearOfCourseConstraint: String(yearOfCourseConstraint),
     })
       .then((data) => {
         uncommittedAssignments = (data.assignments as Assignment[]).map((a) => (
@@ -94,8 +96,10 @@
         structures = data.structures as { id: number; name: string; capacity: number }[];
       })
       .catch((err) => {
-        if (err.timeout === true) {
-          warning(m.plan_timeout({ seconds: err.seconds }));
+        if (err.data.timeout === true) {
+          warning(m.plan_timeout({ seconds: err.data.seconds }));
+        } else if (err.data.noStudents === true) {
+          info(m.plan_no_students());
         } else {
           error(m.error());
         }
@@ -224,7 +228,15 @@
         initialValue="500"
       />
 
-      <!-- TODO: Altro campo per l'anno di corso degli studenti -->
+      <div class="input-host">
+        <label for="year-of-course">{m.plan_year_of_course()}</label>
+        <select id="year-of-course" bind:value={yearOfCourseConstraint}>
+          <option value={0}>{m.plan_year_of_course_all()}</option>
+          <option value={1}>{m.plan_year_of_course_first()}</option>
+          <option value={2}>{m.plan_year_of_course_second()}</option>
+          <option value={3}>{m.plan_year_of_course_third()}</option>
+        </select>
+      </div>
 
       <LoadingButton
         {loading}

@@ -14,8 +14,9 @@ import {
 import { sendAssignmentReceipt } from '$lib/server/email';
 import { getDurationFirstYear, getDurationSecondYear, getDurationThirdYear } from '$lib/server/settings';
 import { getYear } from '$lib/server/structure';
+import { getYearOfCourse } from '$lib/server/user';
 import { fail } from '@sveltejs/kit';
-import { and, count, countDistinct, desc, eq, gt, inArray, sql } from 'drizzle-orm';
+import { and, count, countDistinct, desc, eq, gt, inArray } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -59,20 +60,27 @@ export const actions: Actions = {
     if (isNaN(collectionId)) return fail(400, '`collectionId` is required and must be a valid number');
 
     const timeout = form.has('timeout') ? Number(form.get('timeout')) : null;
+    const yearOfCourse = Number(form.get('yearOfCourseConstraint'));
+    if (!form.get('yearOfCourseConstraint') || isNaN(yearOfCourse) || yearOfCourse < 0 || yearOfCourse > 3) {
+      return fail(400, 'year of course must be a valid number in [0, 3]');
+    }
 
-    const prefs = await db.select({
+    const prefRows = await db.select({
       studentId: preferences.studentId,
       siteId: preferences.siteId,
       month: preferences.month,
       weight: preferences.weight,
       createdAt: preferences.createdAt,
-      yearOfCourse:
-        sql`EXTRACT(YEAR FROM CURRENT_DATE) - COALESCE(${users.enrollmentYear}, EXTRACT(YEAR FROM CURRENT_DATE))`
-          .mapWith((v) => Math.min(Number(v), 3)),
+      year: users.enrollmentYear,
     })
       .from(preferences)
       .leftJoin(users, eq(users.id, preferences.studentId))
       .where(eq(preferences.collectionId, collectionId));
+
+    const prefs = prefRows.map((pref) => ({
+      ...pref,
+      yearOfCourse: pref.year != null ? getYearOfCourse(pref.year) : 0,
+    }));
 
     const durationMonths = [await getDurationFirstYear(), await getDurationSecondYear(), await getDurationThirdYear()];
 
@@ -110,20 +118,28 @@ export const actions: Actions = {
       return fail(408, { timeout: true, seconds: timeout });
     }
 
-    // FIXME: calculating the "year of course" by subtracting the enrollment year from the current one assumes that the academic year starts in January and ends in December, which is incorrect.
-    const studentsArr = await db.select({
+    const studentsArrRows = await db.select({
       id: users.id,
       number: users.number,
       name: users.name,
       surname: users.surname,
       email: users.email,
       year: users.enrollmentYear,
-      yearOfCourse:
-        sql`EXTRACT(YEAR FROM CURRENT_DATE) - COALESCE(${users.enrollmentYear}, EXTRACT(YEAR FROM CURRENT_DATE))`
-          .mapWith((v) => Math.min(Number(v), 3)),
     })
       .from(users)
       .where(inArray(users.id, studentsInfo.map((student) => student.id)));
+
+    const studentsArr = studentsArrRows.map((student) => ({
+      ...student,
+      yearOfCourse: student.year != null ? getYearOfCourse(student.year) : 0,
+    }))
+      .filter((student) =>
+        yearOfCourse === 0
+        || (yearOfCourse < 3 ? student.yearOfCourse === yearOfCourse : student.yearOfCourse >= yearOfCourse)
+      );
+    if (studentsArr.length <= 0) {
+      return fail(422, { noStudents: true });
+    }
 
     const students = new Map(
       studentsArr.map((

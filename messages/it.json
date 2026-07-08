@@ -423,7 +423,7 @@
   "settings_duration_third": "Durata in mesi per studenti al terzo anno",
   "structures_year": "Anno di corso",
   "structures_year_long": "Possono essere assegnati a questa struttura solo studenti all'anno",
-  "plan_timeout": "Non è stato possibile generare gli assegnamenti in {seconds} secondi",
+  "plan_timeout": "Non è stato possibile generare gli assegnamenti entro {seconds} secondi",
   "plan_empty": "Non ci sono assegnamenti",
   "plan_filtered_out": "Nessuno degli assegnamenti soddisfa i filtri",
   "plan_sort_by_year": "Ordina per anno",
@@ -449,5 +449,11 @@
   "plan_capacity_exceeded": "La capacità di alcune strutture è stata sforata",
   "plan_export": "Esporta piano",
   "plan_export_filename": "piano_esportato",
-  "plan_edit_successful": "Assegnamenti modificati correttamente"
+  "plan_edit_successful": "Assegnamenti modificati correttamente",
+  "plan_year_of_course": "Assegna solo studenti che sono iscritti all'anno di corso",
+  "plan_year_of_course_all": "Tutti gli anni",
+  "plan_year_of_course_first": "Primo anno",
+  "plan_year_of_course_second": "Secondo anno",
+  "plan_year_of_course_third": "Terzo anno",
+  "plan_no_students": "I filtri impostati non lasciano studenti da assegnare"
 }

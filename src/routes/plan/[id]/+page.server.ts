@@ -3,8 +3,9 @@ import { type Assignment, getDurationInMonths } from '$lib/server/assignment.ser
 import { db } from '$lib/server/db';
 import { assignments, preferenceCollectionIntervals, structures, users } from '$lib/server/db/schema';
 import { getDurationFirstYear, getDurationSecondYear, getDurationThirdYear } from '$lib/server/settings';
+import { getYearOfCourse } from '$lib/server/user';
 import { fail } from '@sveltejs/kit';
-import { eq, inArray, sql } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
@@ -18,16 +19,13 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     .from(assignments)
     .where(eq(assignments.collectionId, Number(params.id)));
 
-  const studentsArr = await db.select({
+  const studentsArrRows = await db.select({
     id: users.id,
     name: users.name,
     surname: users.surname,
     number: users.number,
     email: users.email,
     year: users.enrollmentYear,
-    yearOfCourse:
-      sql`EXTRACT(YEAR FROM CURRENT_DATE) - COALESCE(${users.enrollmentYear}, EXTRACT(YEAR FROM CURRENT_DATE))`
-        .mapWith((v) => Math.min(Number(v), 3)),
   })
     .from(users)
     .where(
@@ -37,6 +35,11 @@ export const load: PageServerLoad = async ({ locals, params }) => {
         ),
       ] as number[]),
     );
+
+  const studentsArr = studentsArrRows.map((student) => ({
+    ...student,
+    yearOfCourse: student.year != null ? getYearOfCourse(student.year) : 0,
+  }));
 
   const durationMonths = [await getDurationFirstYear(), await getDurationSecondYear(), await getDurationThirdYear()];
 
