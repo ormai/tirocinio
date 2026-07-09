@@ -185,24 +185,27 @@
   {/if}
 </div>
 
-{#if page.data.pastAssignments.length > 0}
+{#if page.data.pastAssignments.length > 0
+  && page.data.pastAssignments.some((s: { structures: string[] }) => s.structures.length > 0)}
   <h2 style="margin-top: 2rem">{m.plan_previous_assignments()}</h2>
 
   {#each page.data.pastAssignments as { id, year, structures }, i (id)}
-    <div
-      class="boxed-list row-spaced text-small"
-      style="gap: 1.5rem; opacity: 0.7"
-      class:first={i === 0 && page.data.pastAssignments.length > 1}
-      class:last={i === page.data.pastAssignments.length - 1 && page.data.pastAssignments.length > 1}
-      class:middle={i > 0 && i < page.data.pastAssignments.length - 1}
-    >
-      <span class="numeric">{year}</span>
-      <div class="column">
-        {#each structures as structure, month (month)}
-          <span>{m.preferences_month_head({ n: month + 1 })}: {structure}</span>
-        {/each}
+    {#if structures.length > 0}
+      <div
+        class="boxed-list row-spaced text-small"
+        style="gap: 1.5rem; opacity: 0.7"
+        class:first={i === 0 && page.data.pastAssignments.length > 1}
+        class:last={i === page.data.pastAssignments.length - 1 && page.data.pastAssignments.length > 1}
+        class:middle={i > 0 && i < page.data.pastAssignments.length - 1}
+      >
+        <span class="numeric">{year}</span>
+        <div class="column">
+          {#each structures as structure, month (month)}
+            <span>{m.preferences_month_head({ n: month + 1 })}: {structure}</span>
+          {/each}
+        </div>
       </div>
-    </div>
+    {/if}
   {/each}
 {/if}
 
